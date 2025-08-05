@@ -32,14 +32,17 @@ export function DashboardHeader({ onLogout }: DashboardHeaderProps) {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setIsLoggingOut(true)
-    // Simulate logout delay
-    setTimeout(() => {
-      onLogout()
+    try {
+      // Call the logout function passed from parent
+      await onLogout()
+    } catch (error) {
+      console.error("Logout failed:", error)
+    } finally {
       setIsLoggingOut(false)
       setShowLogoutDialog(false)
-    }, 1000)
+    }
   }
 
   return (
