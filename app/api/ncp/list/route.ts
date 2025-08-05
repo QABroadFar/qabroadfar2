@@ -15,6 +15,9 @@ export async function GET(request: NextRequest) {
     let reports
     if (type === "pending") {
       reports = getPendingNCPsForRole(user.role, user.username)
+    } else if (type === "all") {
+      // Return all NCPs for database view and flow tracker
+      reports = getAllNCPReports()
     } else {
       reports = getNCPReportsForUser(user.id, user.role, user.username)
     }

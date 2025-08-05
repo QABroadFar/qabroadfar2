@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useEffect, useState } from "react"
-import { Database, CheckCircle, FileInput, Users, Package, FileText, Settings, Cog, Award } from "lucide-react"
+import { Database, CheckCircle, FileInput, Users, Package, FileText, Settings, Cog, Award, Plus, CheckSquare, Wrench, Shield, TrendingUp } from "lucide-react"
 
 import {
   Sidebar,
@@ -28,59 +28,64 @@ export function AppSidebar({ userInfo: userInfoProp, currentPage, setCurrentPage
 
   const getMenuItems = () => {
     const baseItems = [
-      {
-        title: "Input NCP",
-        page: "input-ncp",
-        icon: FileInput,
-        roles: ["user", "qa_leader", "admin"],
-      },
-      {
-        title: "Database NCP",
-        page: "database-ncp",
-        icon: Database,
-        roles: ["user", "qa_leader", "team_leader", "process_lead", "qa_manager", "admin"],
-      },
+      { title: "Dashboard", page: "dashboard", icon: Home },
     ]
 
-    const roleSpecificItems = []
-
-    if (userInfo.role === "qa_leader" || userInfo.role === "admin") {
-      roleSpecificItems.push({
-        title: "QA Leader Approval",
-        page: "qa-approval",
-        icon: CheckCircle,
-        roles: ["qa_leader", "admin"],
-      })
+    // Role-specific menu items
+    if (userInfo.role === "user") {
+      baseItems.push(
+        { title: "Input NCP", page: "input-ncp", icon: Plus },
+        { title: "NCP Flow Tracker", page: "ncp-flow-tracker", icon: TrendingUp },
+        { title: "Database NCP", page: "database-ncp", icon: Database },
+      )
     }
 
-    if (userInfo.role === "team_leader" || userInfo.role === "admin") {
-      roleSpecificItems.push({
-        title: "Team Leader Processing",
-        page: "tl-processing",
-        icon: Settings,
-        roles: ["team_leader", "admin"],
-      })
+    if (userInfo.role === "qa_leader") {
+      baseItems.push(
+        { title: "Input NCP", page: "input-ncp", icon: Plus },
+        { title: "QA Approval", page: "qa-approval", icon: CheckSquare },
+        { title: "NCP Flow Tracker", page: "ncp-flow-tracker", icon: TrendingUp },
+        { title: "Database NCP", page: "database-ncp", icon: Database },
+      )
     }
 
-    if (userInfo.role === "process_lead" || userInfo.role === "admin") {
-      roleSpecificItems.push({
-        title: "Process Lead Approval",
-        page: "process-approval",
-        icon: Cog,
-        roles: ["process_lead", "admin"],
-      })
+    if (userInfo.role === "team_leader") {
+      baseItems.push(
+        { title: "TL Processing", page: "tl-processing", icon: Wrench },
+        { title: "NCP Flow Tracker", page: "ncp-flow-tracker", icon: TrendingUp },
+        { title: "Database NCP", page: "database-ncp", icon: Database },
+      )
     }
 
-    if (userInfo.role === "qa_manager" || userInfo.role === "admin") {
-      roleSpecificItems.push({
-        title: "QA Manager Approval",
-        page: "qa-manager-approval",
-        icon: Award,
-        roles: ["qa_manager", "admin"],
-      })
+    if (userInfo.role === "process_lead") {
+      baseItems.push(
+        { title: "Process Lead Approval", page: "process-approval", icon: Shield },
+        { title: "NCP Flow Tracker", page: "ncp-flow-tracker", icon: TrendingUp },
+        { title: "Database NCP", page: "database-ncp", icon: Database },
+      )
     }
 
-    return [...baseItems, ...roleSpecificItems]
+    if (userInfo.role === "qa_manager") {
+      baseItems.push(
+        { title: "Manager Approval", page: "manager-approval", icon: Award },
+        { title: "NCP Flow Tracker", page: "ncp-flow-tracker", icon: TrendingUp },
+        { title: "Database NCP", page: "database-ncp", icon: Database },
+      )
+    }
+
+    if (userInfo.role === "admin") {
+      baseItems.push(
+        { title: "Input NCP", page: "input-ncp", icon: Plus },
+        { title: "QA Approval", page: "qa-approval", icon: CheckSquare },
+        { title: "TL Processing", page: "tl-processing", icon: Wrench },
+        { title: "Process Lead Approval", page: "process-approval", icon: Shield },
+        { title: "Manager Approval", page: "manager-approval", icon: Award },
+        { title: "NCP Flow Tracker", page: "ncp-flow-tracker", icon: TrendingUp },
+        { title: "Database NCP", page: "database-ncp", icon: Database },
+      )
+    }
+
+    return baseItems
   }
 
   const menuData = {
