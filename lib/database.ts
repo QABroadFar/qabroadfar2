@@ -210,15 +210,6 @@ export function getNCPReportsForUser(userId: number, userRole: string, username:
   return results
 }
 
-// Get all NCP reports (for database view and flow tracker)
-export function getAllNCPReports() {
-  const query = `
-    SELECT * FROM ncp_reports 
-    ORDER BY submitted_at DESC
-  `
-  return db.prepare(query).all()
-}
-
 // Get pending NCPs for approval based on role
 export function getPendingNCPsForRole(userRole: string, username: string) {
   let query = ""
