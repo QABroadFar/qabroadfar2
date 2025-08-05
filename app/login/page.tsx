@@ -1,21 +1,20 @@
+
 "use client"
 
-import type React from "react"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { AlertCircle, Loader2 } from "lucide-react"
 
-interface LoginPageProps {
-  onLogin: () => void
-}
-
-export default function LoginPage({ onLogin }: LoginPageProps) {
+export default function LoginPage() {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
     setIsLoading(true)
@@ -24,15 +23,29 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
     const username = formData.get("username") as string
     const password = formData.get("password") as string
 
-    // Simulate loading delay
-    setTimeout(() => {
-      if (username === "q" && password === "q") {
-        onLogin()
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        // Login berhasil, redirect ke dashboard
+        router.push("/dashboard")
       } else {
-        setError("Invalid username or password. Please try again.")
+        setError(data.error || "Login gagal. Silakan coba lagi.")
       }
+    } catch (error) {
+      console.error("Login error:", error)
+      setError("Terjadi kesalahan. Silakan coba lagi.")
+    } finally {
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   return (
@@ -44,6 +57,12 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
             <div className="w-16 h-1 bg-blue-600 mx-auto rounded-full"></div>
           </CardHeader>
           <CardContent className="space-y-6 px-8 pb-8">
+            {error && (
+              <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-md">
+                <AlertCircle className="h-4 w-4" />
+                <span className="text-sm">{error}</span>
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="username" className="text-sm font-medium text-gray-700">
@@ -53,9 +72,10 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                   id="username"
                   name="username"
                   type="text"
-                  placeholder="Enter your username"
+                  placeholder="Masukkan username Anda"
                   className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
                   required
+                  disabled={isLoading}
                 />
               </div>
               <div className="space-y-2">
@@ -66,30 +86,39 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                   id="password"
                   name="password"
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder="Masukkan password Anda"
                   className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-colors"
                   required
+                  disabled={isLoading}
                 />
               </div>
-
-              {error && (
-                <div className="text-red-600 text-sm text-center bg-red-50 p-3 rounded-md border border-red-200">
-                  {error}
-                </div>
-              )}
-
               <Button
                 type="submit"
+                className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold text-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
                 disabled={isLoading}
-                className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium text-base transition-colors shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? "Signing in..." : "Login"}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Masuk...
+                  </>
+                ) : (
+                  "Masuk"
+                )}
               </Button>
             </form>
-            <div className="text-center">
-              <a href="#" className="text-sm text-blue-600 hover:text-blue-800 transition-colors">
-                Forgot password?
-              </a>
+            
+            <div className="text-center text-sm text-gray-500 mt-6">
+              <p className="mb-2">Akun yang tersedia:</p>
+              <div className="text-xs space-y-1">
+                <p><strong>user1</strong> / 123 (User)</p>
+                <p><strong>qaleader1</strong> / 123 (QA Leader)</p>
+                <p><strong>teamlead1</strong> / 123 (Team Leader)</p>
+                <p><strong>processlead1</strong> / 123 (Process Lead)</p>
+                <p><strong>qamanager1</strong> / 123 (QA Manager)</p>
+                <p><strong>admin</strong> / 123 (Admin)</p>
+                <p><strong>q</strong> / q (Quick Admin)</p>
+              </div>
             </div>
           </CardContent>
         </Card>
