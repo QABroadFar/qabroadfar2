@@ -34,7 +34,7 @@ import {
   ImageIcon,
 } from "lucide-react"
 
-const machineOptions = ["SC1", "DC1A", "MAX", "DC1B", "SC2", "DC2", "HLP1", "HLP2", "HLP3", "HLP4", "SC3", "DC2"]
+const machineOptions = ["SC1", "DC1A", "MAX", "DC1B", "SC2", "DC2", "HLP1", "HLP2", "HLP3", "HLP4", "SC3"]
 
 const qaLeaderOptions = ["QA Leader 1", "QA Leader 2"]
 
