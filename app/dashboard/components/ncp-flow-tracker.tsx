@@ -359,21 +359,7 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
                           <ImageIcon className="h-4 w-4" />
                           Photo Attachment:
                         </div>
-                        <div className="space-y-2">
-                          <p className="text-gray-600 text-sm">{ncp.photo_attachment.split("/").pop()}</p>
-                          <div className="relative w-full max-w-md h-32 bg-gray-100 rounded-lg overflow-hidden border">
-                            <img
-                              src={ncp.photo_attachment || "/placeholder.svg"}
-                              alt="NCP Photo"
-                              className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
-                              onError={(e) => {
-                                e.currentTarget.src = "/placeholder.svg?height=150&width=200&text=Image+Not+Found"
-                              }}
-                              onClick={() => window.open(ncp.photo_attachment, "_blank")}
-                            />
-                          </div>
-                          <p className="text-xs text-gray-500">Click to view full size</p>
-                        </div>
+                        <p className="text-gray-600 text-sm">{ncp.photo_attachment.split("/").pop()}</p>
                       </div>
                     )}
                   </CardContent>

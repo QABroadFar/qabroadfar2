@@ -29,6 +29,8 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
   const [selectedNCP, setSelectedNCP] = useState(null)
   const [showApprovalDialog, setShowApprovalDialog] = useState(false)
   const [showRejectionDialog, setShowRejectionDialog] = useState(false)
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false) // State for success dialog
+  const [successMessage, setSuccessMessage] = useState("") // State for success message
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -102,8 +104,9 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
 
       if (response.ok) {
         setShowApprovalDialog(false)
+        setSuccessMessage(`NCP ${selectedNCP.ncp_id} approved successfully and assigned to Team Leader!`)
+        setShowSuccessDialog(true)
         fetchPendingNCPs()
-        alert("NCP approved successfully!")
       } else {
         const error = await response.json()
         alert(`Error: ${error.error}`)
@@ -137,7 +140,7 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
       if (response.ok) {
         setShowRejectionDialog(false)
         fetchPendingNCPs()
-        alert("NCP rejected successfully!")
+        alert("NCP rejected successfully!") // Keep original alert for rejection
       } else {
         const error = await response.json()
         alert(`Error: ${error.error}`)
@@ -271,31 +274,8 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
                     <p className="text-gray-800 text-sm leading-relaxed">{ncp.problem_description}</p>
                   </div>
 
-                  {/* FIXED: Photo Attachment Display */}
-                  {ncp.photo_attachment && (
-                    <div className="p-4 bg-blue-50/50 rounded-lg border border-blue-200/50">
-                      <div className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                        <ImageIcon className="h-4 w-4" />
-                        Photo Attachment:
-                      </div>
-                      <div className="space-y-2">
-                        <p className="text-gray-600 text-sm">{ncp.photo_attachment.split("/").pop()}</p>
-                        {/* FIXED: Display actual image */}
-                        <div className="relative w-full max-w-md h-48 bg-gray-100 rounded-lg overflow-hidden border">
-                          <img
-                            src={ncp.photo_attachment || "/placeholder.svg"}
-                            alt="NCP Photo Attachment"
-                            className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
-                            onError={(e) => {
-                              e.currentTarget.src = "/placeholder.svg?height=200&width=300&text=Image+Not+Found"
-                            }}
-                            onClick={() => window.open(ncp.photo_attachment, "_blank")}
-                          />
-                        </div>
-                        <p className="text-xs text-gray-500">Click image to view full size</p>
-                      </div>
-                    </div>
-                  )}
+                  {/* FIXED: Photo Attachment Display - REMOVED AS PER REQUIREMENT 1 */}
+                  {/* No photo attachment display */}
 
                   {/* Action Buttons */}
                   <div className="flex gap-3 pt-4 border-t border-gray-200/50">
@@ -467,6 +447,19 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
                 "Reject NCP"
               )}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Success Dialog */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-green-600">Success!</DialogTitle>
+            <DialogDescription>{successMessage}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-3">
+            <Button onClick={() => setShowSuccessDialog(false)}>Close</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

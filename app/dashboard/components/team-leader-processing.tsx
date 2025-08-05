@@ -37,6 +37,8 @@ export function TeamLeaderProcessing({ onBack }: TeamLeaderProcessingProps) {
   const [assignedNCPs, setAssignedNCPs] = useState([])
   const [selectedNCP, setSelectedNCP] = useState(null)
   const [showProcessDialog, setShowProcessDialog] = useState(false)
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false)
+  const [successMessage, setSuccessMessage] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -57,10 +59,10 @@ export function TeamLeaderProcessing({ onBack }: TeamLeaderProcessingProps) {
       const response = await fetch("/api/ncp/list?type=pending")
       if (response.ok) {
         const data = await response.json()
-        // FIXED: Filter for NCPs assigned to current team leader with qa_approved status
+        // Filter for NCPs assigned to current team leader with qa_approved status only (not processed)
         const assignedToMe = data.data.filter(
           (ncp: any) =>
-            (ncp.status === "qa_approved" || ncp.status === "tl_processed") &&
+            ncp.status === "qa_approved" &&
             (ncp.assigned_team_leader === "teamlead1" || // Match with actual team leader usernames
               ncp.assigned_team_leader === "teamlead2" ||
               ncp.assigned_team_leader === "teamlead3"),
@@ -110,8 +112,9 @@ export function TeamLeaderProcessing({ onBack }: TeamLeaderProcessingProps) {
 
       if (response.ok) {
         setShowProcessDialog(false)
+        setSuccessMessage(`NCP ${selectedNCP.ncp_id} processed successfully and forwarded to Process Lead!`)
+        setShowSuccessDialog(true)
         fetchAssignedNCPs()
-        alert("NCP processed successfully and forwarded to Process Lead!")
       } else {
         const error = await response.json()
         alert(`Error: ${error.error}`)
@@ -161,7 +164,7 @@ export function TeamLeaderProcessing({ onBack }: TeamLeaderProcessingProps) {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <Button variant="ghost" onClick={onBack} className="text-gray-600 hover:text-gray-900 p-0 h-auto mb-4">
+          <Button variant="ghost" onClick={() => onBack()} className="text-gray-600 hover:text-gray-900 p-0 h-auto mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
@@ -181,8 +184,8 @@ export function TeamLeaderProcessing({ onBack }: TeamLeaderProcessingProps) {
           <Card className="bg-white/80 backdrop-blur-sm">
             <CardContent className="p-12 text-center">
               <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">No Assigned NCPs</h3>
-              <p className="text-gray-600">No NCP reports have been assigned to you at this time.</p>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">No Pending NCPs</h3>
+              <p className="text-gray-600">All assigned NCP reports have been processed successfully.</p>
             </CardContent>
           </Card>
         ) : (
@@ -448,6 +451,26 @@ export function TeamLeaderProcessing({ onBack }: TeamLeaderProcessingProps) {
                 )}
               </Button>
             )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Success Dialog */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-green-600 flex items-center gap-2">
+              <CheckCircle className="h-6 w-6" />
+              Success!
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-gray-700">{successMessage}</p>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setShowSuccessDialog(false)} className="w-full bg-green-600 hover:bg-green-700">
+              Continue
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

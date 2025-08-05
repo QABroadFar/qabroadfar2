@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useEffect } from "react"
@@ -25,17 +24,15 @@ import {
   ArrowLeft,
   Search,
   Loader2,
-  Eye,
-  Download,
-  Filter,
+  FileText,
   Calendar,
   User,
   Package,
-  FileText,
-  ImageIcon,
   CheckCircle,
   Clock,
   AlertCircle,
+  ImageIcon,
+  Download,
 } from "lucide-react"
 
 interface DatabaseNCPProps {
@@ -155,44 +152,49 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
     })
   }
 
-  const exportToCSV = () => {
+  const exportToExcel = () => {
     const headers = [
-      "NCP ID",
-      "SKU Code",
-      "Machine Code",
-      "Date",
-      "Status",
-      "Submitted By",
-      "Hold Quantity",
-      "Problem Description",
-      "Submitted At",
+      "NCP ID", "SKU Code", "Machine Code", "Date", "Time", "Hold Quantity", "UOM",
+      "Problem Description", "Status", "Submitted By", "Submitted At", "QA Leader",
+      "Disposisi", "Sortir", "Release", "Reject", "Team Leader", "Root Cause",
+      "Corrective Action", "Preventive Action"
     ]
 
-    const csvData = filteredNCPs.map((ncp: any) => [
-      ncp.ncp_id,
-      ncp.sku_code,
-      ncp.machine_code,
-      ncp.date,
-      ncp.status,
-      ncp.submitted_by,
-      `${ncp.hold_quantity} ${ncp.hold_quantity_uom}`,
-      ncp.problem_description.replace(/"/g, '""'),
-      formatDate(ncp.submitted_at),
-    ])
+    const csvContent = [
+      headers.join(","),
+      ...filteredNCPs.map((ncp: any) => [
+        ncp.ncp_id,
+        ncp.sku_code,
+        ncp.machine_code,
+        ncp.date,
+        ncp.time_incident,
+        ncp.hold_quantity,
+        ncp.hold_quantity_uom,
+        `"${ncp.problem_description?.replace(/"/g, '""') || ''}"`,
+        ncp.status,
+        ncp.submitted_by,
+        ncp.submitted_at,
+        ncp.qa_leader,
+        `"${ncp.disposisi?.replace(/"/g, '""') || ''}"`,
+        ncp.jumlah_sortir || '0',
+        ncp.jumlah_release || '0',
+        ncp.jumlah_reject || '0',
+        ncp.assigned_team_leader || '',
+        `"${ncp.root_cause_analysis?.replace(/"/g, '""') || ''}"`,
+        `"${ncp.corrective_action?.replace(/"/g, '""') || ''}"`,
+        `"${ncp.preventive_action?.replace(/"/g, '""') || ''}"`
+      ].join(","))
+    ].join("\n")
 
-    const csvContent = [headers, ...csvData]
-      .map((row) => row.map((cell) => `"${cell}"`).join(","))
-      .join("\n")
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
-    const link = document.createElement("a")
-    const url = URL.createObjectURL(blob)
-    link.setAttribute("href", url)
-    link.setAttribute("download", `ncp_database_${new Date().toISOString().slice(0, 10)}.csv`)
-    link.style.visibility = "hidden"
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    const blob = new Blob([csvContent], { type: "text/csv" })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `ncp-database-${new Date().toISOString().split('T')[0]}.csv`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    window.URL.revokeObjectURL(url)
   }
 
   if (isLoading) {
@@ -216,14 +218,14 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
               <h1 className="text-3xl font-bold text-gray-800">NCP Database</h1>
               <p className="text-gray-600 mt-1">Complete database of all Non-Conformance Product reports</p>
             </div>
-            <div className="flex gap-3">
-              <Badge variant="secondary" className="text-lg px-4 py-2">
-                {filteredNCPs.length} Records
-              </Badge>
-              <Button onClick={exportToCSV} variant="outline" className="flex items-center gap-2">
-                <Download className="h-4 w-4" />
-                Export CSV
+            <div className="flex items-center gap-3">
+              <Button onClick={exportToExcel} variant="outline" className="text-green-600 border-green-300 hover:bg-green-50">
+                <Download className="h-4 w-4 mr-2" />
+                Export Excel
               </Button>
+              <Badge variant="secondary" className="text-lg px-4 py-2">
+                {filteredNCPs.length} NCPs
+              </Badge>
             </div>
           </div>
         </div>
@@ -409,7 +411,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                 </div>
               </div>
 
-              {/* Photo Attachment */}
+              {/* Photo Attachment - Simplified for database view */}
               {selectedNCP.photo_attachment && (
                 <div className="bg-purple-50/50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -418,18 +420,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                   </h3>
                   <div className="space-y-3">
                     <p className="text-gray-600 text-sm">{selectedNCP.photo_attachment.split("/").pop()}</p>
-                    <div className="relative w-full max-w-2xl h-64 bg-gray-100 rounded-lg overflow-hidden border">
-                      <img
-                        src={selectedNCP.photo_attachment || "/placeholder.svg"}
-                        alt="NCP Photo Attachment"
-                        className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
-                        onError={(e) => {
-                          e.currentTarget.src = "/placeholder.svg?height=250&width=400&text=Image+Not+Found"
-                        }}
-                        onClick={() => window.open(selectedNCP.photo_attachment, "_blank")}
-                      />
-                    </div>
-                    <p className="text-xs text-gray-500">Click image to view full size</p>
+                    <p className="text-xs text-gray-500">Photo is not displayed in this view. Click filename to download.</p>
                   </div>
                 </div>
               )}
