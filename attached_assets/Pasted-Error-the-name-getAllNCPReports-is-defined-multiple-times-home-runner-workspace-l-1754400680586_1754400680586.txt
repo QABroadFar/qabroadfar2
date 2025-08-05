@@ -1,0 +1,52 @@
+Error: 
+  × the name `getAllNCPReports` is defined multiple times
+     ╭─[/home/runner/workspace/lib/database.ts:173:1]
+ 173 │ }
+ 174 │ 
+ 175 │ // Get all NCP reports for database view and flow tracker
+ 176 │ export function getAllNCPReports() {
+     ·                 ────────┬───────
+     ·                         ╰── previous definition of `getAllNCPReports` here
+ 177 │   return db.prepare("SELECT * FROM ncp_reports ORDER BY submitted_at DESC").all()
+ 178 │ }
+ 179 │ 
+ 180 │ // Get NCPs based on user role and permissions
+ 181 │ export function getNCPReportsForUser(userId: number, userRole: string, username: string) {
+ 182 │   let query = "SELECT * FROM ncp_reports"
+ 183 │   let params: any[] = []
+ 184 │ 
+ 185 │   switch (userRole) {
+ 186 │     case "user":
+ 187 │       query += " WHERE submitted_by = ? ORDER BY submitted_at DESC"
+ 188 │       params = [username]
+ 189 │       break
+ 190 │     case "qa_leader":
+ 191 │       query += " ORDER BY submitted_at DESC"
+ 192 │       break
+ 193 │     case "team_leader":
+ 194 │       query += " WHERE assigned_team_leader = ? ORDER BY submitted_at DESC"
+ 195 │       params = [username]
+ 196 │       break
+ 197 │     case "process_lead":
+ 198 │       query += " WHERE status IN ('tl_processed', 'process_approved', 'process_rejected') ORDER BY submitted_at DESC"
+ 199 │       break
+ 200 │     case "qa_manager":
+ 201 │     case "admin":
+ 202 │       query += " ORDER BY submitted_at DESC"
+ 203 │       break
+ 204 │     default:
+ 205 │       query += " WHERE submitted_by = ? ORDER BY submitted_at DESC"
+ 206 │       params = [username]
+ 207 │   }
+ 208 │ 
+ 209 │   const results = db.prepare(query).all(...params)
+ 210 │   return results
+ 211 │ }
+ 212 │ 
+ 213 │ // Get all NCP reports (for database view and flow tracker)
+ 214 │ export function getAllNCPReports() {
+     ·                 ────────┬───────
+     ·                         ╰── `getAllNCPReports` redefined here
+ 215 │   const query = `
+ 216 │     SELECT * FROM ncp_reports 
+ 217 │     ORDER BY submitted_at DESC
