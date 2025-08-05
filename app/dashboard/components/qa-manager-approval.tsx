@@ -31,6 +31,7 @@ import {
   ImageIcon,
   Award,
 } from "lucide-react"
+import * as XLSX from 'xlsx'; // Import XLSX for Excel export
 
 interface QAManagerApprovalProps {
   onBack: () => void
@@ -41,6 +42,8 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
   const [selectedNCP, setSelectedNCP] = useState(null)
   const [showApprovalDialog, setShowApprovalDialog] = useState(false)
   const [showRejectionDialog, setShowRejectionDialog] = useState(false)
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false) // State for the success dialog
+  const [successMessage, setSuccessMessage] = useState("") // State for the success message
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -102,8 +105,9 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
 
       if (response.ok) {
         setShowApprovalDialog(false)
+        setSuccessMessage(`NCP ${selectedNCP.ncp_id} approved and archived successfully! Workflow completed.`)
+        setShowSuccessDialog(true)
         fetchPendingNCPs()
-        alert("NCP workflow completed successfully and archived!")
       } else {
         const error = await response.json()
         alert(`Error: ${error.error}`)
@@ -136,8 +140,10 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
 
       if (response.ok) {
         setShowRejectionDialog(false)
+        // Show success message for rejection as well
+        setSuccessMessage(`NCP ${selectedNCP.ncp_id} rejected and returned to Team Leader.`)
+        setShowSuccessDialog(true)
         fetchPendingNCPs()
-        alert("NCP rejected and returned to Team Leader!")
       } else {
         const error = await response.json()
         alert(`Error: ${error.error}`)
@@ -149,6 +155,46 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
       setIsSubmitting(false)
     }
   }
+
+  const exportToExcel = () => {
+    if (pendingNCPs.length === 0) {
+      alert("No data to export.");
+      return;
+    }
+
+    // Prepare data for Excel
+    const worksheetData = pendingNCPs.map((ncp: any) => ({
+      "NCP ID": ncp.ncp_id,
+      "SKU Code": ncp.sku_code,
+      "Machine Code": ncp.machine_code,
+      "Incident Date": new Date(ncp.date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
+      "Incident Time": ncp.time_incident,
+      "Process Lead": ncp.process_approved_by,
+      "Status": "Ready for Final Approval", // Assuming status for this view
+      "Problem Description": ncp.problem_description,
+      "QA Leader Disposition": ncp.disposisi,
+      "Sortir": ncp.jumlah_sortir || "0",
+      "Release": ncp.jumlah_release || "0",
+      "Reject": ncp.jumlah_reject || "0",
+      "Total Hold Quantity": `${ncp.hold_quantity} ${ncp.hold_quantity_uom}`,
+      "Root Cause Analysis": ncp.root_cause_analysis,
+      "Corrective Action": ncp.corrective_action,
+      "Preventive Action": ncp.preventive_action,
+      "Process Lead Comment": ncp.process_comment,
+      "Process Approved At": new Date(ncp.process_approved_at).toLocaleString(),
+      "Photo Attachment Path": ncp.photo_attachment,
+    }));
+
+    // Create a new workbook
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+
+    // Append the worksheet to the workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Pending NCPs");
+
+    // Export the workbook to an Excel file
+    XLSX.writeFile(workbook, "pending_ncps_for_approval.xlsx");
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -196,9 +242,15 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
               <h1 className="text-3xl font-bold text-gray-800">QA Manager Final Approval</h1>
               <p className="text-gray-600 mt-1">Final review and approval of completed NCP workflows</p>
             </div>
-            <Badge variant="secondary" className="text-lg px-4 py-2">
-              {pendingNCPs.length} Pending Final Approval
-            </Badge>
+            <div className="flex items-center gap-4">
+              <Badge variant="secondary" className="text-lg px-4 py-2">
+                {pendingNCPs.length} Pending Final Approval
+              </Badge>
+              <Button onClick={exportToExcel} variant="outline" className="flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                Export to Excel
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -512,6 +564,26 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                   Reject & Return
                 </>
               )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Success Dialog */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl font-bold text-green-600">
+              <CheckCircle className="h-6 w-6" />
+              Operation Successful
+            </DialogTitle>
+          </DialogHeader>
+          <DialogDescription className="text-base text-gray-700 pt-4">
+            {successMessage}
+          </DialogDescription>
+          <DialogFooter className="mt-6">
+            <Button onClick={() => setShowSuccessDialog(false)}>
+              OK
             </Button>
           </DialogFooter>
         </DialogContent>

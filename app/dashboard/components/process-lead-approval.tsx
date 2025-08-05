@@ -40,6 +40,8 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
   const [selectedNCP, setSelectedNCP] = useState(null)
   const [showApprovalDialog, setShowApprovalDialog] = useState(false)
   const [showRejectionDialog, setShowRejectionDialog] = useState(false)
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false)
+  const [successMessage, setSuccessMessage] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -101,8 +103,9 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
 
       if (response.ok) {
         setShowApprovalDialog(false)
+        setSuccessMessage(`NCP ${selectedNCP.ncp_id} approved successfully and forwarded to QA Manager!`)
+        setShowSuccessDialog(true)
         fetchPendingNCPs()
-        alert("NCP approved successfully and forwarded to QA Manager!")
       } else {
         const error = await response.json()
         alert(`Error: ${error.error}`)
@@ -135,8 +138,9 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
 
       if (response.ok) {
         setShowRejectionDialog(false)
+        setSuccessMessage(`NCP ${selectedNCP.ncp_id} rejected and returned to Team Leader!`)
+        setShowSuccessDialog(true)
         fetchPendingNCPs()
-        alert("NCP rejected and returned to Team Leader!")
       } else {
         const error = await response.json()
         alert(`Error: ${error.error}`)
@@ -186,7 +190,7 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <Button variant="ghost" onClick={onBack} className="text-gray-600 hover:text-gray-900 p-0 h-auto mb-4">
+          <Button variant="ghost" onClick={() => onBack()} className="text-gray-600 hover:text-gray-900 p-0 h-auto mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
@@ -497,6 +501,26 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
                   Reject & Return
                 </>
               )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Success Dialog */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-green-600 flex items-center gap-2">
+              <CheckCircle className="h-6 w-6" />
+              Success!
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-gray-700">{successMessage}</p>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setShowSuccessDialog(false)} className="w-full bg-green-600 hover:bg-green-700">
+              Continue
             </Button>
           </DialogFooter>
         </DialogContent>
