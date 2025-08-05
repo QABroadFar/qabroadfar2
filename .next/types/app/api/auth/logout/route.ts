@@ -1,8 +1,8 @@
-// File: /home/runner/workspace/app/api/ncp/list/route.ts
-import * as entry from '../../../../../../app/api/ncp/list/route.js'
+// File: /home/runner/workspace/app/api/auth/logout/route.ts
+import * as entry from '../../../../../../app/api/auth/logout/route.js'
 import type { NextRequest } from 'next/server.js'
 
-type TEntry = typeof import('../../../../../../app/api/ncp/list/route.js')
+type TEntry = typeof import('../../../../../../app/api/auth/logout/route.js')
 
 // Check that the entry is a valid entry
 checkFields<Diff<{
