@@ -12,14 +12,13 @@ async function seedUsers() {
   try {
     // Test users with their roles and passwords
     const testUsers = [
-      { username: "user1", password: "123", role: "user", fullName: "Test User 1" },
+      { username: "user1", password: "123", role: "user", fullName: "User 1" },
       { username: "qaleader1", password: "123", role: "qa_leader", fullName: "QA Leader 1" },
       { username: "teamlead1", password: "123", role: "team_leader", fullName: "Team Leader 1" },
       { username: "processlead1", password: "123", role: "process_lead", fullName: "Process Lead 1" },
       { username: "qamanager1", password: "123", role: "qa_manager", fullName: "QA Manager 1" },
       { username: "admin", password: "123", role: "admin", fullName: "Administrator" },
-      // Additional test users
-      { username: "q", password: "q", role: "admin", fullName: "Quick Admin" }, // For quick testing
+      { username: "q", password: "q", role: "admin", fullName: "Quick Admin" }
     ]
 
     // Clear existing users (optional - remove this if you want to keep existing users)
