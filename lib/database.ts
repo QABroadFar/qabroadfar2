@@ -172,6 +172,11 @@ export function createNCPReport(data: any) {
   return { id: result.lastInsertRowid, ncpId }
 }
 
+// Get all NCP reports for database view and flow tracker
+export function getAllNCPReports() {
+  return db.prepare("SELECT * FROM ncp_reports ORDER BY submitted_at DESC").all()
+}
+
 // Get NCPs based on user role and permissions
 export function getNCPReportsForUser(userId: number, userRole: string, username: string) {
   let query = "SELECT * FROM ncp_reports"
