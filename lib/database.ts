@@ -41,7 +41,7 @@ export function initializeDatabase() {
       status TEXT DEFAULT 'pending',
       submitted_by TEXT NOT NULL,
       submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      
+
       -- QA Leader Approval Fields
       qa_approved_by TEXT,
       qa_approved_at DATETIME,
@@ -51,26 +51,26 @@ export function initializeDatabase() {
       jumlah_reject TEXT DEFAULT '0',
       assigned_team_leader TEXT,
       qa_rejection_reason TEXT,
-      
+
       -- Team Leader Fields
       tl_processed_by TEXT,
       tl_processed_at DATETIME,
       root_cause_analysis TEXT,
       corrective_action TEXT,
       preventive_action TEXT,
-      
+
       -- Process Lead Fields
       process_approved_by TEXT,
       process_approved_at DATETIME,
       process_rejection_reason TEXT,
       process_comment TEXT,
-      
+
       -- QA Manager Fields
       manager_approved_by TEXT,
       manager_approved_at DATETIME,
       manager_rejection_reason TEXT,
       manager_comment TEXT,
-      
+
       -- Final status
       archived_at DATETIME
     )
@@ -205,7 +205,16 @@ export function getNCPReportsForUser(userId: number, userRole: string, username:
   return results
 }
 
-// FIXED: Get pending NCPs for approval based on role
+// Get all NCP reports (for database view and flow tracker)
+export function getAllNCPReports() {
+  const query = `
+    SELECT * FROM ncp_reports 
+    ORDER BY submitted_at DESC
+  `
+  return db.prepare(query).all()
+}
+
+// Get pending NCPs for approval based on role
 export function getPendingNCPsForRole(userRole: string, username: string) {
   let query = ""
   let params: any[] = []

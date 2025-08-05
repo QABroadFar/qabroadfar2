@@ -296,7 +296,22 @@ export function TeamLeaderProcessing({ onBack }: TeamLeaderProcessingProps) {
                         <ImageIcon className="h-4 w-4" />
                         Photo Attachment:
                       </div>
-                      <p className="text-gray-600 text-sm">{ncp.photo_attachment}</p>
+                      <div className="space-y-2">
+                        <p className="text-gray-600 text-sm">{ncp.photo_attachment.split("/").pop()}</p>
+                        {/* Display actual image */}
+                        <div className="relative w-full max-w-md h-48 bg-gray-100 rounded-lg overflow-hidden border">
+                          <img
+                            src={ncp.photo_attachment || "/placeholder.svg"}
+                            alt="NCP Photo Attachment"
+                            className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
+                            onError={(e) => {
+                              e.currentTarget.src = "/placeholder.svg?height=200&width=300&text=Image+Not+Found"
+                            }}
+                            onClick={() => window.open(ncp.photo_attachment, "_blank")}
+                          />
+                        </div>
+                        <p className="text-xs text-gray-500">Click image to view full size</p>
+                      </div>
                     </div>
                   )}
 

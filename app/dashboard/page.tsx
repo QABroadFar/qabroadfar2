@@ -12,6 +12,7 @@ import { TeamLeaderProcessing } from "./components/team-leader-processing"
 import { ProcessLeadApproval } from "./components/process-lead-approval"
 import { QAManagerApproval } from "./components/qa-manager-approval"
 import { DatabaseNCP } from "./components/database-ncp"
+import { NCPFlowTracker } from "./components/ncp-flow-tracker" // Import the new component
 
 interface UserInfo {
   id: number
@@ -85,13 +86,15 @@ export default function DashboardPage() {
         return <NCPInputForm userInfo={userInfo} />
       case "database-ncp":
         return <DatabaseNCP userInfo={userInfo} />
+      case "ncp-flow-tracker": // Added case for NCP Flow Tracker
+        return <NCPFlowTracker userInfo={userInfo} />
       case "qa-approval":
         return <QALeaderApproval userInfo={userInfo} />
       case "tl-processing":
         return <TeamLeaderProcessing userInfo={userInfo} />
       case "process-approval":
         return <ProcessLeadApproval userInfo={userInfo} />
-      case "qa-manager-approval":
+      case "manager-approval":
         return <QAManagerApproval userInfo={userInfo} />
       default:
         return <WelcomeContent userInfo={userInfo} />
