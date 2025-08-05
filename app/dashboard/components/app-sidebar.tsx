@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useEffect, useState } from "react"
-import { Database, CheckCircle, FileInput, Users, Package, FileText, Settings, Cog, Award, Plus, CheckSquare, Wrench, Shield, TrendingUp } from "lucide-react"
+import { Database, CheckCircle, FileInput, Users, Package, FileText, Settings, Cog, Award, Plus, CheckSquare, Wrench, Shield, TrendingUp, Home } from "lucide-react"
 
 import {
   Sidebar,

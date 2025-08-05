@@ -22,7 +22,7 @@ interface UserInfo {
 
 export default function DashboardPage() {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
-  const [currentPage, setCurrentPage] = useState("overview")
+  const [currentPage, setCurrentPage] = useState("input-ncp")
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
@@ -82,12 +82,12 @@ export default function DashboardPage() {
 
   const renderContent = () => {
     switch (currentPage) {
+      case "dashboard":
+        return <WelcomeContent userInfo={userInfo} />
       case "input-ncp":
         return <NCPInputForm userInfo={userInfo} />
       case "database-ncp":
         return <DatabaseNCP userInfo={userInfo} />
-      case "ncp-flow-tracker": // Added case for NCP Flow Tracker
-        return <NCPFlowTracker userInfo={userInfo} />
       case "qa-approval":
         return <QALeaderApproval userInfo={userInfo} />
       case "tl-processing":
@@ -96,6 +96,8 @@ export default function DashboardPage() {
         return <ProcessLeadApproval userInfo={userInfo} />
       case "manager-approval":
         return <QAManagerApproval userInfo={userInfo} />
+      case "ncp-flow-tracker":
+        return <NCPFlowTracker userInfo={userInfo} />
       default:
         return <WelcomeContent userInfo={userInfo} />
     }
