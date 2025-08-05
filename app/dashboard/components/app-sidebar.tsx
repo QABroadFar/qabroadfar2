@@ -18,29 +18,13 @@ import {
 } from "@/components/ui/sidebar"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  onNavigate: (page: string) => void
+  userInfo: { username: string; role: string; fullName?: string; id?: number }
   currentPage: string
+  setCurrentPage: (page: string) => void
 }
 
-export function AppSidebar({ onNavigate, currentPage, ...props }: AppSidebarProps) {
-  const [userInfo, setUserInfo] = useState({ username: "", role: "", fullName: "" })
-
-  useEffect(() => {
-    // Get user info from API
-    fetchUserInfo()
-  }, [])
-
-  const fetchUserInfo = async () => {
-    try {
-      const response = await fetch("/api/auth/me")
-      if (response.ok) {
-        const data = await response.json()
-        setUserInfo(data.user)
-      }
-    } catch (error) {
-      console.error("Error fetching user info:", error)
-    }
-  }
+export function AppSidebar({ userInfo: userInfoProp, currentPage, setCurrentPage, ...props }: AppSidebarProps) {
+  const userInfo = userInfoProp || { username: "", role: "", fullName: "" }
 
   const getMenuItems = () => {
     const baseItems = [
@@ -171,7 +155,7 @@ export function AppSidebar({ onNavigate, currentPage, ...props }: AppSidebarProp
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     isActive={currentPage === item.page}
-                    onClick={() => onNavigate(item.page)}
+                    onClick={() => setCurrentPage(item.page)}
                     className="text-gray-300 hover:text-white hover:bg-gray-800 data-[active=true]:bg-blue-600 data-[active=true]:text-white cursor-pointer"
                   >
                     <item.icon className="h-4 w-4" />

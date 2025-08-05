@@ -11,6 +11,7 @@ import { QALeaderApproval } from "./components/qa-leader-approval"
 import { TeamLeaderProcessing } from "./components/team-leader-processing"
 import { ProcessLeadApproval } from "./components/process-lead-approval"
 import { QAManagerApproval } from "./components/qa-manager-approval"
+import { DatabaseNCP } from "./components/database-ncp"
 
 interface UserInfo {
   id: number
@@ -80,8 +81,10 @@ export default function DashboardPage() {
 
   const renderContent = () => {
     switch (currentPage) {
-      case "ncp-input":
+      case "input-ncp":
         return <NCPInputForm userInfo={userInfo} />
+      case "database-ncp":
+        return <DatabaseNCP userInfo={userInfo} />
       case "qa-approval":
         return <QALeaderApproval userInfo={userInfo} />
       case "tl-processing":
