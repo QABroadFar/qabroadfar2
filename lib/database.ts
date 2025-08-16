@@ -185,7 +185,7 @@ export function getAllUsers() {
 }
 
 export function getUsersByRole(role: string) {
-  return db.prepare("SELECT id, username, full_name FROM users WHERE role = ?").all(role)
+  return db.prepare("SELECT id, username, full_name FROM users WHERE role = ? AND is_active = TRUE").all(role)
 }
 
 export function updateUserRole(userId: number, newRole:string) {
@@ -403,8 +403,16 @@ export function createNCPReport(data: any) {
     data.submittedBy,
   )
 
-  // Create notification for QA Leaders
-  createNotificationForRole("qa_leader", ncpId, "New NCP Submitted", `NCP ${ncpId} requires your approval`)
+  // Create notification for the selected QA Leader
+  const qaLeaderUser = db.prepare("SELECT id FROM users WHERE username = ?").get(data.qaLeader)
+  if (qaLeaderUser) {
+    createNotification(
+      qaLeaderUser.id,
+      ncpId,
+      "New NCP Submitted",
+      `NCP ${ncpId} requires your approval`,
+    )
+  }
 
   return { id: result.lastInsertRowid, ncpId }
 }
@@ -454,7 +462,8 @@ export function getPendingNCPsForRole(userRole: string, username: string) {
 
   switch (userRole) {
     case "qa_leader":
-      query = "SELECT * FROM ncp_reports WHERE status = 'pending' ORDER BY submitted_at ASC"
+      query = "SELECT * FROM ncp_reports WHERE status = 'pending' AND qa_leader = ? ORDER BY submitted_at ASC"
+      params = [username]
       break
     case "team_leader":
       // FIXED: Show NCPs assigned to this team leader
@@ -526,13 +535,7 @@ export function approveNCPByQALeader(id: number, approvalData: any, qaLeaderUser
       )
     }
 
-    // Also create notification for all team leaders as backup
-    createNotificationForRole(
-      "team_leader",
-      ncp.ncp_id,
-      "New NCP Assignment",
-      `NCP ${ncp.ncp_id} has been approved and assigned to ${approvalData.assignedTeamLeader}`,
-    )
+    // The backup notification is removed to target only the specific team leader.
   }
 
   return result

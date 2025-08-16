@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { formatToWIB } from "@/lib/date-utils"
 import { Eye } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -170,17 +171,6 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
     setEditableNCP({ ...ncp })
     setShowDetailDialog(true)
     setIsEditing(false)
-  }
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "N/A"
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
   }
 
   const exportToExcel = () => {
@@ -415,7 +405,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                           {ncp.hold_quantity} {ncp.hold_quantity_uom}
                         </TableCell>
                         <TableCell>{ncp.submitted_by}</TableCell>
-                        <TableCell>{formatDate(ncp.submitted_at)}</TableCell>
+                        <TableCell>{formatToWIB(ncp.submitted_at)}</TableCell>
                         <TableCell>
                           <Button
                             variant="outline"
@@ -610,7 +600,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">Approved At</label>
-                      <p className="text-gray-800 font-medium">{formatDate(selectedNCP.qa_approved_at)}</p>
+                      <p className="text-gray-800 font-medium">{formatToWIB(selectedNCP.qa_approved_at)}</p>
                     </div>
                     {selectedNCP.assigned_team_leader && (
                       <div>
@@ -657,7 +647,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">Processed At</label>
-                      <p className="text-gray-800 font-medium">{formatDate(selectedNCP.tl_processed_at)}</p>
+                      <p className="text-gray-800 font-medium">{formatToWIB(selectedNCP.tl_processed_at)}</p>
                     </div>
                   </div>
                   {(isEditing || selectedNCP.root_cause_analysis) && (
@@ -723,7 +713,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">Approved At</label>
-                      <p className="text-gray-800 font-medium">{formatDate(selectedNCP.process_approved_at)}</p>
+                      <p className="text-gray-800 font-medium">{formatToWIB(selectedNCP.process_approved_at)}</p>
                     </div>
                   </div>
                   {selectedNCP.process_comment && (
@@ -747,7 +737,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">Approved At</label>
-                      <p className="text-gray-800 font-medium">{formatDate(selectedNCP.manager_approved_at)}</p>
+                      <p className="text-gray-800 font-medium">{formatToWIB(selectedNCP.manager_approved_at)}</p>
                     </div>
                   </div>
                   {selectedNCP.final_comment && (
