@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { authenticateUser } from "@/lib/database"
+import { authenticateUser, logSystemEvent } from "@/lib/database"
 import { SignJWT } from "jose"
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET || "your-secret-key")
@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
     const user = await authenticateUser(username, password)
 
     if (!user) {
+      logSystemEvent("warn", "Failed login attempt", { username })
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }
 

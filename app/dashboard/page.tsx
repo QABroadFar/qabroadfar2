@@ -13,6 +13,12 @@ import { ProcessLeadApproval } from "./components/process-lead-approval"
 import { QAManagerApproval } from "./components/qa-manager-approval"
 import { DatabaseNCP } from "./components/database-ncp"
 import { NCPFlowTracker } from "./components/ncp-flow-tracker" // Import the new component
+import UserManagementPage from "./user-management/page"
+import AnalyticsPage from "./analytics/page"
+import AuditLogPage from "./audit-log/page"
+import SystemLogsPage from "./system-logs/page"
+import ApiKeysPage from "./api-keys/page"
+import BackupRestorePage from "./backup-restore/page"
 
 interface UserInfo {
   id: number
@@ -98,6 +104,18 @@ export default function DashboardPage() {
         return <QAManagerApproval userInfo={userInfo} />
       case "ncp-flow-tracker":
         return <NCPFlowTracker userInfo={userInfo} />
+      case "user-management":
+        return <UserManagementPage />
+      case "analytics":
+        return <AnalyticsPage />
+      case "audit-log":
+        return <AuditLogPage />
+      case "system-logs":
+        return <SystemLogsPage />
+      case "api-keys":
+        return <ApiKeysPage />
+      case "backup-restore":
+        return <BackupRestorePage />
       default:
         return <WelcomeContent userInfo={userInfo} />
     }
