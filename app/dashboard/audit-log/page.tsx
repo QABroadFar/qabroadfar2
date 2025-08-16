@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { formatToWIB } from "@/lib/date-utils"
 
 const AuditLogPage = () => {
   const [auditLog, setAuditLog] = useState([])
@@ -48,7 +49,7 @@ const AuditLogPage = () => {
             <TableRow key={log.id}>
               <TableCell>{log.ncp_id}</TableCell>
               <TableCell>{log.changed_by}</TableCell>
-              <TableCell>{new Date(log.changed_at).toLocaleString()}</TableCell>
+              <TableCell>{formatToWIB(log.changed_at)}</TableCell>
               <TableCell>{log.field_changed}</TableCell>
               <TableCell>{log.old_value}</TableCell>
               <TableCell>{log.new_value}</TableCell>
