@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { formatToWIB } from "@/lib/date-utils"
 
 const SystemLogsPage = () => {
   const [systemLogs, setSystemLogs] = useState([])
@@ -48,7 +49,7 @@ const SystemLogsPage = () => {
               <TableCell>
                 <pre>{JSON.stringify(JSON.parse(log.details), null, 2)}</pre>
               </TableCell>
-              <TableCell>{new Date(log.created_at).toLocaleString()}</TableCell>
+              <TableCell>{formatToWIB(log.created_at)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
