@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { formatToWIB } from "@/lib/date-utils"
 import { Eye } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -50,13 +52,40 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStatus, setSelectedStatus] = useState("all")
   const [selectedNCP, setSelectedNCP] = useState(null)
+  const [editableNCP, setEditableNCP] = useState(null)
+  const [isEditing, setIsEditing] = useState(false)
   const [showDetailDialog, setShowDetailDialog] = useState(false)
+  const [showRevertDialog, setShowRevertDialog] = useState(false)
+  const [showReassignDialog, setShowReassignDialog] = useState(false)
+  const [revertStatus, setRevertStatus] = useState("")
+  const [reassignRole, setReassignRole] = useState("team_leader")
+  const [reassignAssignee, setReassignAssignee] = useState("")
+  const [allTeamLeaders, setAllTeamLeaders] = useState([])
+  const [allQALeaders, setAllQALeaders] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [sortBy, setSortBy] = useState("submitted_at")
   const [sortOrder, setSortOrder] = useState("desc")
 
   useEffect(() => {
     fetchAllNCPs()
+    const fetchUsersByRole = async (role) => {
+      try {
+        const response = await fetch(`/api/users/by-role?role=${role}`)
+        if (response.ok) {
+          const data = await response.json()
+          if (role === "qa_leader") {
+            setAllQALeaders(data)
+          } else if (role === "team_leader") {
+            setAllTeamLeaders(data)
+          }
+        }
+      } catch (error) {
+        console.error(`Failed to fetch ${role}s`, error)
+      }
+    }
+
+    fetchUsersByRole("qa_leader")
+    fetchUsersByRole("team_leader")
   }, [])
 
   useEffect(() => {
@@ -139,18 +168,9 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
 
   const handleViewDetails = (ncp: any) => {
     setSelectedNCP(ncp)
+    setEditableNCP({ ...ncp })
     setShowDetailDialog(true)
-  }
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "N/A"
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+    setIsEditing(false)
   }
 
   const exportToExcel = () => {
@@ -196,6 +216,71 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
     a.click()
     document.body.removeChild(a)
     window.URL.revokeObjectURL(url)
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setEditableNCP((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSaveChanges = async () => {
+    if (!editableNCP) return
+    try {
+      const response = await fetch(`/api/ncp/details/${editableNCP.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editableNCP),
+      })
+      if (response.ok) {
+        fetchAllNCPs()
+        setIsEditing(false)
+        setShowDetailDialog(false)
+      } else {
+        console.error("Failed to save changes")
+      }
+    } catch (error) {
+      console.error("Error saving changes:", error)
+    }
+  }
+
+  const handleRevertStatus = async () => {
+    if (!selectedNCP || !revertStatus) return
+    try {
+      const response = await fetch(`/api/ncp/${selectedNCP.id}/revert-status`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: revertStatus }),
+      })
+      if (response.ok) {
+        fetchAllNCPs()
+        setShowRevertDialog(false)
+        setShowDetailDialog(false)
+      } else {
+        console.error("Failed to revert status")
+      }
+    } catch (error) {
+      console.error("Error reverting status:", error)
+    }
+  }
+
+  const handleReassign = async () => {
+    if (!selectedNCP || !reassignAssignee) return
+    try {
+      const response = await fetch(`/api/ncp/${selectedNCP.id}/reassign`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ assignee: reassignAssignee, role: reassignRole }),
+      })
+      if (response.ok) {
+        fetchAllNCPs()
+        setShowReassignDialog(false)
+        setShowDetailDialog(false)
+      } else {
+        console.error("Failed to reassign NCP")
+      }
+    } catch (error) {
+      console.error("Error reassigning NCP:", error)
+    }
   }
 
   if (isLoading) {
@@ -320,7 +405,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                           {ncp.hold_quantity} {ncp.hold_quantity_uom}
                         </TableCell>
                         <TableCell>{ncp.submitted_by}</TableCell>
-                        <TableCell>{formatDate(ncp.submitted_at)}</TableCell>
+                        <TableCell>{formatToWIB(ncp.submitted_at)}</TableCell>
                         <TableCell>
                           <Button
                             variant="outline"
@@ -346,12 +431,31 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
       <Dialog open={showDetailDialog} onOpenChange={setShowDetailDialog}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-gray-800">
-              NCP Details: {selectedNCP?.ncp_id}
-            </DialogTitle>
-            <DialogDescription>
-              Complete information for Non-Conformance Product report
-            </DialogDescription>
+            <div className="flex justify-between items-center">
+              <div>
+                <DialogTitle className="text-2xl font-bold text-gray-800">
+                  NCP Details: {selectedNCP?.ncp_id}
+                </DialogTitle>
+                <DialogDescription>
+                  Complete information for Non-Conformance Product report
+                </DialogDescription>
+              </div>
+              <div className="flex gap-2">
+                {userInfo.role === 'super_admin' && !isEditing && (
+                  <>
+                    <Button onClick={() => setShowRevertDialog(true)} variant="outline">Revert Status</Button>
+                    <Button onClick={() => setShowReassignDialog(true)} variant="outline">Reassign</Button>
+                    <Button onClick={() => setIsEditing(true)}>Edit</Button>
+                  </>
+                )}
+                {isEditing && (
+                  <div className="flex gap-2">
+                    <Button onClick={handleSaveChanges}>Save</Button>
+                    <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+                  </div>
+                )}
+              </div>
+            </div>
           </DialogHeader>
 
           {selectedNCP && (
@@ -370,32 +474,82 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-600">SKU Code</label>
-                    <p className="text-gray-800 font-medium">{selectedNCP.sku_code}</p>
+                    {isEditing ? (
+                      <Input
+                        name="sku_code"
+                        value={editableNCP.sku_code}
+                        onChange={handleInputChange}
+                      />
+                    ) : (
+                      <p className="text-gray-800 font-medium">{selectedNCP.sku_code}</p>
+                    )}
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-600">Machine Code</label>
-                    <p className="text-gray-800 font-medium">{selectedNCP.machine_code}</p>
+                    {isEditing ? (
+                      <Input
+                        name="machine_code"
+                        value={editableNCP.machine_code}
+                        onChange={handleInputChange}
+                      />
+                    ) : (
+                      <p className="text-gray-800 font-medium">{selectedNCP.machine_code}</p>
+                    )}
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-600">Incident Date</label>
-                    <p className="text-gray-800 font-medium">
-                      {new Date(selectedNCP.date).toLocaleDateString("en-US", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
+                    {isEditing ? (
+                      <Input
+                        type="date"
+                        name="date"
+                        value={editableNCP.date ? new Date(editableNCP.date).toISOString().split('T')[0] : ''}
+                        onChange={handleInputChange}
+                      />
+                    ) : (
+                      <p className="text-gray-800 font-medium">
+                        {new Date(selectedNCP.date).toLocaleDateString("en-US", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-600">Incident Time</label>
-                    <p className="text-gray-800 font-medium">{selectedNCP.time_incident}</p>
+                    {isEditing ? (
+                      <Input
+                        type="time"
+                        name="time_incident"
+                        value={editableNCP.time_incident}
+                        onChange={handleInputChange}
+                      />
+                    ) : (
+                      <p className="text-gray-800 font-medium">{selectedNCP.time_incident}</p>
+                    )}
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-600">Hold Quantity</label>
-                    <p className="text-gray-800 font-medium">
-                      {selectedNCP.hold_quantity} {selectedNCP.hold_quantity_uom}
-                    </p>
+                    {isEditing ? (
+                      <div className="flex gap-2">
+                        <Input
+                          type="number"
+                          name="hold_quantity"
+                          value={editableNCP.hold_quantity}
+                          onChange={handleInputChange}
+                        />
+                        <Input
+                          name="hold_quantity_uom"
+                          value={editableNCP.hold_quantity_uom}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-gray-800 font-medium">
+                        {selectedNCP.hold_quantity} {selectedNCP.hold_quantity_uom}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-600">Submitted By</label>
@@ -408,7 +562,16 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
               <div className="bg-orange-50/50 p-6 rounded-lg">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Problem Description</h3>
                 <div className="bg-white p-4 rounded border">
-                  <p className="text-gray-800 whitespace-pre-wrap">{selectedNCP.problem_description}</p>
+                  {isEditing ? (
+                    <Textarea
+                      name="problem_description"
+                      value={editableNCP.problem_description}
+                      onChange={handleInputChange}
+                      rows={5}
+                    />
+                  ) : (
+                    <p className="text-gray-800 whitespace-pre-wrap">{selectedNCP.problem_description}</p>
+                  )}
                 </div>
               </div>
 
@@ -437,7 +600,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">Approved At</label>
-                      <p className="text-gray-800 font-medium">{formatDate(selectedNCP.qa_approved_at)}</p>
+                      <p className="text-gray-800 font-medium">{formatToWIB(selectedNCP.qa_approved_at)}</p>
                     </div>
                     {selectedNCP.assigned_team_leader && (
                       <div>
@@ -484,27 +647,54 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">Processed At</label>
-                      <p className="text-gray-800 font-medium">{formatDate(selectedNCP.tl_processed_at)}</p>
+                      <p className="text-gray-800 font-medium">{formatToWIB(selectedNCP.tl_processed_at)}</p>
                     </div>
                   </div>
-                  {selectedNCP.root_cause_analysis && (
+                  {(isEditing || selectedNCP.root_cause_analysis) && (
                     <div className="space-y-4">
                       <div>
                         <label className="text-sm font-medium text-gray-600">Root Cause Analysis</label>
                         <div className="bg-white p-4 rounded border mt-2">
-                          <p className="text-gray-800 whitespace-pre-wrap">{selectedNCP.root_cause_analysis}</p>
+                          {isEditing ? (
+                            <Textarea
+                              name="root_cause_analysis"
+                              value={editableNCP.root_cause_analysis}
+                              onChange={handleInputChange}
+                              rows={3}
+                            />
+                          ) : (
+                            <p className="text-gray-800 whitespace-pre-wrap">{selectedNCP.root_cause_analysis}</p>
+                          )}
                         </div>
                       </div>
                       <div>
                         <label className="text-sm font-medium text-gray-600">Corrective Action</label>
                         <div className="bg-white p-4 rounded border mt-2">
-                          <p className="text-gray-800 whitespace-pre-wrap">{selectedNCP.corrective_action}</p>
+                          {isEditing ? (
+                            <Textarea
+                              name="corrective_action"
+                              value={editableNCP.corrective_action}
+                              onChange={handleInputChange}
+                              rows={3}
+                            />
+                          ) : (
+                            <p className="text-gray-800 whitespace-pre-wrap">{selectedNCP.corrective_action}</p>
+                          )}
                         </div>
                       </div>
                       <div>
                         <label className="text-sm font-medium text-gray-600">Preventive Action</label>
                         <div className="bg-white p-4 rounded border mt-2">
-                          <p className="text-gray-800 whitespace-pre-wrap">{selectedNCP.preventive_action}</p>
+                          {isEditing ? (
+                            <Textarea
+                              name="preventive_action"
+                              value={editableNCP.preventive_action}
+                              onChange={handleInputChange}
+                              rows={3}
+                            />
+                          ) : (
+                            <p className="text-gray-800 whitespace-pre-wrap">{selectedNCP.preventive_action}</p>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -523,7 +713,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">Approved At</label>
-                      <p className="text-gray-800 font-medium">{formatDate(selectedNCP.process_approved_at)}</p>
+                      <p className="text-gray-800 font-medium">{formatToWIB(selectedNCP.process_approved_at)}</p>
                     </div>
                   </div>
                   {selectedNCP.process_comment && (
@@ -547,7 +737,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">Approved At</label>
-                      <p className="text-gray-800 font-medium">{formatDate(selectedNCP.manager_approved_at)}</p>
+                      <p className="text-gray-800 font-medium">{formatToWIB(selectedNCP.manager_approved_at)}</p>
                     </div>
                   </div>
                   {selectedNCP.final_comment && (
@@ -562,6 +752,65 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
               )}
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Revert Status Dialog */}
+      <Dialog open={showRevertDialog} onOpenChange={setShowRevertDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Revert NCP Status</DialogTitle>
+            <DialogDescription>
+              Select a new status to revert the NCP report to. This action will be logged.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <select
+              value={revertStatus}
+              onChange={(e) => setRevertStatus(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-200 rounded-md"
+            >
+              <option value="">Select a status</option>
+              <option value="pending">Pending QA Review</option>
+              <option value="qa_approved">Team Leader Assigned</option>
+              <option value="tl_processed">Processing Complete</option>
+              <option value="process_approved">Process Approved</option>
+            </select>
+          </div>
+          <Button onClick={handleRevertStatus}>Confirm Revert</Button>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reassign Dialog */}
+      <Dialog open={showReassignDialog} onOpenChange={setShowReassignDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reassign NCP</DialogTitle>
+            <DialogDescription>
+              Select a new assignee for this NCP report. This action will be logged.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <select
+              value={reassignRole}
+              onChange={(e) => setReassignRole(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-200 rounded-md"
+            >
+              <option value="team_leader">Team Leader</option>
+              <option value="qa_leader">QA Leader</option>
+            </select>
+            <select
+              value={reassignAssignee}
+              onChange={(e) => setReassignAssignee(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-200 rounded-md"
+            >
+              <option value="">Select an assignee</option>
+              {(reassignRole === 'team_leader' ? allTeamLeaders : allQALeaders).map(user => (
+                <option key={user.id} value={user.username}>{user.full_name || user.username}</option>
+              ))}
+            </select>
+          </div>
+          <Button onClick={handleReassign}>Confirm Reassignment</Button>
         </DialogContent>
       </Dialog>
     </div>
