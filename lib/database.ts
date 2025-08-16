@@ -1,5 +1,6 @@
 import Database from "better-sqlite3"
-import { compare } from "bcryptjs"
+import { compare, hashSync } from "bcryptjs"
+import crypto from "crypto"
 
 // Database schema and connection
 const db = new Database("qa_portal.db")
@@ -20,6 +21,7 @@ export function initializeDatabase() {
       password TEXT NOT NULL,
       role TEXT DEFAULT 'user',
       full_name TEXT,
+      is_active BOOLEAN DEFAULT TRUE,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `)
@@ -73,6 +75,44 @@ export function initializeDatabase() {
 
       -- Final status
       archived_at DATETIME
+    )
+  `)
+
+  // NCP Audit Log table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS ncp_audit_log (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ncp_id TEXT NOT NULL,
+      changed_by TEXT NOT NULL,
+      changed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      field_changed TEXT NOT NULL,
+      old_value TEXT,
+      new_value TEXT,
+      description TEXT
+    )
+  `)
+
+  // System Logs table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS system_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      level TEXT NOT NULL, -- e.g., 'info', 'warn', 'error'
+      message TEXT NOT NULL,
+      details TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `)
+
+  // API Keys table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS api_keys (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      key TEXT UNIQUE NOT NULL,
+      service_name TEXT NOT NULL,
+      permissions TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      last_used_at DATETIME,
+      is_active BOOLEAN DEFAULT TRUE
     )
   `)
 
@@ -138,6 +178,203 @@ export async function authenticateUser(username: string, password: string) {
 // Get user by username
 export function getUserByUsername(username: string) {
   return db.prepare("SELECT id, username, role, full_name FROM users WHERE username = ?").get(username)
+}
+
+export function getAllUsers() {
+  return db.prepare("SELECT id, username, role, full_name, is_active, created_at FROM users").all()
+}
+
+export function getUsersByRole(role: string) {
+  return db.prepare("SELECT id, username, full_name FROM users WHERE role = ?").all(role)
+}
+
+export function updateUserRole(userId: number, newRole:string) {
+  const stmt = db.prepare("UPDATE users SET role = ? WHERE id = ?")
+  const result = stmt.run(newRole, userId)
+  return result
+}
+
+export function updateUserPassword(userId: number, newPassword: string) {
+  const hashedPassword = hashSync(newPassword, 10)
+  const stmt = db.prepare("UPDATE users SET password = ? WHERE id = ?")
+  const result = stmt.run(hashedPassword, userId)
+  return result
+}
+
+export function updateUserStatus(userId: number, isActive: boolean) {
+  const stmt = db.prepare("UPDATE users SET is_active = ? WHERE id = ?")
+  const result = stmt.run(isActive ? 1 : 0, userId)
+  return result
+}
+
+export function logNCPChange(ncpId: string, changedBy: string, fieldChanged: string, oldValue: any, newValue: any, description: string) {
+  const stmt = db.prepare(`
+    INSERT INTO ncp_audit_log (ncp_id, changed_by, field_changed, old_value, new_value, description)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `);
+  stmt.run(ncpId, changedBy, fieldChanged, String(oldValue), String(newValue), description);
+}
+
+export function superEditNCP(ncpId: number, data: any, changedBy: string) {
+  const ncp = getNCPById(ncpId)
+  if (!ncp) {
+    return { changes: 0 }
+  }
+
+  const fields = Object.keys(data)
+  const values = Object.values(data)
+
+  if (fields.length === 0) {
+    return { changes: 0 }
+  }
+
+  for (const field of fields) {
+    if (ncp[field] !== data[field]) {
+      logNCPChange(
+        ncp.ncp_id,
+        changedBy,
+        field,
+        ncp[field],
+        data[field],
+        `Field ${field} updated by super_admin`,
+      )
+    }
+  }
+
+  const setClause = fields.map((field) => `${field.replace(/([A-Z])/g, "_$1").toLowerCase()} = ?`).join(", ")
+
+  const stmt = db.prepare(`
+    UPDATE ncp_reports
+    SET ${setClause}
+    WHERE id = ?
+  `)
+
+  const result = stmt.run(...values, ncpId)
+  return result
+}
+
+export function revertNCPStatus(ncpId: number, newStatus: string, changedBy: string) {
+  const ncp = getNCPById(ncpId)
+  if (ncp) {
+    logNCPChange(
+      ncp.ncp_id,
+      changedBy,
+      "status",
+      ncp.status,
+      newStatus,
+      `Status reverted to ${newStatus} by super_admin`,
+    )
+  }
+
+  const stmt = db.prepare("UPDATE ncp_reports SET status = ? WHERE id = ?")
+  const result = stmt.run(newStatus, ncpId)
+  return result
+}
+
+export function reassignNCP(ncpId: number, newAssignee: string, role: "qa_leader" | "team_leader", changedBy: string) {
+  const ncp = getNCPById(ncpId)
+  if (!ncp) return { changes: 0 }
+
+  let columnToUpdate = ""
+  let oldAssignee = ""
+  if (role === "qa_leader") {
+    columnToUpdate = "qa_leader"
+    oldAssignee = ncp.qa_leader
+  } else if (role === "team_leader") {
+    columnToUpdate = "assigned_team_leader"
+    oldAssignee = ncp.assigned_team_leader
+  } else {
+    return { changes: 0 }
+  }
+
+  logNCPChange(
+    ncp.ncp_id,
+    changedBy,
+    columnToUpdate,
+    oldAssignee,
+    newAssignee,
+    `Reassigned to ${newAssignee} by super_admin`,
+  )
+
+  const stmt = db.prepare(`UPDATE ncp_reports SET ${columnToUpdate} = ? WHERE id = ?`)
+  const result = stmt.run(newAssignee, ncpId)
+  return result
+}
+
+export function getNCPsByMonth() {
+  const query = `
+    SELECT strftime('%Y-%m', submitted_at) as month, COUNT(*) as count
+    FROM ncp_reports
+    WHERE submitted_at >= strftime('%Y-%m-%d %H:%M:%S', date('now', '-12 months'))
+    GROUP BY month
+    ORDER BY month;
+  `
+  return db.prepare(query).all()
+}
+
+export function getAverageApprovalTime() {
+  const query = `
+    SELECT AVG(julianday(manager_approved_at) - julianday(submitted_at)) * 24 * 60 as avg_minutes
+    FROM ncp_reports
+    WHERE status = 'manager_approved';
+  `
+  const result = db.prepare(query).get()
+  return result ? result.avg_minutes : 0
+}
+
+export function getNCPStatusDistribution() {
+  const query = `
+    SELECT status, COUNT(*) as count
+    FROM ncp_reports
+    GROUP BY status;
+  `
+  return db.prepare(query).all()
+}
+
+export function getNCPsByTopSubmitters(limit = 5) {
+  const query = `
+    SELECT submitted_by, COUNT(*) as count
+    FROM ncp_reports
+    GROUP BY submitted_by
+    ORDER BY count DESC
+    LIMIT ?;
+  `
+  return db.prepare(query).all(limit)
+}
+
+export function getAuditLog() {
+  return db.prepare("SELECT * FROM ncp_audit_log ORDER BY changed_at DESC").all()
+}
+
+export function logSystemEvent(level: "info" | "warn" | "error", message: string, details: any) {
+  const stmt = db.prepare(`
+    INSERT INTO system_logs (level, message, details)
+    VALUES (?, ?, ?)
+  `)
+  stmt.run(level, message, JSON.stringify(details))
+}
+
+export function getSystemLogs() {
+  return db.prepare("SELECT * FROM system_logs ORDER BY created_at DESC").all()
+}
+
+export function getApiKeys() {
+  return db.prepare("SELECT * FROM api_keys").all()
+}
+
+export function createApiKey(serviceName: string, permissions: string[]) {
+  const key = `sk_${crypto.randomBytes(24).toString("hex")}`
+  const stmt = db.prepare(`
+    INSERT INTO api_keys (key, service_name, permissions)
+    VALUES (?, ?, ?)
+  `)
+  stmt.run(key, serviceName, JSON.stringify(permissions))
+  return { key }
+}
+
+export function deleteApiKey(id: number) {
+  const stmt = db.prepare("DELETE FROM api_keys WHERE id = ?")
+  return stmt.run(id)
 }
 
 // FIXED: NCP Report functions

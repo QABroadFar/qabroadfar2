@@ -1,6 +1,32 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getNCPById } from "@/lib/database"
+import { getNCPById, superEditNCP } from "@/lib/database"
 import { verifyAuth } from "@/lib/auth"
+
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+  const auth = await verifyAuth(request)
+  if (!auth) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  if (auth.role !== "super_admin") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
+  try {
+    const id = Number.parseInt(params.id)
+    if (isNaN(id)) {
+      return NextResponse.json({ error: "Invalid NCP ID" }, { status: 400 })
+    }
+
+    const data = await request.json()
+    superEditNCP(id, data, auth.username)
+
+    return NextResponse.json({ message: "NCP report updated successfully" })
+  } catch (error) {
+    console.error("Error updating NCP report:", error)
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
+  }
+}
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
