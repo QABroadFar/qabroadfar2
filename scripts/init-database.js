@@ -16,6 +16,7 @@ try {
       password TEXT NOT NULL,
       role TEXT DEFAULT 'user',
       full_name TEXT,
+      is_active BOOLEAN DEFAULT TRUE,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `)
@@ -72,6 +73,44 @@ try {
     )
   `)
 
+  // NCP Audit Log table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS ncp_audit_log (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ncp_id TEXT NOT NULL,
+      changed_by TEXT NOT NULL,
+      changed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      field_changed TEXT NOT NULL,
+      old_value TEXT,
+      new_value TEXT,
+      description TEXT
+    )
+  `)
+
+  // System Logs table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS system_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      level TEXT NOT NULL, -- e.g., 'info', 'warn', 'error'
+      message TEXT NOT NULL,
+      details TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `)
+
+  // API Keys table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS api_keys (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      key TEXT UNIQUE NOT NULL,
+      service_name TEXT NOT NULL,
+      permissions TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      last_used_at DATETIME,
+      is_active BOOLEAN DEFAULT TRUE
+    )
+  `)
+
   // Notifications table
   db.exec(`
     CREATE TABLE IF NOT EXISTS notifications (
@@ -89,7 +128,8 @@ try {
 
   console.log("✅ Database tables created successfully!")
 
-  // Clear existing users
+  // Clear existing notifications and users
+  db.prepare("DELETE FROM notifications").run()
   db.prepare("DELETE FROM users").run()
   console.log("🗑️ Cleared existing users")
 
@@ -124,6 +164,12 @@ try {
       password: "password123",
       role: "admin",
       full_name: "Administrator"
+    },
+    {
+      username: "superadmin",
+      password: "123",
+      role: "super_admin",
+      full_name: "Super Administrator"
     }
   ]
 

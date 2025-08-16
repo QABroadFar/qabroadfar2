@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useEffect, useState } from "react"
-import { Database, CheckCircle, FileInput, Users, Package, FileText, Settings, Cog, Award, Plus, CheckSquare, Wrench, Shield, TrendingUp, Home } from "lucide-react"
+import { Database, CheckCircle, FileInput, Users, Package, FileText, Settings, Cog, Award, Plus, CheckSquare, Wrench, Shield, TrendingUp, Home, Key } from "lucide-react"
 
 import {
   Sidebar,
@@ -85,6 +85,24 @@ export function AppSidebar({ userInfo: userInfoProp, currentPage, setCurrentPage
       )
     }
 
+    if (userInfo.role === "super_admin") {
+      baseItems.push(
+        { title: "Analytics", page: "analytics", icon: TrendingUp },
+        { title: "Audit Log", page: "audit-log", icon: FileText },
+        { title: "System Logs", page: "system-logs", icon: Shield },
+        { title: "User Management", page: "user-management", icon: Users },
+        { title: "API Keys", page: "api-keys", icon: Key },
+        { title: "Backup/Restore", page: "backup-restore", icon: Database },
+        { title: "Input NCP", page: "input-ncp", icon: Plus },
+        { title: "QA Approval", page: "qa-approval", icon: CheckSquare },
+        { title: "TL Processing", page: "tl-processing", icon: Wrench },
+        { title: "Process Lead Approval", page: "process-approval", icon: Shield },
+        { title: "Manager Approval", page: "manager-approval", icon: Award },
+        { title: "NCP Flow Tracker", page: "ncp-flow-tracker", icon: TrendingUp },
+        { title: "Database NCP", page: "database-ncp", icon: Database },
+      )
+    }
+
     return baseItems
   }
 
@@ -124,6 +142,8 @@ export function AppSidebar({ userInfo: userInfoProp, currentPage, setCurrentPage
         return "QA MANAGER"
       case "admin":
         return "ADMINISTRATOR"
+      case "super_admin":
+        return "SUPER ADMINISTRATOR"
       case "user":
         return "QA USER"
       default:
