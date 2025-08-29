@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { db } from "@/lib/database"
+import { 
+  deleteApiKey,
+  logSystemEvent
+} from "@/lib/database"
 
-// Get a specific API key
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+// Delete API key by ID
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   const auth = await verifyAuth(request)
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -14,50 +17,27 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 
   try {
-    const apiKeyId = parseInt(params.id, 10)
-    const apiKey = db.prepare("SELECT * FROM api_keys WHERE id = ?").get(apiKeyId)
+    const id = parseInt(params.id, 10)
     
-    if (!apiKey) {
+    if (isNaN(id)) {
+      return NextResponse.json({ error: "Invalid API key ID" }, { status: 400 })
+    }
+    
+    const result = deleteApiKey(id)
+    
+    if (result.changes > 0) {
+      // Log the event
+      logSystemEvent("info", "API Key Deleted", {
+        api_key_id: id,
+        deleted_by: auth.username
+      })
+      
+      return NextResponse.json({ message: "API key deleted successfully" })
+    } else {
       return NextResponse.json({ error: "API key not found" }, { status: 404 })
     }
-
-    return NextResponse.json(apiKey)
   } catch (error) {
-    console.error("Error fetching API key:", error)
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
-  }
-}
-
-// Update an API key
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
-  const auth = await verifyAuth(request)
-  if (!auth) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
-
-  if (auth.role !== "super_admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-  }
-
-  try {
-    const apiKeyId = parseInt(params.id, 10)
-    const { serviceName, permissions, isActive } = await request.json()
-
-    const stmt = db.prepare(`
-      UPDATE api_keys 
-      SET service_name = ?, permissions = ?, is_active = ?
-      WHERE id = ?
-    `)
-    
-    const result = stmt.run(serviceName, JSON.stringify(permissions), isActive ? 1 : 0, apiKeyId)
-
-    if (result.changes === 0) {
-      return NextResponse.json({ error: "API key not found" }, { status: 404 })
-    }
-
-    return NextResponse.json({ message: "API key updated successfully" })
-  } catch (error) {
-    console.error("Error updating API key:", error)
+    console.error("Error deleting API key:", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
 }

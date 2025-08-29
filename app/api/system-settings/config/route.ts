@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
 import { 
-  getApiKeys, 
-  createApiKey, 
-  deleteApiKey,
+  getSystemSetting,
+  setSystemSetting,
   logSystemEvent
 } from "@/lib/database"
 
-// Get all API keys
+// Get system setting by key
 export async function GET(request: NextRequest) {
   const auth = await verifyAuth(request)
   if (!auth) {
@@ -19,15 +18,26 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const apiKeys = getApiKeys()
-    return NextResponse.json(apiKeys)
+    const { searchParams } = new URL(request.url)
+    const key = searchParams.get("key")
+    
+    if (!key) {
+      return NextResponse.json({ error: "Missing setting key" }, { status: 400 })
+    }
+    
+    const value = getSystemSetting(key)
+    
+    return NextResponse.json({ 
+      key,
+      value
+    })
   } catch (error) {
-    console.error("Error fetching API keys:", error)
+    console.error("Error fetching system setting:", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
 }
 
-// Create new API key
+// Set system setting
 export async function POST(request: NextRequest) {
   const auth = await verifyAuth(request)
   if (!auth) {
@@ -39,24 +49,24 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { serviceName, permissions } = await request.json()
+    const { key, value, description } = await request.json()
     
-    if (!serviceName || !permissions) {
+    if (!key || value === undefined) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
     
-    const result = createApiKey(serviceName, permissions)
+    setSystemSetting(key, value, description || "")
     
     // Log the event
-    logSystemEvent("info", "API Key Created", {
-      service_name: serviceName,
-      permissions,
-      created_by: auth.username
+    logSystemEvent("info", "System Setting Updated", {
+      key,
+      value,
+      updated_by: auth.username
     })
     
-    return NextResponse.json(result)
+    return NextResponse.json({ message: "System setting updated successfully" })
   } catch (error) {
-    console.error("Error creating API key:", error)
+    console.error("Error updating system setting:", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
 }

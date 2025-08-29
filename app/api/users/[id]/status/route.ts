@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { updateUserStatus } from "@/lib/database"
+import { 
+  updateUserStatus,
+  logSystemEvent
+} from "@/lib/database"
 
+// Update user status (active/inactive)
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   const auth = await verifyAuth(request)
   if (!auth) {
@@ -16,13 +20,28 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const userId = parseInt(params.id, 10)
     const { is_active } = await request.json()
 
-    if (typeof is_active !== 'boolean') {
-      return NextResponse.json({ error: "Missing or invalid is_active status" }, { status: 400 })
+    if (isNaN(userId)) {
+      return NextResponse.json({ error: "Invalid user ID" }, { status: 400 })
     }
 
-    updateUserStatus(userId, is_active)
+    if (is_active === undefined) {
+      return NextResponse.json({ error: "Status is required" }, { status: 400 })
+    }
 
-    return NextResponse.json({ message: "User status updated successfully" })
+    const result = updateUserStatus(userId, is_active)
+    
+    if (result.changes > 0) {
+      // Log the event
+      logSystemEvent("info", "User Status Updated", {
+        user_id: userId,
+        is_active,
+        updated_by: auth.username
+      })
+      
+      return NextResponse.json({ message: "User status updated successfully" })
+    } else {
+      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    }
   } catch (error) {
     console.error("Error updating user status:", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })

@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
 import { 
+  getAuditLog, 
+  getSystemLogs, 
   getApiKeys, 
   createApiKey, 
   deleteApiKey,
   logSystemEvent
 } from "@/lib/database"
 
-// Get all API keys
+// Get audit logs
 export async function GET(request: NextRequest) {
   const auth = await verifyAuth(request)
   if (!auth) {
@@ -19,10 +21,24 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const apiKeys = getApiKeys()
-    return NextResponse.json(apiKeys)
+    const { searchParams } = new URL(request.url)
+    const type = searchParams.get("type") || "audit"
+    
+    switch (type) {
+      case "audit":
+        const auditLogs = getAuditLog()
+        return NextResponse.json(auditLogs)
+      case "system":
+        const systemLogs = getSystemLogs()
+        return NextResponse.json(systemLogs)
+      case "api-keys":
+        const apiKeys = getApiKeys()
+        return NextResponse.json(apiKeys)
+      default:
+        return NextResponse.json({ error: "Invalid log type" }, { status: 400 })
+    }
   } catch (error) {
-    console.error("Error fetching API keys:", error)
+    console.error(`Error fetching ${type} logs:`, error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
 }

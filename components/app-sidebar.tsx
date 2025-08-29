@@ -18,9 +18,9 @@ import {
 } from "@/components/ui/sidebar"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  userRole?: string;
-  onNavigationChange?: (component: string) => void;
-  activeComponent?: string;
+  userInfo: { username: string; role: string; fullName?: string; id?: number }
+  currentPage: string
+  setCurrentPage: (page: string) => void
 }
 
 // Menu data
@@ -155,7 +155,12 @@ export function AppSidebar({ userRole, onNavigationChange, activeComponent, ...p
             <SidebarMenu>
               {menuData.othersGroup.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton disabled={item.disabled} className="text-gray-500 cursor-not-allowed opacity-50">
+                  <SidebarMenuButton 
+                    isActive={currentPage === item.page}
+                    onClick={() => !item.disabled && setCurrentPage(item.page)}
+                    disabled={item.disabled} 
+                    className={`text-gray-300 hover:text-white hover:bg-gray-800 data-[active=true]:bg-blue-600 data-[active=true]:text-white cursor-pointer ${item.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
                     <item.icon className="h-4 w-4" />
                     <span>{item.title}</span>
                   </SidebarMenuButton>

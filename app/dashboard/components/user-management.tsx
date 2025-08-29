@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { Loader2, UserPlus, Users } from "lucide-react"
+import { Loader2, UserPlus, Users, Edit, Key, UserX } from "lucide-react"
 
 interface User {
   id: number
@@ -29,6 +29,7 @@ export function UserManagement() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddUserForm, setShowAddUserForm] = useState(false)
+  const [editingUser, setEditingUser] = useState<User | null>(null)
   const [newUser, setNewUser] = useState({
     username: "",
     password: "",
@@ -59,7 +60,7 @@ export function UserManagement() {
     }
   }
 
-  const handleAddUser = async (e: React.FormEvent) => {
+  const handleAddUser = async (e: React.FormEvent) {
     e.preventDefault()
     
     if (!newUser.username || !newUser.password) {
@@ -99,6 +100,100 @@ export function UserManagement() {
     } catch (error: any) {
       console.error("Error creating user:", error)
       toast.error(`Error creating user: ${error.message}`)
+    }
+  }
+
+  const handleUpdateUserRole = async (userId: number, newRole: string) => {
+    try {
+      const response = await fetch(`/api/users/${userId}/role`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ role: newRole }),
+      })
+      
+      const result = await response.json()
+      
+      if (response.ok) {
+        toast.success("User role updated successfully")
+        fetchUsers() // Refresh the user list
+      } else {
+        toast.error(result.error || "Failed to update user role")
+      }
+    } catch (error: any) {
+      console.error("Error updating user role:", error)
+      toast.error(`Error updating user role: ${error.message}`)
+    }
+  }
+
+  const handleUpdateUserStatus = async (userId: number, isActive: boolean) => {
+    try {
+      const response = await fetch(`/api/users/${userId}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ is_active: isActive }),
+      })
+      
+      const result = await response.json()
+      
+      if (response.ok) {
+        toast.success(`User ${isActive ? "activated" : "deactivated"} successfully`)
+        fetchUsers() // Refresh the user list
+      } else {
+        toast.error(result.error || `Failed to ${isActive ? "activate" : "deactivate"} user`)
+      }
+    } catch (error: any) {
+      console.error("Error updating user status:", error)
+      toast.error(`Error updating user status: ${error.message}`)
+    }
+  }
+
+  const handleResetPassword = async (userId: number) => {
+    const newPassword = prompt("Enter new password for this user:")
+    if (!newPassword) return
+    
+    try {
+      const response = await fetch(`/api/users/${userId}/password`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password: newPassword }),
+      })
+      
+      const result = await response.json()
+      
+      if (response.ok) {
+        toast.success("User password updated successfully")
+      } else {
+        toast.error(result.error || "Failed to update user password")
+      }
+    } catch (error: any) {
+      console.error("Error updating user password:", error)
+      toast.error(`Error updating user password: ${error.message}`)
+    }
+  }
+
+  const handleDeleteUser = async (userId: number) => {
+    try {
+      const response = await fetch(`/api/users/${userId}`, {
+        method: "DELETE",
+      })
+      
+      const result = await response.json()
+      
+      if (response.ok) {
+        toast.success("User deleted successfully")
+        fetchUsers() // Refresh the user list
+      } else {
+        toast.error(result.error || "Failed to delete user")
+      }
+    } catch (error: any) {
+      console.error("Error deleting user:", error)
+      toast.error(`Error deleting user: ${error.message}`)
     }
   }
 
@@ -236,6 +331,7 @@ export function UserManagement() {
                     <TableHead>Role</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Created At</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -243,7 +339,44 @@ export function UserManagement() {
                     <TableRow key={user.id} className="hover:bg-gray-50/50">
                       <TableCell className="font-medium">{user.username}</TableCell>
                       <TableCell>{user.full_name || "-"}</TableCell>
-                      <TableCell>{getRoleBadge(user.role)}</TableCell>
+                      <TableCell>
+                        {editingUser?.id === user.id ? (
+                          <select
+                            value={editingUser.role}
+                            onChange={(e) => setEditingUser({...editingUser, role: e.target.value})}
+                            className="w-full px-2 py-1 border border-gray-200 rounded-md text-sm"
+                            onBlur={() => {
+                              handleUpdateUserRole(user.id, editingUser.role)
+                              setEditingUser(null)
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                handleUpdateUserRole(user.id, editingUser.role)
+                                setEditingUser(null)
+                              }
+                            }}
+                          >
+                            <option value="user">User</option>
+                            <option value="qa_leader">QA Leader</option>
+                            <option value="team_leader">Team Leader</option>
+                            <option value="process_lead">Process Lead</option>
+                            <option value="qa_manager">QA Manager</option>
+                            <option value="admin">Admin</option>
+                            <option value="super_admin">Super Admin</option>
+                          </select>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            {getRoleBadge(user.role)}
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              onClick={() => setEditingUser(user)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        )}
+                      </TableCell>
                       <TableCell>
                         <Badge className={user.is_active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
                           {user.is_active ? "Active" : "Inactive"}
@@ -255,6 +388,35 @@ export function UserManagement() {
                           month: "short",
                           day: "numeric",
                         })}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => handleUpdateUserStatus(user.id, !user.is_active)}
+                          >
+                            {user.is_active ? <UserX className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => handleResetPassword(user.id)}
+                          >
+                            <Key className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => {
+                              if (confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+                                handleDeleteUser(user.id)
+                              }
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}

@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import {
+import { 
   getNCPsByMonth,
   getAverageApprovalTime,
   getNCPStatusDistribution,
   getNCPsByTopSubmitters,
+  getNCPStatistics
 } from "@/lib/database"
+
+// Get analytics data
 export async function GET(request: NextRequest) {
   const auth = await verifyAuth(request)
   if (!auth) {
@@ -17,16 +20,19 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const ncpByMonth = getNCPsByMonth()
-    const avgApprovalTime = getAverageApprovalTime()
+    // Get all analytics data
+    const monthlyData = getNCPsByMonth()
+    const averageApprovalTime = getAverageApprovalTime()
     const statusDistribution = getNCPStatusDistribution()
     const topSubmitters = getNCPsByTopSubmitters()
-
+    const ncpStats = getNCPStatistics()
+    
     return NextResponse.json({
-      ncpByMonth,
-      avgApprovalTime,
+      monthlyData,
+      averageApprovalTime,
       statusDistribution,
       topSubmitters,
+      ncpStats
     })
   } catch (error) {
     console.error("Error fetching analytics data:", error)

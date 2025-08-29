@@ -13,6 +13,46 @@ export function initializeDatabase() {
     return
   }
 
+  // Create settings table for system configurations
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS system_settings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      setting_key TEXT UNIQUE NOT NULL,
+      setting_value TEXT NOT NULL,
+      description TEXT
+    )
+  `)
+
+  // Create SKU codes table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS sku_codes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      description TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `)
+
+  // Create machines table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS machines (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `)
+
+  // Create UOMs table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS uoms (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `)
+
   // Users table
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
@@ -859,6 +899,80 @@ export function updateExistingRecords() {
 
   const result = db.prepare(updateQuery).run()
   return result
+}
+
+// System Settings Functions
+export function getSystemSetting(key: string): string | null {
+  const result = db.prepare("SELECT setting_value FROM system_settings WHERE setting_key = ?").get(key)
+  return result ? result.setting_value : null
+}
+
+export function setSystemSetting(key: string, value: string, description: string = "") {
+  const stmt = db.prepare(`
+    INSERT OR REPLACE INTO system_settings (setting_key, setting_value, description)
+    VALUES (?, ?, ?)
+  `)
+  return stmt.run(key, value, description)
+}
+
+// SKU Codes Functions
+export function getAllSKUCodes() {
+  return db.prepare("SELECT * FROM sku_codes ORDER BY code").all()
+}
+
+export function createSKUCode(code: string, description: string) {
+  const stmt = db.prepare("INSERT INTO sku_codes (code, description) VALUES (?, ?)")
+  return stmt.run(code, description)
+}
+
+export function updateSKUCode(id: number, code: string, description: string) {
+  const stmt = db.prepare("UPDATE sku_codes SET code = ?, description = ? WHERE id = ?")
+  return stmt.run(code, description, id)
+}
+
+export function deleteSKUCode(id: number) {
+  const stmt = db.prepare("DELETE FROM sku_codes WHERE id = ?")
+  return stmt.run(id)
+}
+
+// Machines Functions
+export function getAllMachines() {
+  return db.prepare("SELECT * FROM machines ORDER BY code").all()
+}
+
+export function createMachine(code: string, name: string) {
+  const stmt = db.prepare("INSERT INTO machines (code, name) VALUES (?, ?)")
+  return stmt.run(code, name)
+}
+
+export function updateMachine(id: number, code: string, name: string) {
+  const stmt = db.prepare("UPDATE machines SET code = ?, name = ? WHERE id = ?")
+  return stmt.run(code, name, id)
+}
+
+export function deleteMachine(id: number) {
+  const stmt = db.prepare("DELETE FROM machines WHERE id = ?")
+  return stmt.run(id)
+}
+
+// UOMs Functions
+export function getAllUOMs() {
+  return db.prepare("SELECT * FROM uoms ORDER BY code").all()
+}
+
+export function createUOM(code: string, name: string) {
+  const stmt = db.prepare("INSERT INTO uoms (code, name) VALUES (?, ?)")
+  return stmt.run(code, name)
+}
+
+export function updateUOM(id: number, code: string, name: string) {
+  const stmt = db.prepare("UPDATE uoms SET code = ?, name = ? WHERE id = ?")
+  return stmt.run(code, name, id)
+}
+
+export function deleteUOM(id: number) {
+  const stmt = db.prepare("DELETE FROM uoms WHERE id = ?")
+  return stmt.run(id)
 }
 
 // Initialize database on import

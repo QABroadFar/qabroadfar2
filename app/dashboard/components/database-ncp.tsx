@@ -322,6 +322,26 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
     }
   }
 
+  const handleDeleteNCP = async (id: number) => {
+    try {
+      const response = await fetch(`/api/ncp/details/${id}`, {
+        method: "DELETE",
+      })
+      if (response.ok) {
+        fetchAllNCPs()
+        setShowDetailDialog(false)
+        toast.success("NCP report deleted successfully")
+      } else {
+        const result = await response.json()
+        console.error("Failed to delete NCP:", result.error)
+        toast.error(result.error || "Failed to delete NCP report")
+      }
+    } catch (error) {
+      console.error("Error deleting NCP:", error)
+      toast.error("Error deleting NCP report")
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen">
@@ -485,6 +505,16 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     <Button onClick={() => setShowRevertDialog(true)} variant="outline">Revert Status</Button>
                     <Button onClick={() => setShowReassignDialog(true)} variant="outline">Reassign</Button>
                     <Button onClick={() => setIsEditing(true)}>Edit</Button>
+                    <Button 
+                      onClick={() => {
+                        if (confirm("Are you sure you want to permanently delete this NCP report? This action cannot be undone.")) {
+                          handleDeleteNCP(selectedNCP!.id)
+                        }
+                      }} 
+                      variant="destructive"
+                    >
+                      Delete
+                    </Button>
                   </>
                 )}
                 {isEditing && (
