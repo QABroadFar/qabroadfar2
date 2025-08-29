@@ -81,6 +81,8 @@ export function UserManagement() {
         }),
       })
       
+      const result = await response.json()
+      
       if (response.ok) {
         toast.success("User created successfully")
         setNewUser({
@@ -92,12 +94,11 @@ export function UserManagement() {
         setShowAddUserForm(false)
         fetchUsers() // Refresh the user list
       } else {
-        const errorData = await response.json()
-        toast.error(errorData.error || "Failed to create user")
+        toast.error(result.error || "Failed to create user")
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating user:", error)
-      toast.error("Error creating user")
+      toast.error(`Error creating user: ${error.message}`)
     }
   }
 
