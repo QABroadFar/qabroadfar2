@@ -245,7 +245,7 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
               <p className="text-gray-600 mt-1">Track the progress of all Non-Conformance Product reports</p>
             </div>
             <Badge variant="secondary" className="text-lg px-4 py-2">
-              {filteredNCPs.length} NCPs
+              {(filteredNCPs || []).length} NCPs
             </Badge>
           </div>
         </div>
@@ -277,7 +277,7 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
         </div>
 
         {/* NCP Cards */}
-        {filteredNCPs && filteredNCPs.length === 0 ? (
+        {(filteredNCPs || []).length === 0 ? (
           <Card className="bg-white/80 backdrop-blur-sm">
             <CardContent className="p-12 text-center">
               <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
@@ -287,7 +287,7 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
           </Card>
         ) : (
           <div className="grid gap-6">
-            {filteredNCPs && filteredNCPs.map((ncp) => {
+            {(filteredNCPs || []).map((ncp) => {
               const statusInfo = getStatusInfo(ncp.status)
               const StatusIcon = statusInfo.icon
               const flowSteps = getFlowSteps(ncp)
