@@ -54,19 +54,25 @@ export function NCPInputForm() {
     })
   }
 
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewData, setPreviewData] = useState({});
+
   const handlePreview = () => {
-    console.log("Preview data:", formData)
-    // Add preview logic here
+    setPreviewData(formData);
+    setShowPreview(true);
   }
 
   const handleSubmit = async () => {
     try {
+      // If we're in preview mode, submit the preview data
+      const dataToSubmit = showPreview ? previewData : formData;
+      
       const response = await fetch("/api/ncp/submit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSubmit),
       });
 
       if (response.ok) {
@@ -74,6 +80,8 @@ export function NCPInputForm() {
         console.log("NCP submitted successfully:", result);
         // Reset form after successful submission
         handleReset();
+        // Hide preview if it was shown
+        setShowPreview(false);
         // Show success message to user
         alert("NCP submitted successfully!");
       } else {
@@ -89,16 +97,110 @@ export function NCPInputForm() {
     }
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-xl">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-3xl font-bold text-gray-800 text-center">NCP Input Form</CardTitle>
-            <div className="w-20 h-1 bg-blue-600 mx-auto rounded-full"></div>
-          </CardHeader>
+  const handleEdit = () => {
+    setShowPreview(false);
+  }
 
-          <CardContent className="space-y-6">
+  const handleReset = () => {
+    setFormData({
+      skuCode: "",
+      machineCode: "",
+      date: "",
+      timeIncident: "",
+      holdQuantity: "",
+      holdQuantityUOM: "PCS",
+      problemDescription: "",
+      photoAttachment: null,
+      qaLeader: "",
+    });
+    setShowPreview(false);
+    setPreviewData({});
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {showPreview ? (
+          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+            <CardHeader className="pb-6">
+              <CardTitle className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                <FileText className="h-6 w-6 text-blue-600" />
+                <span>NCP Report Preview</span>
+              </CardTitle>
+              <p className="text-gray-600 mt-2">
+                Review your NCP report details before submitting.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">SKU Code</Label>
+                    <p className="mt-1 text-gray-900">{previewData.skuCode}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">Machine Code</Label>
+                    <p className="mt-1 text-gray-900">{previewData.machineCode}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">Date</Label>
+                    <p className="mt-1 text-gray-900">{previewData.date}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">Time of Incident</Label>
+                    <p className="mt-1 text-gray-900">{previewData.timeIncident}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">Hold Quantity</Label>
+                    <p className="mt-1 text-gray-900">{previewData.holdQuantity} {previewData.holdQuantityUOM}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">QA Leader</Label>
+                    <p className="mt-1 text-gray-900">{previewData.qaLeader}</p>
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-700">Problem Description</Label>
+                  <p className="mt-1 text-gray-900 whitespace-pre-wrap">{previewData.problemDescription}</p>
+                </div>
+                {previewData.photoAttachment && (
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">Photo Attachment</Label>
+                    <p className="mt-1 text-gray-900">{previewData.photoAttachment.name}</p>
+                  </div>
+                )}
+                <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200/50">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleEdit}
+                    className="flex-1 h-12 border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 bg-transparent"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleSubmit}
+                    className="flex-1 h-12 bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    Submit NCP
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+            <CardHeader className="pb-6">
+              <CardTitle className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                <FileText className="h-6 w-6 text-blue-600" />
+                <span>New NCP Report</span>
+              </CardTitle>
+              <p className="text-gray-600 mt-2">
+                Fill in the details below to submit a new Non-Conformance Product report.
+              </p>
+            </CardHeader>
+            <CardContent>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Left Column */}
               <div className="space-y-6">
@@ -287,6 +389,7 @@ export function NCPInputForm() {
             </div>
           </CardContent>
         </Card>
+        )}
       </div>
     </div>
   )

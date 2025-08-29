@@ -13,6 +13,7 @@ import { SystemLogs } from "./app/dashboard/components/system-logs"
 import { ApiKeysManagement } from "./app/dashboard/components/api-keys"
 import { BackupRestore } from "./app/dashboard/components/backup-restore"
 import { AnalyticsDashboard } from "./app/dashboard/components/analytics-dashboard"
+import { NCPInputForm } from "./components/ncp-input-form"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { useRouter } from "next/navigation"
 
@@ -55,7 +56,7 @@ export default function Dashboard() {
       case "dashboard":
         return <RoleSpecificDashboard userInfo={userInfo} />
       case "input":
-        return <div className="p-6">Input NCP Component</div>
+        return <NCPInputForm />
       case "database":
         return <DatabaseNCP userInfo={userInfo} />
       case "user-management":
@@ -70,8 +71,6 @@ export default function Dashboard() {
         return <ApiKeysManagement />
       case "backup-restore":
         return <BackupRestore />
-      case "settings":
-        return <SystemSettings />
       case "settings":
         return <SystemSettings />
       default:

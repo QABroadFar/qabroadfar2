@@ -44,14 +44,34 @@ const menuData = {
   ],
   superAdminGroup: [
     {
+      title: "Analytics Dashboard",
+      component: "analytics",
+      icon: FileSearch,
+    },
+    {
       title: "User Management",
-      component: "users",
+      component: "user-management",
       icon: UserCog,
     },
     {
       title: "Audit Logs",
-      component: "audit",
+      component: "audit-log",
       icon: FileSearch,
+    },
+    {
+      title: "System Logs",
+      component: "system-logs",
+      icon: FileText,
+    },
+    {
+      title: "API Keys",
+      component: "api-keys",
+      icon: Shield,
+    },
+    {
+      title: "Backup & Restore",
+      component: "backup-restore",
+      icon: Database,
     },
     {
       title: "System Settings",
