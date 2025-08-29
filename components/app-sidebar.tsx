@@ -101,7 +101,7 @@ const menuData = {
   ],
 }
 
-export function AppSidebar({ userRole, onNavigationChange, activeComponent, ...props }: AppSidebarProps) {
+export function AppSidebar({ userInfo, currentPage, setCurrentPage, ...props }: AppSidebarProps) {
   const handleNavigation = (component: string) => {
     if (onNavigationChange) {
       onNavigationChange(component);
@@ -142,7 +142,7 @@ export function AppSidebar({ userRole, onNavigationChange, activeComponent, ...p
         </SidebarGroup>
 
         {/* Super Admin Group - Only visible to super admins */}
-        {userRole === "super_admin" && (
+        {userInfo.role === "super_admin" && (
           <SidebarGroup>
             <SidebarGroupLabel className="text-gray-300 text-xs font-medium uppercase tracking-wider">
               Super Admin
@@ -152,8 +152,8 @@ export function AppSidebar({ userRole, onNavigationChange, activeComponent, ...p
                 {menuData.superAdminGroup.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
-                      onClick={() => handleNavigation(item.component)}
-                      isActive={activeComponent === item.component}
+                      onClick={() => setCurrentPage(item.component)}
+                      isActive={currentPage === item.component}
                       className="text-gray-300 hover:text-white hover:bg-gray-800 data-[active=true]:bg-blue-600 data-[active=true]:text-white"
                     >
                       <item.icon className="h-4 w-4" />
