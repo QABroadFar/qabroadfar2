@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { AppSidebar } from "./components/app-sidebar"
 import { DashboardHeader } from "./components/dashboard-header"
-import { WelcomeContent } from "./components/welcome-content"
+import { RoleSpecificDashboard } from "./components/role-specific-dashboard"
 import { NCPInputForm } from "./components/ncp-input-form"
 import { QALeaderApproval } from "./components/qa-leader-approval"
 import { TeamLeaderProcessing } from "./components/team-leader-processing"
@@ -28,7 +28,7 @@ interface UserInfo {
 
 export default function DashboardPage() {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
-  const [currentPage, setCurrentPage] = useState("input-ncp")
+  const [currentPage, setCurrentPage] = useState("dashboard")
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
@@ -89,19 +89,19 @@ export default function DashboardPage() {
   const renderContent = () => {
     switch (currentPage) {
       case "dashboard":
-        return <WelcomeContent userInfo={userInfo} />
+        return <RoleSpecificDashboard userInfo={userInfo} />
       case "input-ncp":
-        return <NCPInputForm userInfo={userInfo} />
+        return <NCPInputForm onBack={() => setCurrentPage("dashboard")} />
       case "database-ncp":
         return <DatabaseNCP userInfo={userInfo} />
       case "qa-approval":
-        return <QALeaderApproval userInfo={userInfo} />
+        return <QALeaderApproval onBack={() => setCurrentPage("dashboard")} />
       case "tl-processing":
-        return <TeamLeaderProcessing userInfo={userInfo} />
+        return <TeamLeaderProcessing onBack={() => setCurrentPage("dashboard")} />
       case "process-approval":
-        return <ProcessLeadApproval userInfo={userInfo} />
+        return <ProcessLeadApproval onBack={() => setCurrentPage("dashboard")} />
       case "manager-approval":
-        return <QAManagerApproval userInfo={userInfo} />
+        return <QAManagerApproval onBack={() => setCurrentPage("dashboard")} />
       case "ncp-flow-tracker":
         return <NCPFlowTracker userInfo={userInfo} />
       case "user-management":
@@ -117,7 +117,7 @@ export default function DashboardPage() {
       case "backup-restore":
         return <BackupRestorePage />
       default:
-        return <WelcomeContent userInfo={userInfo} />
+        return <RoleSpecificDashboard userInfo={userInfo} />
     }
   }
 

@@ -154,13 +154,18 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+    if (!dateString) return "N/A"
+    // Import and use the WIB formatting function
+    const { formatToWIBID } = require("@/lib/date-utils")
+    try {
+      return formatToWIBID(new Date(dateString))
+    } catch (error) {
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    }
   }
 
   if (isLoading) {
