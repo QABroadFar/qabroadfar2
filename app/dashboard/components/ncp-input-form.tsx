@@ -155,21 +155,33 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "Not specified"
-    return new Date(dateString).toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
+    // Import and use the WIB formatting function
+    const { formatToWIBID } = require("@/lib/date-utils")
+    try {
+      return formatToWIBID(new Date(dateString))
+    } catch (error) {
+      return new Date(dateString).toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    }
   }
 
   const formatTime = (timeString: string) => {
     if (!timeString) return "Not specified"
-    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    })
+    // Import and use the WIB formatting function
+    const { formatTimeOnlyWIB } = require("@/lib/date-utils")
+    try {
+      return formatTimeOnlyWIB(new Date(`2000-01-01T${timeString}`))
+    } catch (error) {
+      return new Date(`2000-01-01T${timeString}`).toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      })
+    }
   }
 
   return (
