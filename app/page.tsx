@@ -1,23 +1,19 @@
 "use client"
 
-import { useState } from "react"
-import LoginPage from "./login/page"
-import DashboardPage from "./dashboard/page"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 export default function Page() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const router = useRouter()
 
-  const handleLogin = () => {
-    setIsAuthenticated(true)
-  }
+  useEffect(() => {
+    // Redirect to login page by default
+    router.push("/login")
+  }, [router])
 
-  const handleLogout = () => {
-    setIsAuthenticated(false)
-  }
-
-  if (!isAuthenticated) {
-    return <LoginPage onLogin={handleLogin} />
-  }
-
-  return <DashboardPage onLogout={handleLogout} />
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-lg">Redirecting...</div>
+    </div>
+  )
 }

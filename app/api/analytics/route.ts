@@ -5,8 +5,7 @@ import {
   getAverageApprovalTime,
   getNCPStatusDistribution,
   getNCPsByTopSubmitters,
-} from "@/lib/database"
-
+} from "@/lib/analytics"
 export async function GET(request: NextRequest) {
   const auth = await verifyAuth(request)
   if (!auth) {
