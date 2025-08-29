@@ -29,9 +29,48 @@ interface NCPFlowTrackerProps {
   }
 }
 
+interface NCPReport {
+  id: number
+  ncp_id: string
+  sku_code: string
+  machine_code: string
+  date: string
+  time_incident: string
+  hold_quantity: number
+  hold_quantity_uom: string
+  problem_description: string
+  photo_attachment: string | null
+  qa_leader: string
+  status: string
+  submitted_by: string
+  submitted_at: string
+  qa_approved_by: string | null
+  qa_approved_at: string | null
+  disposisi: string | null
+  jumlah_sortir: string
+  jumlah_release: string
+  jumlah_reject: string
+  assigned_team_leader: string | null
+  qa_rejection_reason: string | null
+  tl_processed_by: string | null
+  tl_processed_at: string | null
+  root_cause_analysis: string | null
+  corrective_action: string | null
+  preventive_action: string | null
+  process_approved_by: string | null
+  process_approved_at: string | null
+  process_rejection_reason: string | null
+  process_comment: string | null
+  manager_approved_by: string | null
+  manager_approved_at: string | null
+  manager_rejection_reason: string | null
+  manager_comment: string | null
+  archived_at: string | null
+}
+
 export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
-  const [ncps, setNCPs] = useState([])
-  const [filteredNCPs, setFilteredNCPs] = useState([])
+  const [ncps, setNCPs] = useState<NCPReport[]>([])
+  const [filteredNCPs, setFilteredNCPs] = useState<NCPReport[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStatus, setSelectedStatus] = useState("all")
   const [isLoading, setIsLoading] = useState(true)
@@ -63,11 +102,11 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
   }
 
   const filterNCPs = () => {
-    let filtered = ncps
+    let filtered = Array.isArray(ncps) ? [...ncps] : []
 
     // Filter by search term
     if (searchTerm) {
-      filtered = filtered.filter((ncp: any) =>
+      filtered = filtered.filter((ncp) =>
         ncp.ncp_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ncp.sku_code.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ncp.machine_code.toLowerCase().includes(searchTerm.toLowerCase())
@@ -76,7 +115,7 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
 
     // Filter by status
     if (selectedStatus !== "all") {
-      filtered = filtered.filter((ncp: any) => ncp.status === selectedStatus)
+      filtered = filtered.filter((ncp) => ncp.status === selectedStatus)
     }
 
     setFilteredNCPs(filtered)
@@ -238,7 +277,7 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
         </div>
 
         {/* NCP Cards */}
-        {filteredNCPs.length === 0 ? (
+        {filteredNCPs && filteredNCPs.length === 0 ? (
           <Card className="bg-white/80 backdrop-blur-sm">
             <CardContent className="p-12 text-center">
               <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
@@ -248,7 +287,7 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
           </Card>
         ) : (
           <div className="grid gap-6">
-            {filteredNCPs.map((ncp: any) => {
+            {filteredNCPs && filteredNCPs.map((ncp) => {
               const statusInfo = getStatusInfo(ncp.status)
               const StatusIcon = statusInfo.icon
               const flowSteps = getFlowSteps(ncp)

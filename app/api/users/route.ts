@@ -40,8 +40,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
+    // Log the incoming data for debugging
+    console.log("Creating user with data:", { username, role, fullName })
+
     // Create user in database
     const result = createUser(username, password, role, fullName)
+    
+    console.log("Create user result:", result)
     
     if (result.changes > 0) {
       return NextResponse.json({ message: "User created successfully" })
@@ -56,6 +61,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Username already exists" }, { status: 400 })
     }
     
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
+    return NextResponse.json({ error: "Internal Server Error", details: error.message }, { status: 500 })
   }
 }

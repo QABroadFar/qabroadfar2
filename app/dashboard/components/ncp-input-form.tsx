@@ -112,6 +112,7 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
     setIsSubmitting(true)
 
     try {
+      // Create FormData object
       const submitFormData = new FormData()
 
       // Append all form data
@@ -119,7 +120,7 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
         if (value !== null && value !== "") {
           if (key === "photoAttachment" && value instanceof File) {
             submitFormData.append(key, value, value.name)
-          } else {
+          } else if (key !== "photoAttachment") {
             submitFormData.append(key, value as string)
           }
         }
@@ -132,17 +133,17 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
 
       const result = await response.json()
 
-      if (result.success) {
+      if (response.ok && result.success) {
         setSubmittedNCPId(result.ncpId)
         setShowPreview(false)
         setShowSuccess(true)
         handleReset()
       } else {
-        alert(`Error: ${result.error}`)
+        alert(`Error: ${result.error || "Failed to submit NCP report"}`)
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Submit error:", error)
-      alert("Failed to submit NCP report. Please try again.")
+      alert(`Failed to submit NCP report. Please try again. Error: ${error.message}`)
     } finally {
       setIsSubmitting(false)
     }

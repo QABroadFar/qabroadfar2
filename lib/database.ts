@@ -195,13 +195,19 @@ export function updateUserRole(userId: number, newRole:string) {
 }
 
 export function createUser(username: string, password: string, role: string, fullName: string) {
-  const hashedPassword = hashSync(password, 10)
-  const stmt = db.prepare(`
-    INSERT INTO users (username, password, role, full_name, is_active)
-    VALUES (?, ?, ?, ?, ?)
-  `)
-  const result = stmt.run(username, hashedPassword, role, fullName || null, true)
-  return result
+  try {
+    const hashedPassword = hashSync(password, 10)
+    const stmt = db.prepare(`
+      INSERT INTO users (username, password, role, full_name, is_active)
+      VALUES (?, ?, ?, ?, ?)
+    `)
+    const result = stmt.run(username, hashedPassword, role, fullName || null, true)
+    console.log("User created successfully:", { username, role, fullName })
+    return result
+  } catch (error) {
+    console.error("Error in createUser function:", error)
+    throw error
+  }
 }
 
 export function deleteUser(userId: number) {
@@ -413,7 +419,7 @@ export function createNCPReport(data: any, submittedBy: string) {
     data.holdQuantity,
     data.holdQuantityUOM,
     data.problemDescription,
-    data.photoAttachment,
+    data.photoAttachment || null,
     data.qaLeader,
     submittedBy,
   )
