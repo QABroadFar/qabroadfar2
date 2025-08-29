@@ -7,6 +7,12 @@ import { WelcomeContent } from "./components/welcome-content"
 import { RoleSpecificDashboard } from "./app/dashboard/components/role-specific-dashboard"
 import { DatabaseNCP } from "./app/dashboard/components/database-ncp"
 import { UserManagement } from "./app/dashboard/components/user-management"
+import { SystemSettings } from "./app/dashboard/components/system-settings"
+import { AuditLog } from "./app/dashboard/components/audit-log"
+import { SystemLogs } from "./app/dashboard/components/system-logs"
+import { ApiKeysManagement } from "./app/dashboard/components/api-keys"
+import { BackupRestore } from "./app/dashboard/components/backup-restore"
+import { AnalyticsDashboard } from "./app/dashboard/components/analytics-dashboard"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { useRouter } from "next/navigation"
 
@@ -52,12 +58,22 @@ export default function Dashboard() {
         return <div className="p-6">Input NCP Component</div>
       case "database":
         return <DatabaseNCP userInfo={userInfo} />
-      case "users":
+      case "user-management":
         return <UserManagement />
-      case "audit":
-        return <div className="p-6">Audit Logs Component</div>
+      case "analytics":
+        return <AnalyticsDashboard />;
+      case "audit-log":
+        return <AuditLog />
+      case "system-logs":
+        return <SystemLogs />
+      case "api-keys":
+        return <ApiKeysManagement />
+      case "backup-restore":
+        return <BackupRestore />
       case "settings":
-        return <div className="p-6">System Settings Component</div>
+        return <SystemSettings />
+      case "settings":
+        return <SystemSettings />
       default:
         return <WelcomeContent onNavigate={setActiveComponent} />
     }
@@ -67,9 +83,9 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <SidebarProvider>
         <AppSidebar 
-          userRole={userInfo?.role || undefined} 
-          onNavigationChange={setActiveComponent}
-          activeComponent={activeComponent}
+          userInfo={userInfo} 
+          currentPage={activeComponent}
+          setCurrentPage={setActiveComponent}
         />
         <SidebarInset>
           <DashboardHeader userInfo={userInfo} />

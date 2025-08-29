@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { getSystemLogs } from "@/lib/database"
+import { 
+  getSystemLogs
+} from "@/lib/database"
 
+// Get system logs
 export async function GET(request: NextRequest) {
   const auth = await verifyAuth(request)
   if (!auth) {

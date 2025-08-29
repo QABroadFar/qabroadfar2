@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { getAuditLog } from "@/lib/database"
+import { 
+  getAuditLog
+} from "@/lib/database"
 
+// Get audit logs
 export async function GET(request: NextRequest) {
   const auth = await verifyAuth(request)
   if (!auth) {
@@ -13,10 +16,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const auditLog = getAuditLog()
-    return NextResponse.json(auditLog)
+    const auditLogs = getAuditLog()
+    return NextResponse.json(auditLogs)
   } catch (error) {
-    console.error("Error fetching audit log:", error)
+    console.error("Error fetching audit logs:", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
 }

@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { updateUserPassword } from "@/lib/database"
+import { 
+  updateUserPassword,
+  logSystemEvent
+} from "@/lib/database"
+import { hashSync } from "bcryptjs"
 
+// Update user password
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   const auth = await verifyAuth(request)
   if (!auth) {
@@ -16,13 +21,29 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const userId = parseInt(params.id, 10)
     const { password } = await request.json()
 
-    if (!password) {
-      return NextResponse.json({ error: "Missing password" }, { status: 400 })
+    if (isNaN(userId)) {
+      return NextResponse.json({ error: "Invalid user ID" }, { status: 400 })
     }
 
-    updateUserPassword(userId, password)
+    if (!password) {
+      return NextResponse.json({ error: "Password is required" }, { status: 400 })
+    }
 
-    return NextResponse.json({ message: "User password updated successfully" })
+    // Hash the new password
+    const hashedPassword = hashSync(password, 10)
+    const result = updateUserPassword(userId, hashedPassword)
+    
+    if (result.changes > 0) {
+      // Log the event
+      logSystemEvent("info", "User Password Updated", {
+        user_id: userId,
+        updated_by: auth.username
+      })
+      
+      return NextResponse.json({ message: "User password updated successfully" })
+    } else {
+      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    }
   } catch (error) {
     console.error("Error updating user password:", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })

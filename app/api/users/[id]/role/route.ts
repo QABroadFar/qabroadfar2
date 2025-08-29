@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { updateUserRole } from "@/lib/database"
+import { 
+  updateUserRole,
+  updateUserStatus,
+  updateUserPassword,
+  logSystemEvent
+} from "@/lib/database"
 
+// Update user role
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   const auth = await verifyAuth(request)
   if (!auth) {
@@ -16,13 +22,28 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const userId = parseInt(params.id, 10)
     const { role } = await request.json()
 
-    if (!role) {
-      return NextResponse.json({ error: "Missing role" }, { status: 400 })
+    if (isNaN(userId)) {
+      return NextResponse.json({ error: "Invalid user ID" }, { status: 400 })
     }
 
-    updateUserRole(userId, role)
+    if (!role) {
+      return NextResponse.json({ error: "Role is required" }, { status: 400 })
+    }
 
-    return NextResponse.json({ message: "User role updated successfully" })
+    const result = updateUserRole(userId, role)
+    
+    if (result.changes > 0) {
+      // Log the event
+      logSystemEvent("info", "User Role Updated", {
+        user_id: userId,
+        new_role: role,
+        updated_by: auth.username
+      })
+      
+      return NextResponse.json({ message: "User role updated successfully" })
+    } else {
+      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    }
   } catch (error) {
     console.error("Error updating user role:", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
