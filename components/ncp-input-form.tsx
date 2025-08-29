@@ -22,6 +22,7 @@ export function NCPInputForm() {
     date: "",
     timeIncident: "",
     holdQuantity: "",
+    holdQuantityUOM: "PCS", // Added UOM field
     problemDescription: "",
     photoAttachment: null as File | null,
     qaLeader: "",
@@ -46,6 +47,7 @@ export function NCPInputForm() {
       date: "",
       timeIncident: "",
       holdQuantity: "",
+      holdQuantityUOM: "PCS",
       problemDescription: "",
       photoAttachment: null,
       qaLeader: "",
@@ -57,9 +59,34 @@ export function NCPInputForm() {
     // Add preview logic here
   }
 
-  const handleSubmit = () => {
-    console.log("Submit data:", formData)
-    // Add submit logic here
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch("/api/ncp/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("NCP submitted successfully:", result);
+        // Reset form after successful submission
+        handleReset();
+        // Show success message to user
+        alert("NCP submitted successfully!");
+      } else {
+        const errorData = await response.json();
+        console.error("Error submitting NCP:", errorData);
+        // Show error message to user
+        alert("Error submitting NCP: " + (errorData.error || "Unknown error"));
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+      // Show error message to user
+      alert("Network error occurred while submitting NCP");
+    }
   }
 
   return (
@@ -154,15 +181,27 @@ export function NCPInputForm() {
                   <Label htmlFor="holdQuantity" className="text-sm font-medium text-gray-700">
                     Hold Quantity
                   </Label>
-                  <Input
-                    id="holdQuantity"
-                    type="number"
-                    placeholder="Enter quantity"
-                    value={formData.holdQuantity}
-                    onChange={(e) => handleInputChange("holdQuantity", e.target.value)}
-                    className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                    min="0"
-                  />
+                  <div className="flex gap-2">
+                    <Input
+                      id="holdQuantity"
+                      type="number"
+                      placeholder="Enter quantity"
+                      value={formData.holdQuantity}
+                      onChange={(e) => handleInputChange("holdQuantity", e.target.value)}
+                      className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500 flex-1"
+                      min="0"
+                    />
+                    <select
+                      value={formData.holdQuantityUOM}
+                      onChange={(e) => handleInputChange("holdQuantityUOM", e.target.value)}
+                      className="h-11 border border-gray-200 rounded-md px-3 focus:border-blue-500 focus:ring-blue-500 bg-white"
+                    >
+                      <option value="PCS">PCS</option>
+                      <option value="KG">KG</option>
+                      <option value="L">L</option>
+                      <option value="M">M</option>
+                    </select>
+                  </div>
                 </div>
 
                 {/* QA Leader */}

@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { updateNCPStatus } from "@/lib/database"
+import { approveNCPByQALeader, rejectNCPByQALeader } from "@/lib/database"
 import { verifyAuth } from "@/lib/auth"
 
 export async function POST(request: NextRequest) {
@@ -11,11 +11,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user has approval permissions
-    if (user.role !== "admin" && user.role !== "qa_leader") {
+    if (user.role !== "admin" && user.role !== "qa_leader" && user.role !== "super_admin") {
       return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 })
     }
 
-    const { id, action, rejectionReason } = await request.json()
+    const { id, action, rejectionReason, ...approvalData } = await request.json()
 
     if (!id || !action) {
       return NextResponse.json({ error: "ID and action are required" }, { status: 400 })
@@ -25,11 +25,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 })
     }
 
-    if (action === "rejected" && !rejectionReason) {
-      return NextResponse.json({ error: "Rejection reason is required" }, { status: 400 })
+    let result;
+    if (action === "approved") {
+      result = approveNCPByQALeader(id, approvalData, user.username)
+    } else if (action === "rejected") {
+      if (!rejectionReason) {
+        return NextResponse.json({ error: "Rejection reason is required" }, { status: 400 })
+      }
+      result = rejectNCPByQALeader(id, rejectionReason, user.username)
     }
-
-    const result = updateNCPStatus(id, action, user.username, rejectionReason)
 
     if (result.changes === 0) {
       return NextResponse.json({ error: "NCP report not found" }, { status: 404 })

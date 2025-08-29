@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { Database, CheckCircle, FileInput, Users, Package, FileText } from "lucide-react"
+import { Database, CheckCircle, FileInput, Users, Package, FileText, Shield, Settings, UserCog, FileSearch } from "lucide-react"
 
 import {
   Sidebar,
@@ -17,26 +17,46 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  userRole?: string;
+  onNavigationChange?: (component: string) => void;
+  activeComponent?: string;
+}
+
 // Menu data
 const menuData = {
   ncpGroup: [
     {
-      title: "Input NCP",
-      url: "/input-ncp",
-      icon: FileInput,
-      isActive: false,
+      title: "Dashboard",
+      component: "dashboard",
+      icon: CheckCircle,
     },
     {
-      title: "Approval NCP",
-      url: "/approval-ncp",
-      icon: CheckCircle,
-      isActive: true,
+      title: "Input NCP",
+      component: "input",
+      icon: FileInput,
     },
     {
       title: "Database NCP",
-      url: "/database-ncp",
+      component: "database",
       icon: Database,
-      isActive: false,
+    },
+  ],
+  superAdminGroup: [
+    {
+      title: "User Management",
+      component: "users",
+      icon: UserCog,
+    },
+    {
+      title: "Audit Logs",
+      component: "audit",
+      icon: FileSearch,
+    },
+    {
+      title: "System Settings",
+      component: "settings",
+      icon: Settings,
     },
   ],
   othersGroup: [
@@ -61,7 +81,13 @@ const menuData = {
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ userRole, onNavigationChange, activeComponent, ...props }: AppSidebarProps) {
+  const handleNavigation = (component: string) => {
+    if (onNavigationChange) {
+      onNavigationChange(component);
+    }
+  };
+
   return (
     <Sidebar className="border-r-0" {...props}>
       <SidebarHeader className="border-b border-gray-200/20 bg-white/95 backdrop-blur-sm">
@@ -82,20 +108,43 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               {menuData.ncpGroup.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
-                    asChild
-                    isActive={item.isActive}
+                    onClick={() => handleNavigation(item.component)}
+                    isActive={activeComponent === item.component}
                     className="text-gray-300 hover:text-white hover:bg-gray-800 data-[active=true]:bg-blue-600 data-[active=true]:text-white"
                   >
-                    <a href={item.url} className="flex items-center gap-3">
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </a>
+                    <item.icon className="h-4 w-4" />
+                    <span>{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Super Admin Group - Only visible to super admins */}
+        {userRole === "super_admin" && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-gray-300 text-xs font-medium uppercase tracking-wider">
+              Super Admin
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {menuData.superAdminGroup.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      onClick={() => handleNavigation(item.component)}
+                      isActive={activeComponent === item.component}
+                      className="text-gray-300 hover:text-white hover:bg-gray-800 data-[active=true]:bg-blue-600 data-[active=true]:text-white"
+                    >
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
         {/* Others Group */}
         <SidebarGroup>

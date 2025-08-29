@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle, TrendingUp, Users, FileText } from "lucide-react"
 
 interface WelcomeContentProps {
-  onNavigate: (page: string) => void
+  onNavigate?: (page: string) => void
 }
 
 export function WelcomeContent({ onNavigate }: WelcomeContentProps) {
@@ -78,37 +78,39 @@ export function WelcomeContent({ onNavigate }: WelcomeContentProps) {
       </div>
 
       {/* Quick Actions */}
-      <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
-        <CardContent className="p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div
-              className="p-4 bg-blue-50/80 rounded-lg hover:bg-blue-100/80 transition-colors cursor-pointer"
-              onClick={() => onNavigate("input-ncp")}
-            >
-              <FileText className="h-8 w-8 text-blue-600 mb-2" />
-              <h4 className="font-medium text-gray-800">Create New NCP</h4>
-              <p className="text-sm text-gray-600">Start a new non-conformance report</p>
+      {onNavigate && (
+        <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div
+                className="p-4 bg-blue-50/80 rounded-lg hover:bg-blue-100/80 transition-colors cursor-pointer"
+                onClick={() => onNavigate("input")}
+              >
+                <FileText className="h-8 w-8 text-blue-600 mb-2" />
+                <h4 className="font-medium text-gray-800">Create New NCP</h4>
+                <p className="text-sm text-gray-600">Start a new non-conformance report</p>
+              </div>
+              <div
+                className="p-4 bg-green-50/80 rounded-lg hover:bg-green-100/80 transition-colors cursor-pointer"
+                onClick={() => onNavigate("dashboard")}
+              >
+                <CheckCircle className="h-8 w-8 text-green-600 mb-2" />
+                <h4 className="font-medium text-gray-800">Review Pending</h4>
+                <p className="text-sm text-gray-600">Review items awaiting approval</p>
+              </div>
+              <div
+                className="p-4 bg-purple-50/80 rounded-lg hover:bg-purple-100/80 transition-colors cursor-pointer"
+                onClick={() => onNavigate("database")}
+              >
+                <TrendingUp className="h-8 w-8 text-purple-600 mb-2" />
+                <h4 className="font-medium text-gray-800">View Reports</h4>
+                <p className="text-sm text-gray-600">Access quality reports and analytics</p>
+              </div>
             </div>
-            <div
-              className="p-4 bg-green-50/80 rounded-lg hover:bg-green-100/80 transition-colors cursor-pointer"
-              onClick={() => onNavigate("approval-ncp")}
-            >
-              <CheckCircle className="h-8 w-8 text-green-600 mb-2" />
-              <h4 className="font-medium text-gray-800">Review Pending</h4>
-              <p className="text-sm text-gray-600">Review items awaiting approval</p>
-            </div>
-            <div
-              className="p-4 bg-purple-50/80 rounded-lg hover:bg-purple-100/80 transition-colors cursor-pointer"
-              onClick={() => onNavigate("database-ncp")}
-            >
-              <TrendingUp className="h-8 w-8 text-purple-600 mb-2" />
-              <h4 className="font-medium text-gray-800">View Reports</h4>
-              <p className="text-sm text-gray-600">Access quality reports and analytics</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

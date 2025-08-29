@@ -1,36 +1,28 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { 
-  getNCPReportsForUser, 
-  getPendingNCPsForRole 
-} from "@/lib/database"
+import { getNCPReportsForUser, getPendingNCPsForRole } from "@/lib/database"
 
 export async function GET(request: NextRequest) {
+  const auth = await verifyAuth(request)
+  if (!auth) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  // Check if we're fetching pending NCPs for approval
+  const { searchParams } = new URL(request.url)
+  const pendingOnly = searchParams.get('pending') === 'true'
+  
   try {
-    const user = await verifyAuth(request)
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    // Get query parameters
-    const { searchParams } = new URL(request.url)
-    const type = searchParams.get("type") || "assigned"
-
-    let ncps
-    if (type === "pending") {
-      // Get pending NCPs for approval based on role
-      ncps = getPendingNCPsForRole(user.role, user.username)
+    let reports;
+    if (pendingOnly) {
+      reports = getPendingNCPsForRole(auth.role, auth.username)
     } else {
-      // Get all NCPs assigned to or created by user
-      ncps = getNCPReportsForUser(user.id, user.role, user.username)
+      reports = getNCPReportsForUser(auth.id, auth.role, auth.username)
     }
-
-    return NextResponse.json({
-      success: true,
-      data: ncps
-    })
+    
+    return NextResponse.json(reports)
   } catch (error) {
-    console.error("Dashboard NCPs error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("Error fetching NCP reports:", error)
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
 }

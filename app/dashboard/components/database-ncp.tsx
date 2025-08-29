@@ -46,13 +46,52 @@ interface DatabaseNCPProps {
   }
 }
 
+interface NCPReport {
+  id: number
+  ncp_id: string
+  sku_code: string
+  machine_code: string
+  date: string
+  time_incident: string
+  hold_quantity: number
+  hold_quantity_uom: string
+  problem_description: string
+  photo_attachment: string | null
+  qa_leader: string
+  status: string
+  submitted_by: string
+  submitted_at: string
+  qa_approved_by: string | null
+  qa_approved_at: string | null
+  disposisi: string | null
+  jumlah_sortir: string
+  jumlah_release: string
+  jumlah_reject: string
+  assigned_team_leader: string | null
+  qa_rejection_reason: string | null
+  tl_processed_by: string | null
+  tl_processed_at: string | null
+  root_cause_analysis: string | null
+  corrective_action: string | null
+  preventive_action: string | null
+  process_approved_by: string | null
+  process_approved_at: string | null
+  process_rejection_reason: string | null
+  process_comment: string | null
+  manager_approved_by: string | null
+  manager_approved_at: string | null
+  manager_rejection_reason: string | null
+  manager_comment: string | null
+  archived_at: string | null
+}
+
 export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
-  const [ncps, setNCPs] = useState([])
-  const [filteredNCPs, setFilteredNCPs] = useState([])
+  const [ncps, setNCPs] = useState<NCPReport[]>([])
+  const [filteredNCPs, setFilteredNCPs] = useState<NCPReport[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStatus, setSelectedStatus] = useState("all")
-  const [selectedNCP, setSelectedNCP] = useState(null)
-  const [editableNCP, setEditableNCP] = useState(null)
+  const [selectedNCP, setSelectedNCP] = useState<NCPReport | null>(null)
+  const [editableNCP, setEditableNCP] = useState<NCPReport | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [showDetailDialog, setShowDetailDialog] = useState(false)
   const [showRevertDialog, setShowRevertDialog] = useState(false)
@@ -60,8 +99,8 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
   const [revertStatus, setRevertStatus] = useState("")
   const [reassignRole, setReassignRole] = useState("team_leader")
   const [reassignAssignee, setReassignAssignee] = useState("")
-  const [allTeamLeaders, setAllTeamLeaders] = useState([])
-  const [allQALeaders, setAllQALeaders] = useState([])
+  const [allTeamLeaders, setAllTeamLeaders] = useState<{id: number, username: string, full_name?: string}[]>([])
+  const [allQALeaders, setAllQALeaders] = useState<{id: number, username: string, full_name?: string}[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [sortBy, setSortBy] = useState("submitted_at")
   const [sortOrder, setSortOrder] = useState("desc")
@@ -110,11 +149,11 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
   }
 
   const filterAndSortNCPs = () => {
-    let filtered = ncps
+    let filtered = Array.isArray(ncps) ? [...ncps] : []
 
     // Filter by search term
     if (searchTerm) {
-      filtered = filtered.filter((ncp: any) =>
+      filtered = filtered.filter((ncp) =>
         ncp.ncp_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ncp.sku_code.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ncp.machine_code.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -124,13 +163,13 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
 
     // Filter by status
     if (selectedStatus !== "all") {
-      filtered = filtered.filter((ncp: any) => ncp.status === selectedStatus)
+      filtered = filtered.filter((ncp) => ncp.status === selectedStatus)
     }
 
     // Sort
-    filtered.sort((a: any, b: any) => {
-      let aValue = a[sortBy]
-      let bValue = b[sortBy]
+    filtered.sort((a, b) => {
+      let aValue: any = a[sortBy as keyof NCPReport]
+      let bValue: any = b[sortBy as keyof NCPReport]
 
       if (sortBy === "submitted_at" || sortBy === "date") {
         aValue = new Date(aValue).getTime()
