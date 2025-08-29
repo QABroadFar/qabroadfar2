@@ -2,6 +2,7 @@
 
 import { Bell, Search, User, LogOut } from "lucide-react"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -24,25 +25,55 @@ import {
 } from "@/components/ui/alert-dialog"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 
-interface DashboardHeaderProps {
-  onLogout: () => void
+interface UserInfo {
+  id: number
+  username: string
+  role: string
+  fullName?: string
 }
 
-export function DashboardHeader({ onLogout }: DashboardHeaderProps) {
+interface DashboardHeaderProps {
+  userInfo?: UserInfo | null
+}
+
+export function DashboardHeader({ userInfo }: DashboardHeaderProps) {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const router = useRouter()
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
     try {
-      // Call the logout function passed from parent
-      await onLogout()
+      // Call the logout API
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+      })
+      
+      if (response.ok) {
+        // Redirect to login page
+        router.push("/login")
+      } else {
+        console.error("Logout failed")
+      }
     } catch (error) {
-      console.error("Logout failed:", error)
+      console.error("Logout error:", error)
     } finally {
       setIsLoggingOut(false)
       setShowLogoutDialog(false)
     }
+  }
+
+  const getRoleDisplay = (role: string) => {
+    const roleMap: Record<string, string> = {
+      super_admin: "Super Admin",
+      admin: "Admin",
+      qa_manager: "QA Manager",
+      process_lead: "Process Lead",
+      team_leader: "Team Leader",
+      qa_leader: "QA Leader",
+      user: "User"
+    }
+    return roleMap[role] || role
   }
 
   return (
@@ -73,7 +104,15 @@ export function DashboardHeader({ onLogout }: DashboardHeaderProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
+              {userInfo && (
+                <>
+                  <div className="px-2 py-1.5 text-sm text-gray-600">
+                    <div className="font-medium">{userInfo.fullName || userInfo.username}</div>
+                    <div className="text-xs text-gray-500">{getRoleDisplay(userInfo.role)}</div>
+                  </div>
+                  <DropdownMenuSeparator />
+                </>
+              )}
               <DropdownMenuItem>Profile</DropdownMenuItem>
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuSeparator />

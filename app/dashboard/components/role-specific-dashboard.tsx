@@ -21,6 +21,8 @@ interface DashboardStats {
   processed: number
   qaApproved?: number
   tlProcessed?: number
+  process_approved?: number
+  manager_approved?: number
   rejected?: number
 }
 
@@ -264,7 +266,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
   }
 
   const renderQALeaderDashboard = () => {
-    const pendingApprovals = pendingNCPs.slice(0, 5)
+    const pendingApprovals = Array.isArray(pendingNCPs) ? pendingNCPs.slice(0, 5) : []
     
     return (
       <div className="space-y-6">

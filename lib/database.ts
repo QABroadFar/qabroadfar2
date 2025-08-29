@@ -194,6 +194,22 @@ export function updateUserRole(userId: number, newRole:string) {
   return result
 }
 
+export function createUser(username: string, password: string, role: string, fullName: string) {
+  const hashedPassword = hashSync(password, 10)
+  const stmt = db.prepare(`
+    INSERT INTO users (username, password, role, full_name, is_active)
+    VALUES (?, ?, ?, ?, ?)
+  `)
+  const result = stmt.run(username, hashedPassword, role, fullName || null, true)
+  return result
+}
+
+export function deleteUser(userId: number) {
+  const stmt = db.prepare("DELETE FROM users WHERE id = ?")
+  const result = stmt.run(userId)
+  return result
+}
+
 export function updateUserPassword(userId: number, newPassword: string) {
   const hashedPassword = hashSync(newPassword, 10)
   const stmt = db.prepare("UPDATE users SET password = ? WHERE id = ?")
@@ -377,8 +393,7 @@ export function deleteApiKey(id: number) {
   return stmt.run(id)
 }
 
-// FIXED: NCP Report functions
-export function createNCPReport(data: any) {
+export function createNCPReport(data: any, submittedBy: string) {
   const ncpId = generateNCPNumber()
 
   const stmt = db.prepare(`
@@ -400,7 +415,7 @@ export function createNCPReport(data: any) {
     data.problemDescription,
     data.photoAttachment,
     data.qaLeader,
-    data.submittedBy,
+    submittedBy,
   )
 
   // Create notification for the selected QA Leader
