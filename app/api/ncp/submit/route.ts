@@ -9,13 +9,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  // Super admin can submit NCP reports
-  if (auth.role !== "super_admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-  }
-
   try {
-    const data = await request.json()
+    // Parse form data
+    const formData = await request.formData()
+    
+    // Convert formData to object
+    const data: any = {}
+    for (const [key, value] of formData.entries()) {
+      data[key] = value
+    }
 
     // Validate required fields
     if (!data.skuCode || !data.machineCode || !data.date || !data.timeIncident || 
@@ -28,12 +30,14 @@ export async function POST(request: NextRequest) {
     
     if (result.id) {
       // Log the event
-      logSystemEvent("info", "NCP Report Submitted by Super Admin", {
+      logSystemEvent("info", "NCP Report Submitted", {
         ncp_id: result.ncpId,
-        submitted_by: auth.username
+        submitted_by: auth.username,
+        role: auth.role
       })
       
       return NextResponse.json({ 
+        success: true,
         message: "NCP report submitted successfully",
         ncpId: result.ncpId
       })
