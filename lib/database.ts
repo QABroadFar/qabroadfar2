@@ -255,12 +255,6 @@ export function deleteUser(userId: number) {
   return result
 }
 
-export function deleteNCPReport(id: number) {
-  const stmt = db.prepare("DELETE FROM ncp_reports WHERE id = ?")
-  const result = stmt.run(id)
-  return result
-}
-
 export function updateUserPassword(userId: number, newPassword: string) {
   const hashedPassword = hashSync(newPassword, 10)
   const stmt = db.prepare("UPDATE users SET password = ? WHERE id = ?")
