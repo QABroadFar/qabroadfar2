@@ -10,13 +10,32 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // Parse form data
-    const formData = await request.formData()
+    let data: any;
     
-    // Convert formData to object
-    const data: any = {}
-    for (const [key, value] of formData.entries()) {
-      data[key] = value
+    // Try to parse form data first
+    try {
+      const formData = await request.formData()
+      
+      // Convert formData to object
+      data = {}
+      for (const [key, value] of formData.entries()) {
+        // Handle File objects specially
+        if (value instanceof File) {
+          // For simplicity, we'll store the filename
+          // In a real app, you'd want to save the file somewhere
+          data[key] = value.name
+        } else {
+          data[key] = value
+        }
+      }
+    } catch (formDataError) {
+      // If formData parsing fails, try JSON
+      try {
+        data = await request.json()
+      } catch (jsonError) {
+        // If both fail, return error
+        return NextResponse.json({ error: "Invalid request data format" }, { status: 400 })
+      }
     }
 
     // Validate required fields
