@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { 
-  getSystemLogs
-} from "@/lib/database"
+import { getSystemLogs } from "@/lib/database"
 
 // Get system logs
 export async function GET(request: NextRequest) {
@@ -16,8 +14,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const systemLogs = getSystemLogs()
-    return NextResponse.json(systemLogs)
+    const logs = getSystemLogs()
+    return NextResponse.json(logs)
   } catch (error) {
     console.error("Error fetching system logs:", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })

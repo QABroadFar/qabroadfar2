@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
 import { 
   updateUserRole,
-  updateUserStatus,
-  updateUserPassword,
   logSystemEvent
 } from "@/lib/database"
 

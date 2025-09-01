@@ -228,7 +228,7 @@ export function getUsersByRole(role: string) {
   return db.prepare("SELECT id, username, full_name FROM users WHERE role = ? AND is_active = TRUE").all(role)
 }
 
-export function updateUserRole(userId: number, newRole:string) {
+export function updateUserRole(userId: number, newRole: string) {
   const stmt = db.prepare("UPDATE users SET role = ? WHERE id = ?")
   const result = stmt.run(newRole, userId)
   return result
@@ -242,7 +242,6 @@ export function createUser(username: string, password: string, role: string, ful
       VALUES (?, ?, ?, ?, ?)
     `)
     const result = stmt.run(username, hashedPassword, role, fullName || null, true)
-    console.log("User created successfully:", { username, role, fullName })
     return result
   } catch (error) {
     console.error("Error in createUser function:", error)
@@ -253,6 +252,12 @@ export function createUser(username: string, password: string, role: string, ful
 export function deleteUser(userId: number) {
   const stmt = db.prepare("DELETE FROM users WHERE id = ?")
   const result = stmt.run(userId)
+  return result
+}
+
+export function deleteNCPReport(id: number) {
+  const stmt = db.prepare("DELETE FROM ncp_reports WHERE id = ?")
+  const result = stmt.run(id)
   return result
 }
 
@@ -414,6 +419,12 @@ export function logSystemEvent(level: "info" | "warn" | "error", message: string
     VALUES (?, ?, ?)
   `)
   stmt.run(level, message, JSON.stringify(details))
+}
+
+export function deleteNCPReport(id: number) {
+  const stmt = db.prepare("DELETE FROM ncp_reports WHERE id = ?")
+  const result = stmt.run(id)
+  return result
 }
 
 export function getSystemLogs() {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { getAllUsers, createUser } from "@/lib/database"
+import { getAllUsers, createUser, logSystemEvent } from "@/lib/database"
 
 // Get all users
 export async function GET(request: NextRequest) {
@@ -40,15 +40,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    // Log the incoming data for debugging
-    console.log("Creating user with data:", { username, role, fullName })
-
     // Create user in database
     const result = createUser(username, password, role, fullName)
     
-    console.log("Create user result:", result)
-    
     if (result.changes > 0) {
+      // Log the event
+      logSystemEvent("info", "User Created", {
+        created_by: auth.username,
+        new_user: username,
+        role: role
+      })
+      
       return NextResponse.json({ message: "User created successfully" })
     } else {
       return NextResponse.json({ error: "Failed to create user" }, { status: 500 })

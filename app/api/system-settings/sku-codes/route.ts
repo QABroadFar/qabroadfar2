@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
 import { 
-  getAllSKUCodes,
-  createSKUCode,
-  updateSKUCode,
+  getAllSKUCodes, 
+  createSKUCode, 
+  updateSKUCode, 
   deleteSKUCode,
   logSystemEvent
 } from "@/lib/database"
@@ -41,24 +41,25 @@ export async function POST(request: NextRequest) {
 
   try {
     const { code, description } = await request.json()
-    
+
     if (!code || !description) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+      return NextResponse.json({ error: "Code and description are required" }, { status: 400 })
     }
-    
+
     const result = createSKUCode(code, description)
     
-    // Log the event
-    logSystemEvent("info", "SKU Code Created", {
-      code,
-      description,
-      created_by: auth.username
-    })
-    
-    return NextResponse.json({ 
-      message: "SKU code created successfully",
-      id: result.lastInsertRowid
-    })
+    if (result.changes > 0) {
+      // Log the event
+      logSystemEvent("info", "SKU Code Created", {
+        code: code,
+        description: description,
+        created_by: auth.username
+      })
+      
+      return NextResponse.json({ message: "SKU code created successfully" })
+    } else {
+      return NextResponse.json({ error: "Failed to create SKU code" }, { status: 500 })
+    }
   } catch (error: any) {
     console.error("Error creating SKU code:", error)
     
@@ -84,25 +85,25 @@ export async function PUT(request: NextRequest) {
 
   try {
     const { id, code, description } = await request.json()
-    
+
     if (!id || !code || !description) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+      return NextResponse.json({ error: "ID, code, and description are required" }, { status: 400 })
     }
-    
+
     const result = updateSKUCode(id, code, description)
     
     if (result.changes > 0) {
       // Log the event
       logSystemEvent("info", "SKU Code Updated", {
-        id,
-        code,
-        description,
+        id: id,
+        code: code,
+        description: description,
         updated_by: auth.username
       })
       
       return NextResponse.json({ message: "SKU code updated successfully" })
     } else {
-      return NextResponse.json({ error: "SKU code not found" }, { status: 404 })
+      return NextResponse.json({ error: "Failed to update SKU code" }, { status: 500 })
     }
   } catch (error: any) {
     console.error("Error updating SKU code:", error)
@@ -128,25 +129,25 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
-    const { searchParams } = new URL(request.url)
-    const id = parseInt(searchParams.get("id") || "", 10)
+    const url = new URL(request.url)
+    const id = parseInt(url.searchParams.get("id") || "0")
     
-    if (isNaN(id)) {
-      return NextResponse.json({ error: "Invalid SKU code ID" }, { status: 400 })
+    if (isNaN(id) || id <= 0) {
+      return NextResponse.json({ error: "Invalid ID" }, { status: 400 })
     }
-    
+
     const result = deleteSKUCode(id)
     
     if (result.changes > 0) {
       // Log the event
       logSystemEvent("info", "SKU Code Deleted", {
-        id,
+        id: id,
         deleted_by: auth.username
       })
       
       return NextResponse.json({ message: "SKU code deleted successfully" })
     } else {
-      return NextResponse.json({ error: "SKU code not found" }, { status: 404 })
+      return NextResponse.json({ error: "Failed to delete SKU code" }, { status: 500 })
     }
   } catch (error) {
     console.error("Error deleting SKU code:", error)

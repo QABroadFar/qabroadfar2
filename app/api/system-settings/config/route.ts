@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
 import { 
-  getSystemSetting,
+  getSystemSetting, 
   setSystemSetting,
   logSystemEvent
 } from "@/lib/database"
 
-// Get system setting by key
+// Get system setting
 export async function GET(request: NextRequest) {
   const auth = await verifyAuth(request)
   if (!auth) {
@@ -18,19 +18,15 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const { searchParams } = new URL(request.url)
-    const key = searchParams.get("key")
+    const url = new URL(request.url)
+    const key = url.searchParams.get("key")
     
     if (!key) {
-      return NextResponse.json({ error: "Missing setting key" }, { status: 400 })
+      return NextResponse.json({ error: "Setting key is required" }, { status: 400 })
     }
-    
+
     const value = getSystemSetting(key)
-    
-    return NextResponse.json({ 
-      key,
-      value
-    })
+    return NextResponse.json({ key, value })
   } catch (error) {
     console.error("Error fetching system setting:", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
@@ -50,17 +46,18 @@ export async function POST(request: NextRequest) {
 
   try {
     const { key, value, description } = await request.json()
-    
+
     if (!key || value === undefined) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+      return NextResponse.json({ error: "Key and value are required" }, { status: 400 })
     }
-    
+
     setSystemSetting(key, value, description || "")
     
     // Log the event
     logSystemEvent("info", "System Setting Updated", {
-      key,
-      value,
+      key: key,
+      value: value,
+      description: description || "",
       updated_by: auth.username
     })
     

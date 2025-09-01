@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
 import { 
-  getAllMachines,
-  createMachine,
-  updateMachine,
+  getAllMachines, 
+  createMachine, 
+  updateMachine, 
   deleteMachine,
   logSystemEvent
 } from "@/lib/database"
@@ -41,24 +41,25 @@ export async function POST(request: NextRequest) {
 
   try {
     const { code, name } = await request.json()
-    
+
     if (!code || !name) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+      return NextResponse.json({ error: "Code and name are required" }, { status: 400 })
     }
-    
+
     const result = createMachine(code, name)
     
-    // Log the event
-    logSystemEvent("info", "Machine Created", {
-      code,
-      name,
-      created_by: auth.username
-    })
-    
-    return NextResponse.json({ 
-      message: "Machine created successfully",
-      id: result.lastInsertRowid
-    })
+    if (result.changes > 0) {
+      // Log the event
+      logSystemEvent("info", "Machine Created", {
+        code: code,
+        name: name,
+        created_by: auth.username
+      })
+      
+      return NextResponse.json({ message: "Machine created successfully" })
+    } else {
+      return NextResponse.json({ error: "Failed to create machine" }, { status: 500 })
+    }
   } catch (error: any) {
     console.error("Error creating machine:", error)
     
@@ -84,25 +85,25 @@ export async function PUT(request: NextRequest) {
 
   try {
     const { id, code, name } = await request.json()
-    
+
     if (!id || !code || !name) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+      return NextResponse.json({ error: "ID, code, and name are required" }, { status: 400 })
     }
-    
+
     const result = updateMachine(id, code, name)
     
     if (result.changes > 0) {
       // Log the event
       logSystemEvent("info", "Machine Updated", {
-        id,
-        code,
-        name,
+        id: id,
+        code: code,
+        name: name,
         updated_by: auth.username
       })
       
       return NextResponse.json({ message: "Machine updated successfully" })
     } else {
-      return NextResponse.json({ error: "Machine not found" }, { status: 404 })
+      return NextResponse.json({ error: "Failed to update machine" }, { status: 500 })
     }
   } catch (error: any) {
     console.error("Error updating machine:", error)
@@ -128,25 +129,25 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
-    const { searchParams } = new URL(request.url)
-    const id = parseInt(searchParams.get("id") || "", 10)
+    const url = new URL(request.url)
+    const id = parseInt(url.searchParams.get("id") || "0")
     
-    if (isNaN(id)) {
-      return NextResponse.json({ error: "Invalid machine ID" }, { status: 400 })
+    if (isNaN(id) || id <= 0) {
+      return NextResponse.json({ error: "Invalid ID" }, { status: 400 })
     }
-    
+
     const result = deleteMachine(id)
     
     if (result.changes > 0) {
       // Log the event
       logSystemEvent("info", "Machine Deleted", {
-        id,
+        id: id,
         deleted_by: auth.username
       })
       
       return NextResponse.json({ message: "Machine deleted successfully" })
     } else {
-      return NextResponse.json({ error: "Machine not found" }, { status: 404 })
+      return NextResponse.json({ error: "Failed to delete machine" }, { status: 500 })
     }
   } catch (error) {
     console.error("Error deleting machine:", error)

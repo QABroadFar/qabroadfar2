@@ -46,14 +46,12 @@ A comprehensive web application for managing Non-Conformance Product (NCP) repor
 6. **Archiving**: Completed reports are archived
 
 ### Super Admin Capabilities
-- User management (create, edit, delete users)
-- Workflow intervention (override normal processes)
-- Full NCP report management (CRUD operations)
-- System settings configuration
-- Audit and system logs monitoring
-- API key management
-- Database backup and restore
-- Comprehensive analytics dashboard
+- **User Management**: Create, edit, delete users; assign roles and permissions; activate/deactivate user accounts; reset user passwords
+- **Workflow Intervention**: View all NCP reports regardless of workflow stage; edit any field in any NCP report at any stage; revert NCP status to previous stages; reassign reports between users; bypass normal approval workflow when needed
+- **Full NCP Report Management**: Create new NCP reports manually; view all NCP reports in the system; update any field in any NCP report; delete NCP reports permanently
+- **System Settings Management**: Manage SKU codes and descriptions; manage manufacturing machines; manage units of measure (UOM); configure NCP numbering format; set auto-reset settings
+- **System Monitoring**: Comprehensive audit logs; system event logging; API key management; analytics dashboard with visualizations
+- **Database Management**: Backup and restore functionality; data integrity monitoring
 
 ## Technology Stack
 

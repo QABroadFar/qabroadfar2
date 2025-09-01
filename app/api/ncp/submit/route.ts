@@ -1,40 +1,47 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { createNCPReport } from "@/lib/database"
+import { createNCPReport, logSystemEvent } from "@/lib/database"
 
+// Submit new NCP report
 export async function POST(request: NextRequest) {
   const auth = await verifyAuth(request)
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
+  // Super admin can submit NCP reports
+  if (auth.role !== "super_admin") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
   try {
-    // Handle multipart form data
-    const formData = await request.formData()
-    
-    // Extract data from form
-    const data = {
-      skuCode: formData.get("skuCode") as string || "",
-      machineCode: formData.get("machineCode") as string || "",
-      date: formData.get("date") as string || "",
-      timeIncident: formData.get("timeIncident") as string || "",
-      holdQuantity: parseInt(formData.get("holdQuantity") as string) || 0,
-      holdQuantityUOM: formData.get("holdQuantityUOM") as string || "",
-      problemDescription: formData.get("problemDescription") as string || "",
-      photoAttachment: formData.get("photoAttachment") as string | null,
-      qaLeader: formData.get("qaLeader") as string || "",
-    }
-    
+    const data = await request.json()
+
     // Validate required fields
     if (!data.skuCode || !data.machineCode || !data.date || !data.timeIncident || 
         !data.holdQuantity || !data.holdQuantityUOM || !data.problemDescription || !data.qaLeader) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
-    
+
+    // Create NCP report
     const result = createNCPReport(data, auth.username)
-    return NextResponse.json({ success: true, ncpId: result.ncpId })
+    
+    if (result.id) {
+      // Log the event
+      logSystemEvent("info", "NCP Report Submitted by Super Admin", {
+        ncp_id: result.ncpId,
+        submitted_by: auth.username
+      })
+      
+      return NextResponse.json({ 
+        message: "NCP report submitted successfully",
+        ncpId: result.ncpId
+      })
+    } else {
+      return NextResponse.json({ error: "Failed to submit NCP report" }, { status: 500 })
+    }
   } catch (error: any) {
-    console.error("Error creating NCP report:", error)
+    console.error("Error submitting NCP report:", error)
     return NextResponse.json({ error: "Internal Server Error", details: error.message }, { status: 500 })
   }
 }
