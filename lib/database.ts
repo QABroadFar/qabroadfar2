@@ -241,7 +241,7 @@ export function createUser(username: string, password: string, role: string, ful
       INSERT INTO users (username, password, role, full_name, is_active)
       VALUES (?, ?, ?, ?, ?)
     `)
-    const result = stmt.run(username, hashedPassword, role, fullName || null, true)
+    const result = stmt.run(username, hashedPassword, role, fullName || null, 1)
     return result
   } catch (error) {
     console.error("Error in createUser function:", error)
