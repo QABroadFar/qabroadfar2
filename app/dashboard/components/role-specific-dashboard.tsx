@@ -78,21 +78,30 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
       const statsResponse = await fetch("/api/dashboard/stats")
       if (statsResponse.ok) {
         const statsData = await statsResponse.json()
-        setDashboardData(statsData.data)
+        // Ensure we're setting the correct data structure
+        if (statsData && typeof statsData === 'object') {
+          setDashboardData(prev => ({
+            ...prev,
+            stats: statsData.stats || statsData,
+            charts: statsData.charts || { monthly: [], statusDistribution: [], topSubmitters: [] }
+          }))
+        }
       }
 
       // Fetch user's NCPs
       const ncpsResponse = await fetch("/api/dashboard/ncps")
       if (ncpsResponse.ok) {
         const ncpsData = await ncpsResponse.json()
-        setUserNCPs(ncpsData.data)
+        // Ensure ncpsData.data is an array
+        setUserNCPs(Array.isArray(ncpsData.data) ? ncpsData.data : [])
       }
 
       // Fetch pending NCPs (for approvers)
       const pendingResponse = await fetch("/api/dashboard/ncps?type=pending")
       if (pendingResponse.ok) {
         const pendingData = await pendingResponse.json()
-        setPendingNCPs(pendingData.data)
+        // Ensure pendingData.data is an array
+        setPendingNCPs(Array.isArray(pendingData.data) ? pendingData.data : [])
       }
     } catch (error) {
       console.error("Error fetching dashboard data:", error)
@@ -118,7 +127,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
   }
 
   const getStatusStats = () => {
-    if (!dashboardData) return []
+    if (!dashboardData || !dashboardData.stats) return []
     
     const stats = dashboardData.stats
     return [
@@ -141,6 +150,11 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
 
   // Role-specific dashboard views
   const renderRoleDashboard = () => {
+    // Ensure userInfo exists and has a role
+    if (!userInfo || !userInfo.role) {
+      return renderDefaultDashboard()
+    }
+    
     switch (userInfo.role) {
       case "user":
         return renderUserDashboard()
@@ -161,8 +175,10 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
   }
 
   const renderUserDashboard = () => {
-    const userReports = userNCPs.slice(0, 5) // Show only 5 most recent
-    const rejectedReports = userNCPs.filter(ncp => ncp.status.includes("rejected")).slice(0, 5)
+    // Ensure userNCPs is an array before using array methods
+    const safeUserNCPs = Array.isArray(userNCPs) ? userNCPs : []
+    const userReports = safeUserNCPs.slice(0, 5) // Show only 5 most recent
+    const rejectedReports = safeUserNCPs.filter(ncp => ncp.status.includes("rejected")).slice(0, 5)
     
     return (
       <div className="space-y-6">
@@ -173,7 +189,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats.total || 0}</div>
+              <div className="text-2xl font-bold">{dashboardData?.stats?.total || 0}</div>
               <p className="text-xs text-muted-foreground">Reports you've submitted</p>
             </CardContent>
           </Card>
@@ -184,7 +200,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats.pending || 0}</div>
+              <div className="text-2xl font-bold">{dashboardData?.stats?.pending || 0}</div>
               <p className="text-xs text-muted-foreground">Awaiting approval</p>
             </CardContent>
           </Card>
@@ -195,7 +211,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               <CheckCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats.approved || 0}</div>
+              <div className="text-2xl font-bold">{dashboardData?.stats?.approved || 0}</div>
               <p className="text-xs text-muted-foreground">Fully approved</p>
             </CardContent>
           </Card>
@@ -267,7 +283,9 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
   }
 
   const renderQALeaderDashboard = () => {
-    const pendingApprovals = Array.isArray(pendingNCPs) ? pendingNCPs.slice(0, 5) : []
+    // Ensure pendingNCPs is an array before using array methods
+    const safePendingNCPs = Array.isArray(pendingNCPs) ? pendingNCPs : []
+    const pendingApprovals = safePendingNCPs.slice(0, 5)
     
     return (
       <div className="space-y-6">
@@ -278,7 +296,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats.pending || 0}</div>
+              <div className="text-2xl font-bold">{dashboardData?.stats?.pending || 0}</div>
               <p className="text-xs text-muted-foreground">Reports awaiting your approval</p>
             </CardContent>
           </Card>
@@ -300,7 +318,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats.qaApproved || 0}</div>
+              <div className="text-2xl font-bold">{dashboardData?.stats?.qaApproved || 0}</div>
               <p className="text-xs text-muted-foreground">Reports you've approved</p>
             </CardContent>
           </Card>
@@ -355,8 +373,10 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
   }
 
   const renderTeamLeaderDashboard = () => {
-    const assignedNCPs = pendingNCPs.filter(ncp => ncp.status === "qa_approved").slice(0, 5)
-    const processedNCPs = pendingNCPs.filter(ncp => ncp.status === "tl_processed").slice(0, 5)
+    // Ensure pendingNCPs is an array before using array methods
+    const safePendingNCPs = Array.isArray(pendingNCPs) ? pendingNCPs : []
+    const assignedNCPs = safePendingNCPs.filter(ncp => ncp.status === "qa_approved").slice(0, 5)
+    const processedNCPs = safePendingNCPs.filter(ncp => ncp.status === "tl_processed").slice(0, 5)
     
     return (
       <div className="space-y-6">
@@ -461,7 +481,9 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
   }
 
   const renderProcessLeadDashboard = () => {
-    const pendingReviews = pendingNCPs.filter(ncp => ncp.status === "tl_processed").slice(0, 5)
+    // Ensure pendingNCPs is an array before using array methods
+    const safePendingNCPs = Array.isArray(pendingNCPs) ? pendingNCPs : []
+    const pendingReviews = safePendingNCPs.filter(ncp => ncp.status === "tl_processed").slice(0, 5)
     
     return (
       <div className="space-y-6">
@@ -483,7 +505,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               <CheckCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats.process_approved || 0}</div>
+              <div className="text-2xl font-bold">{dashboardData?.stats?.process_approved || 0}</div>
               <p className="text-xs text-muted-foreground">Reports you've approved</p>
             </CardContent>
           </Card>
@@ -538,7 +560,9 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
   }
 
   const renderQAManagerDashboard = () => {
-    const pendingApprovals = pendingNCPs.filter(ncp => ncp.status === "process_approved").slice(0, 5)
+    // Ensure pendingNCPs is an array before using array methods
+    const safePendingNCPs = Array.isArray(pendingNCPs) ? pendingNCPs : []
+    const pendingApprovals = safePendingNCPs.filter(ncp => ncp.status === "process_approved").slice(0, 5)
     
     return (
       <div className="space-y-6">
@@ -571,7 +595,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats.manager_approved || 0}</div>
+              <div className="text-2xl font-bold">{dashboardData?.stats?.manager_approved || 0}</div>
               <p className="text-xs text-muted-foreground">Reports you've approved</p>
             </CardContent>
           </Card>
@@ -628,7 +652,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats.total || 0}</div>
+              <div className="text-2xl font-bold">{dashboardData?.stats?.total || 0}</div>
               <p className="text-xs text-muted-foreground">All non-conformance reports</p>
             </CardContent>
           </Card>
@@ -639,7 +663,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats.pending || 0}</div>
+              <div className="text-2xl font-bold">{dashboardData?.stats?.pending || 0}</div>
               <p className="text-xs text-muted-foreground">Awaiting approval</p>
             </CardContent>
           </Card>
@@ -651,7 +675,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {(dashboardData?.stats.qaApproved || 0) + (dashboardData?.stats.tlProcessed || 0) + (dashboardData?.stats.process_approved || 0)}
+                {((dashboardData?.stats?.qaApproved || 0) + (dashboardData?.stats?.tlProcessed || 0) + (dashboardData?.stats?.process_approved || 0))}
               </div>
               <p className="text-xs text-muted-foreground">Being processed</p>
             </CardContent>
@@ -663,7 +687,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               <CheckCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats.manager_approved || 0}</div>
+              <div className="text-2xl font-bold">{dashboardData?.stats?.manager_approved || 0}</div>
               <p className="text-xs text-muted-foreground">Fully approved reports</p>
             </CardContent>
           </Card>
@@ -674,7 +698,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               <XCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats.rejected || 0}</div>
+              <div className="text-2xl font-bold">{dashboardData?.stats?.rejected || 0}</div>
               <p className="text-xs text-muted-foreground">Rejected reports</p>
             </CardContent>
           </Card>
@@ -689,7 +713,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {dashboardData?.charts.monthly && dashboardData.charts.monthly.length > 0 ? (
+              {dashboardData?.charts?.monthly && Array.isArray(dashboardData.charts.monthly) && dashboardData.charts.monthly.length > 0 ? (
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={dashboardData.charts.monthly}>
@@ -755,7 +779,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {dashboardData?.charts.topSubmitters && dashboardData.charts.topSubmitters.length > 0 ? (
+              {dashboardData?.charts?.topSubmitters && Array.isArray(dashboardData.charts.topSubmitters) && dashboardData.charts.topSubmitters.length > 0 ? (
                 <div className="space-y-4">
                   {dashboardData.charts.topSubmitters.map((submitter, index) => (
                     <div key={index} className="flex items-center justify-between p-3 bg-white rounded-lg border">
