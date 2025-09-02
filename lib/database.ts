@@ -256,9 +256,8 @@ export function deleteUser(userId: number) {
 }
 
 export function updateUserPassword(userId: number, newPassword: string) {
-  const hashedPassword = hashSync(newPassword, 10)
   const stmt = db.prepare("UPDATE users SET password = ? WHERE id = ?")
-  const result = stmt.run(hashedPassword, userId)
+  const result = stmt.run(newPassword, userId)
   return result
 }
 
