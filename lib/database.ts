@@ -844,10 +844,10 @@ export function markAllNotificationsAsRead(userId: number) {
 // Statistics functions
 export function getNCPStatistics() {
   const total = db.prepare("SELECT COUNT(*) as count FROM ncp_reports").get()
-  const pending = db.prepare('SELECT COUNT(*) as count FROM ncp_reports WHERE status = "pending"').get()
-  const qaApproved = db.prepare('SELECT COUNT(*) as count FROM ncp_reports WHERE status = "qa_approved"').get()
-  const tlProcessed = db.prepare('SELECT COUNT(*) as count FROM ncp_reports WHERE status = "tl_processed"').get()
-  const rejected = db.prepare('SELECT COUNT(*) as count FROM ncp_reports WHERE status LIKE "%rejected"').get()
+  const pending = db.prepare("SELECT COUNT(*) as count FROM ncp_reports WHERE status = 'pending'").get()
+  const qaApproved = db.prepare("SELECT COUNT(*) as count FROM ncp_reports WHERE status = 'qa_approved'").get()
+  const tlProcessed = db.prepare("SELECT COUNT(*) as count FROM ncp_reports WHERE status = 'tl_processed'").get()
+  const rejected = db.prepare("SELECT COUNT(*) as count FROM ncp_reports WHERE status LIKE '%rejected'").get()
 
   return {
     total: total.count,
