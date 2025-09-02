@@ -15,21 +15,24 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  if (auth.role !== "super_admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-  }
-
   try {
     // Get all dashboard data
     const ncpStats = getNCPStatistics()
-    const users = getAllUsers()
+    
+    // Get user count (only for super_admin)
+    let totalUsers = 0;
+    if (auth.role === "super_admin") {
+      const users = getAllUsers()
+      totalUsers = users.length
+    }
+    
     const monthlyReports = getNCPsByMonth()
     const statusDistribution = getNCPStatusDistribution()
     const topSubmitters = getNCPsByTopSubmitters()
     
     const data = {
       stats: {
-        totalUsers: users.length,
+        totalUsers: totalUsers,
         totalNCPReports: ncpStats.total,
         pendingReports: ncpStats.pending,
         approvedReports: ncpStats.qaApproved + ncpStats.tlProcessed,

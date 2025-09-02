@@ -9,27 +9,38 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  if (auth.role !== "super_admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-  }
-
   try {
     // Get NCP statistics
     const ncpStats = getNCPStatistics()
     
-    // Get user count
-    const users = getAllUsers()
-    const totalUsers = users.length
+    // Get user count (only for super_admin)
+    let totalUsers = 0;
+    if (auth.role === "super_admin") {
+      const users = getAllUsers()
+      totalUsers = users.length
+    }
     
     const stats = {
-      totalUsers,
-      totalNCPReports: ncpStats.total,
-      pendingReports: ncpStats.pending,
-      approvedReports: ncpStats.qaApproved + ncpStats.tlProcessed,
-      rejectedReports: ncpStats.rejected
+      total: ncpStats.total,
+      pending: ncpStats.pending,
+      approved: ncpStats.qaApproved + ncpStats.tlProcessed,
+      processed: ncpStats.tlProcessed,
+      qaApproved: ncpStats.qaApproved,
+      tlProcessed: ncpStats.tlProcessed,
+      process_approved: ncpStats.process_approved,
+      manager_approved: ncpStats.manager_approved,
+      rejected: ncpStats.rejected
     }
 
-    return NextResponse.json(stats)
+    // Return data in format expected by frontend
+    return NextResponse.json({ 
+      stats,
+      charts: {
+        monthly: [],
+        statusDistribution: [],
+        topSubmitters: []
+      }
+    })
   } catch (error) {
     console.error("Error fetching dashboard stats:", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })

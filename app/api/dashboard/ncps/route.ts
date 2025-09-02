@@ -13,6 +13,13 @@ export async function GET(request: NextRequest) {
   const pendingOnly = searchParams.get('pending') === 'true'
   
   try {
+    console.log("Fetching NCP reports for user:", { 
+      id: auth.id, 
+      role: auth.role, 
+      username: auth.username,
+      pendingOnly: pendingOnly
+    });
+    
     let reports;
     if (pendingOnly) {
       reports = getPendingNCPsForRole(auth.role, auth.username)
@@ -20,9 +27,16 @@ export async function GET(request: NextRequest) {
       reports = getNCPReportsForUser(auth.id, auth.role, auth.username)
     }
     
-    return NextResponse.json(reports)
+    console.log("Reports fetched successfully, count:", reports.length);
+    // Return data in format expected by frontend
+    return NextResponse.json({ data: reports })
   } catch (error) {
     console.error("Error fetching NCP reports:", error)
+    console.error("Error details:", {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
 }
