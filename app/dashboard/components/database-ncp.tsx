@@ -466,13 +466,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                         <TableCell className="font-mono font-medium">{ncp.ncp_id}</TableCell>
                         <TableCell>{ncp.sku_code}</TableCell>
                         <TableCell>{ncp.machine_code}</TableCell>
-                        <TableCell>
-                          {new Date(ncp.date).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })}
-                        </TableCell>
+                        <TableCell>{formatDateOnlyWIB(ncp.date)}</TableCell>
                         <TableCell>{getStatusBadge(ncp.status)}</TableCell>
                         <TableCell>
                           {ncp.hold_quantity} {ncp.hold_quantity_uom}

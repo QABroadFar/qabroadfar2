@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/hooks/use-toast"
+import { formatToWIB } from "@/lib/date-utils"
 
 export default function SystemSettingsPage() {
   const [apiKeys, setApiKeys] = useState([])
@@ -264,10 +265,10 @@ export default function SystemSettingsPage() {
                             {key.is_active === 1 ? "Active" : "Inactive"}
                           </span>
                         </TableCell>
-                        <TableCell>{new Date(key.created_at).toLocaleDateString()}</TableCell>
+                        <TableCell>{formatToWIB(key.created_at)}</TableCell>
                         <TableCell>
                           {key.last_used_at 
-                            ? new Date(key.last_used_at).toLocaleDateString()
+                            ? formatToWIB(key.last_used_at)
                             : "Never"}
                         </TableCell>
                         <TableCell>

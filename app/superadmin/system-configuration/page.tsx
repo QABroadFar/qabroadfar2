@@ -7,8 +7,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
 import { toast } from "@/hooks/use-toast"
+import { formatToWIB } from "@/lib/date-utils"
 
 export default function SystemConfigurationPage() {
   const [skuCodes, setSkuCodes] = useState([])
@@ -503,7 +504,7 @@ export default function SystemConfigurationPage() {
                     <TableRow key={sku.id}>
                       <TableCell className="font-medium">{sku.code}</TableCell>
                       <TableCell>{sku.description}</TableCell>
-                      <TableCell>{new Date(sku.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell>{formatToWIB(sku.created_at)}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
                           <Dialog open={isSkuDialogOpen && editingSku?.id === sku.id} onOpenChange={setIsSkuDialogOpen}>
@@ -655,7 +656,7 @@ export default function SystemConfigurationPage() {
                     <TableRow key={machine.id}>
                       <TableCell className="font-medium">{machine.code}</TableCell>
                       <TableCell>{machine.name}</TableCell>
-                      <TableCell>{new Date(machine.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell>{formatToWIB(machine.created_at)}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
                           <Dialog open={isMachineDialogOpen && editingMachine?.id === machine.id} onOpenChange={setIsMachineDialogOpen}>
@@ -806,7 +807,7 @@ export default function SystemConfigurationPage() {
                     <TableRow key={uom.id}>
                       <TableCell className="font-medium">{uom.code}</TableCell>
                       <TableCell>{uom.name}</TableCell>
-                      <TableCell>{new Date(uom.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell>{formatToWIB(uom.created_at)}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
                           <Dialog open={isUomDialogOpen && editingUom?.id === uom.id} onOpenChange={setIsUomDialogOpen}>

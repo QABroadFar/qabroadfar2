@@ -281,8 +281,31 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
                     <p className="text-gray-800 text-sm leading-relaxed">{ncp.problem_description}</p>
                   </div>
 
-                  {/* FIXED: Photo Attachment Display - REMOVED AS PER REQUIREMENT 1 */}
-                  {/* No photo attachment display */}
+                  {/* Photo Attachment Display */}
+                  {ncp.photo_attachment && (
+                    <div className="p-4 bg-purple-50/50 rounded-lg border border-purple-200/50">
+                      <div className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                        <ImageIcon className="h-4 w-4" />
+                        Photo Attachment:
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-gray-600 text-sm">{ncp.photo_attachment.split("/").pop()}</p>
+                        {/* Display actual image */}
+                        <div className="relative w-full max-w-md h-48 bg-gray-100 rounded-lg overflow-hidden border">
+                          <img
+                            src={ncp.photo_attachment || "/placeholder.svg"}
+                            alt="NCP Photo Attachment"
+                            className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
+                            onError={(e) => {
+                              e.currentTarget.src = "/placeholder.svg?height=200&width=300&text=Image+Not+Found"
+                            }}
+                            onClick={() => window.open(ncp.photo_attachment, "_blank")}
+                          />
+                        </div>
+                        <p className="text-xs text-gray-500">Click image to view full size</p>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Action Buttons */}
                   <div className="flex gap-3 pt-4 border-t border-gray-200/50">

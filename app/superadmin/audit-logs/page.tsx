@@ -1,10 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { toast } from "@/hooks/use-toast"
+import { formatToWIB } from "@/lib/date-utils"
 
 export default function AuditLogsPage() {
   const [auditLogs, setAuditLogs] = useState([])
@@ -93,7 +96,7 @@ export default function AuditLogsPage() {
                       <TableCell>{log.old_value || "-"}</TableCell>
                       <TableCell>{log.new_value || "-"}</TableCell>
                       <TableCell>{log.description}</TableCell>
-                      <TableCell>{new Date(log.changed_at).toLocaleString()}</TableCell>
+                      <TableCell>{formatToWIB(log.changed_at)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -135,7 +138,7 @@ export default function AuditLogsPage() {
                       </TableCell>
                       <TableCell>{log.message}</TableCell>
                       <TableCell>{log.details || "-"}</TableCell>
-                      <TableCell>{new Date(log.created_at).toLocaleString()}</TableCell>
+                      <TableCell>{formatToWIB(log.created_at)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
