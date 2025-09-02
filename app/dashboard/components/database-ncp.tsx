@@ -109,6 +109,11 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
     fetchAllNCPs()
     const fetchUsersByRole = async (role) => {
       try {
+        // Only fetch users by role if user is super_admin or admin
+        if (userInfo.role !== "super_admin" && userInfo.role !== "admin") {
+          return
+        }
+        
         const response = await fetch(`/api/users/by-role?role=${role}`)
         if (response.ok) {
           const data = await response.json()
@@ -134,10 +139,19 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
   const fetchAllNCPs = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch("/api/ncp/list?type=all")
+      
+      // Determine which API to call based on user role
+      let apiUrl = "/api/dashboard/ncps"
+      if (userInfo.role === "super_admin") {
+        apiUrl = "/api/ncp/list"
+      }
+      
+      const response = await fetch(apiUrl)
       if (response.ok) {
         const data = await response.json()
-        setNCPs(data.data)
+        // Handle both API response formats
+        const ncpData = data.data || data
+        setNCPs(Array.isArray(ncpData) ? ncpData : [])
       } else {
         console.error("Failed to fetch NCPs")
       }

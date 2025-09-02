@@ -52,10 +52,12 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
   const fetchPendingNCPs = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch("/api/ncp/list?type=pending")
+      const response = await fetch("/api/dashboard/ncps?pending=true")
       if (response.ok) {
         const data = await response.json()
-        setPendingNCPs(data.data.filter((ncp: any) => ncp.status === "pending"))
+        // Handle both API response formats
+        const ncpData = data.data || data
+        setPendingNCPs(Array.isArray(ncpData) ? ncpData.filter((ncp: any) => ncp.status === "pending") : [])
       } else {
         console.error("Failed to fetch pending NCPs")
       }

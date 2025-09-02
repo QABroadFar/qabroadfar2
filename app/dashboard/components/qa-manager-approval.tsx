@@ -57,11 +57,13 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
   const fetchPendingNCPs = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch("/api/ncp/list?type=pending")
+      const response = await fetch("/api/dashboard/ncps?pending=true")
       if (response.ok) {
         const data = await response.json()
+        // Handle both API response formats
+        const ncpData = data.data || data
         // Filter for NCPs that have been approved by Process Lead
-        const managerReady = data.data.filter((ncp: any) => ncp.status === "process_approved")
+        const managerReady = Array.isArray(ncpData) ? ncpData.filter((ncp: any) => ncp.status === "process_approved") : []
         setPendingNCPs(managerReady)
       } else {
         console.error("Failed to fetch pending NCPs")

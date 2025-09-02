@@ -55,11 +55,13 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
   const fetchPendingNCPs = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch("/api/ncp/list?type=pending")
+      const response = await fetch("/api/dashboard/ncps?pending=true")
       if (response.ok) {
         const data = await response.json()
+        // Handle both API response formats
+        const ncpData = data.data || data
         // Filter for NCPs that have been processed by Team Leader
-        const processReady = data.data.filter((ncp: any) => ncp.status === "tl_processed")
+        const processReady = Array.isArray(ncpData) ? ncpData.filter((ncp: any) => ncp.status === "tl_processed") : []
         setPendingNCPs(processReady)
       } else {
         console.error("Failed to fetch pending NCPs")

@@ -56,17 +56,19 @@ export function TeamLeaderProcessing({ onBack }: TeamLeaderProcessingProps) {
   const fetchAssignedNCPs = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch("/api/ncp/list?type=pending")
+      const response = await fetch("/api/dashboard/ncps?pending=true")
       if (response.ok) {
         const data = await response.json()
+        // Handle both API response formats
+        const ncpData = data.data || data
         // Filter for NCPs assigned to current team leader with qa_approved status only (not processed)
-        const assignedToMe = data.data.filter(
+        const assignedToMe = Array.isArray(ncpData) ? ncpData.filter(
           (ncp: any) =>
             ncp.status === "qa_approved" &&
             (ncp.assigned_team_leader === "teamlead1" || // Match with actual team leader usernames
               ncp.assigned_team_leader === "teamlead2" ||
               ncp.assigned_team_leader === "teamlead3"),
-        )
+        ) : []
         setAssignedNCPs(assignedToMe)
       } else {
         console.error("Failed to fetch assigned NCPs")

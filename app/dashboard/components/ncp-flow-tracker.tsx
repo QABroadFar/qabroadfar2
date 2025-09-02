@@ -86,11 +86,20 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
   const fetchAllNCPs = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch("/api/ncp/list?type=all")
+      
+      // Determine which API to call based on user role
+      let apiUrl = "/api/dashboard/ncps"
+      if (userInfo.role === "super_admin") {
+        apiUrl = "/api/ncp/list"
+      }
+      
+      const response = await fetch(apiUrl)
       if (response.ok) {
         const data = await response.json()
-        setNCPs(data.data)
-        setFilteredNCPs(data.data)
+        // Handle both API response formats
+        const ncpData = data.data || data
+        setNCPs(Array.isArray(ncpData) ? ncpData : [])
+        setFilteredNCPs(Array.isArray(ncpData) ? ncpData : [])
       } else {
         console.error("Failed to fetch NCPs")
       }
