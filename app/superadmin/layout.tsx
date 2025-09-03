@@ -46,7 +46,7 @@ export default function SuperAdminLayout({ children }) {
     },
     {
       title: "User Management",
-      href: "/superadmin/users",
+      href: "/superadmin/user-management",
       icon: Users,
     },
     {

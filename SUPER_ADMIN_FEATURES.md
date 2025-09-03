@@ -3,11 +3,10 @@
 Last Updated: September 2, 2025
 
 ## 1. User Management
-- **Create New Users**: Super admin can create new users with username, password, role, and full name
-- **Edit User Roles**: Ability to change user roles directly from the user management interface
-- **Activate/Deactivate Users**: Toggle user status between active and inactive
-- **Reset Passwords**: Reset user passwords as needed
-- **Delete Users**: Permanently remove users from the system (with confirmation)
+- **Fixed User Lists**: 3 QA Leaders and 3 Team Leaders with predefined accounts
+- **Edit User Information**: Ability to change username, full name, and password for fixed users
+- **Persistent Storage**: User changes saved to localStorage for persistence across sessions
+- **User Management Interface**: Dedicated page for managing QA Leaders and Team Leaders
 
 ## 2. Workflow Intervention
 - **View All Reports**: Super admin can view all NCP reports regardless of their stage in the workflow
@@ -50,12 +49,7 @@ Last Updated: September 2, 2025
 ## API Endpoints Created
 
 ### User Management
-- `POST /api/users` - Create new user
-- `PUT /api/users/[id]/role` - Update user role
-- `PUT /api/users/[id]/status` - Update user status
-- `PUT /api/users/[id]/password` - Reset user password
-- `DELETE /api/users/[id]` - Delete user
-- `GET /api/users/by-role?role=[role]` - Get users by role
+- `GET /api/users/by-role?role=[role]` - Get users by role (for dropdown selections in forms)
 
 ### NCP Management
 - `PUT /api/ncp/details/[id]` - Update NCP report
