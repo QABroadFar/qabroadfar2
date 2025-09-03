@@ -1,4 +1,4 @@
-import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
+import { formatInTimeZone } from 'date-fns-tz';
 import { enUS } from 'date-fns/locale';
 
 export const formatToWIB = (date: string | Date, formatString: string = 'dd MMM yyyy, HH:mm:ss'): string => {
@@ -10,8 +10,8 @@ export const formatToWIB = (date: string | Date, formatString: string = 'dd MMM 
     if (typeof date === 'string') {
       // If it's already an ISO string, it might be in UTC
       if (date.endsWith('Z') || date.includes('+') || date.includes('T')) {
-        // Parse as UTC and convert to WIB
-        dateObj = zonedTimeToUtc(date, 'UTC');
+        // Parse as UTC and directly format to WIB
+        dateObj = new Date(date);
       } else {
         // Assume it's already in local time
         dateObj = new Date(date);

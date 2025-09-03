@@ -64,8 +64,6 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submittedNCPId, setSubmittedNCPId] = useState("")
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
-  const [qaLeaders, setQaLeaders] = useState<{id: number, username: string, full_name?: string}[]>([])
-  const [isLoadingQaLeaders, setIsLoadingQaLeaders] = useState(true)
 
   useEffect(() => {
     const fetchQaLeaders = async () => {
