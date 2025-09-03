@@ -47,6 +47,11 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
     }
   }, [])
 
+  // Fetch pending NCPs when component mounts
+  useEffect(() => {
+    fetchPendingNCPs()
+  }, [])
+
   const fetchPendingNCPs = async () => {
     try {
       console.log("Fetching pending NCPs for QA Leader");
