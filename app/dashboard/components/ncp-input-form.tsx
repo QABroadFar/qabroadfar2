@@ -56,7 +56,11 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
     qaLeader: "",
   })
   
-  const [qaLeaders, setQaLeaders] = useState<{id: number, username: string, full_name?: string}[]>([])
+  const [qaLeaders, setQaLeaders] = useState<{id: number, username: string, full_name?: string}[]>([
+    {id: 1, username: "qaleader1", full_name: "QA Leader 1"},
+    {id: 2, username: "qaleader2", full_name: "QA Leader 2"},
+    {id: 3, username: "qaleader3", full_name: "QA Leader 3"}
+  ])
   const [isLoadingQaLeaders, setIsLoadingQaLeaders] = useState(true)
 
   const [showPreview, setShowPreview] = useState(false)
@@ -64,25 +68,6 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submittedNCPId, setSubmittedNCPId] = useState("")
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
-
-  useEffect(() => {
-    const fetchQaLeaders = async () => {
-      try {
-        setIsLoadingQaLeaders(true)
-        const response = await fetch("/api/users/by-role?role=qa_leader")
-        if (response.ok) {
-          const data = await response.json()
-          setQaLeaders(data)
-        }
-      } catch (error) {
-        console.error("Failed to fetch QA Leaders:", error)
-      } finally {
-        setIsLoadingQaLeaders(false)
-      }
-    }
-
-    fetchQaLeaders()
-  }, [])
 
   const handleInputChange = (field: string, value: string | File | null) => {
     setFormData((prev) => ({

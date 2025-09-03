@@ -32,39 +32,12 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
   const [successMessage, setSuccessMessage] = useState("") // State for success message
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [teamLeaders, setTeamLeaders] = useState<{id: number, username: string, full_name?: string}[]>([])
-  const [isLoadingTeamLeaders, setIsLoadingTeamLeaders] = useState(true)
-
-  // Approval form data
-  const [approvalData, setApprovalData] = useState({
-    disposisi: "",
-    jumlahSortir: "",
-    jumlahRelease: "",
-    jumlahReject: "",
-    assignedTeamLeader: "",
-  })
-
-  const [rejectionReason, setRejectionReason] = useState("")
-
-  useEffect(() => {
-    fetchPendingNCPs()
-    fetchTeamLeaders()
-  }, [])
-
-  const fetchTeamLeaders = async () => {
-    try {
-      setIsLoadingTeamLeaders(true)
-      const response = await fetch("/api/users/by-role?role=team_leader")
-      if (response.ok) {
-        const data = await response.json()
-        setTeamLeaders(data)
-      }
-    } catch (error) {
-      console.error("Failed to fetch Team Leaders:", error)
-    } finally {
-      setIsLoadingTeamLeaders(false)
-    }
-  }
+  const [teamLeaders, setTeamLeaders] = useState<{id: number, username: string, full_name?: string}[]>([
+    {id: 1, username: "teamlead1", full_name: "Team Leader 1"},
+    {id: 2, username: "teamlead2", full_name: "Team Leader 2"},
+    {id: 3, username: "teamlead3", full_name: "Team Leader 3"}
+  ])
+  const [isLoadingTeamLeaders, setIsLoadingTeamLeaders] = useState(false)
 
   const fetchPendingNCPs = async () => {
     try {
