@@ -1,5 +1,7 @@
 # Testing and Quality Assurance Documentation
 
+Last Updated: September 2, 2025
+
 ## Table of Contents
 1. [Testing Strategy](#testing-strategy)
 2. [Test Environment](#test-environment)

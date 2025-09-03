@@ -1,5 +1,7 @@
 # Quality Assurance Portal Developer Guide
 
+Last Updated: September 2, 2025
+
 ## Table of Contents
 1. [Project Overview](#project-overview)
 2. [Technology Stack](#technology-stack)
@@ -85,14 +87,21 @@ The system follows a modern web application architecture with clear separation o
 qabroadfar2/
 ├── app/                    # App Router pages and components
 │   ├── api/               # API routes
+│   │   ├── analytics/     # Analytics endpoints
+│   │   ├── api-keys/      # API key management
+│   │   ├── audit-log/     # Audit log endpoints
 │   │   ├── auth/          # Authentication endpoints
 │   │   ├── dashboard/     # Dashboard endpoints
+│   │   ├── database/      # Database management
+│   │   ├── logs/          # System logs endpoints
 │   │   ├── ncp/           # NCP management endpoints
-│   │   ├── users/         # User management endpoints
+│   │   ├── notifications/ # Notification endpoints
+│   │   ├── system-logs/   # System logs endpoints
 │   │   ├── system-settings/ # System settings endpoints
-│   │   └── ...            # Other API endpoints
+│   │   └── users/         # User management endpoints
 │   ├── dashboard/         # Dashboard pages and components
-│   └── login/             # Login page
+│   ├── login/             # Login page
+│   └── superadmin/        # Super Admin features
 ├── components/            # Shared UI components
 │   ├── ui/                # shadcn/ui components
 │   └── ...                # Custom components

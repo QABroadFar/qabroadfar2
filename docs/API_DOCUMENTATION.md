@@ -1,5 +1,7 @@
 # API Documentation
 
+Last Updated: September 2, 2025
+
 ## Table of Contents
 1. [Authentication](#authentication)
 2. [Users](#users)
@@ -7,7 +9,8 @@
 4. [System Settings](#system-settings)
 5. [Monitoring](#monitoring)
 6. [Dashboard](#dashboard)
-7. [Error Handling](#error-handling)
+7. [Database Management](#database-management)
+8. [Error Handling](#error-handling)
 
 ## Authentication
 
@@ -696,6 +699,34 @@ GET /api/dashboard/ncps?type=all|pending
 Response:
 {
   "data": [...]
+}
+```
+
+## Database Management
+
+### Create Database Backup (Super Admin only)
+```
+POST /api/database/backup
+
+Response:
+{
+  "message": "Database backup created successfully",
+  "filename": "backup_20230101_103000.db"
+}
+```
+
+### Restore Database from Backup (Super Admin only)
+```
+POST /api/database/restore
+Content-Type: application/json
+
+{
+  "filename": "backup_20230101_103000.db"
+}
+
+Response:
+{
+  "message": "Database restored successfully"
 }
 ```
 

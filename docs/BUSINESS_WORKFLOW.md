@@ -1,5 +1,7 @@
 # Business Workflow and Process Documentation
 
+Last Updated: September 2, 2025
+
 ## Table of Contents
 1. [Overview](#overview)
 2. [NCP Report Lifecycle](#ncp-report-lifecycle)

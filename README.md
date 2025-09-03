@@ -1,6 +1,8 @@
-# Quality Assurance Portal
+# Quality Assurance Portal v0.1.0
 
 A comprehensive web application for managing Non-Conformance Product (NCP) reports through a structured workflow process.
+
+Last Updated: September 2, 2025
 
 ## Table of Contents
 - [Features](#features)
@@ -136,10 +138,19 @@ After the first run, the system will create default users:
 
 Comprehensive documentation is available in the `docs/` directory:
 
-- [User Guide](docs/USER_GUIDE.md) - For end users of the system
-- [Developer Guide](docs/DEVELOPER_GUIDE.md) - For developers maintaining the system
-- [Complete Documentation](docs/COMPLETE_DOCUMENTATION.md) - Full technical documentation
-- [Super Admin Features](SUPER_ADMIN_FEATURES.md) - Detailed Super Admin capabilities
+### For End Users
+- [User Guide](docs/USER_GUIDE.md): Comprehensive guide for using the system
+- [Business Workflow](docs/BUSINESS_WORKFLOW.md): Detailed process documentation
+
+### For Developers
+- [Developer Guide](docs/DEVELOPER_GUIDE.md): Technical implementation details
+- [API Documentation](docs/API_DOCUMENTATION.md): Complete API reference
+- [Setup and Configuration](docs/SETUP_CONFIGURATION.md): Installation and deployment guide
+- [Testing and QA](docs/TESTING_QA.md): Quality assurance framework
+
+### Comprehensive Documentation
+- [Complete Documentation](docs/COMPLETE_DOCUMENTATION.md): Full technical reference
+- [Super Admin Features](SUPER_ADMIN_FEATURES.md): Detailed Super Admin capabilities
 
 ## Project Structure
 
@@ -148,7 +159,8 @@ qabroadfar2/
 ├── app/                    # App Router pages and components
 │   ├── api/               # API routes
 │   ├── dashboard/         # Dashboard components
-│   └── login/             # Login page
+│   ├── login/             # Login page
+│   └── superadmin/        # Super Admin features
 ├── components/            # Shared UI components
 ├── lib/                   # Utility functions and business logic
 ├── public/                # Static assets

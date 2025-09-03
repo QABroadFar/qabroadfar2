@@ -1,5 +1,7 @@
 # Quality Assurance Portal Documentation
 
+Last Updated: September 2, 2025
+
 ## Table of Contents
 1. [System Overview](#system-overview)
 2. [Architecture](#architecture)
@@ -123,7 +125,8 @@ qabroadfar2/
 ├── app/                    # App Router pages and components
 │   ├── api/               # API routes
 │   ├── dashboard/         # Dashboard components
-│   └── login/             # Login page
+│   ├── login/             # Login page
+│   └── superadmin/        # Super Admin features
 ├── components/            # Shared UI components
 ├── lib/                   # Utility functions and business logic
 ├── public/                # Static assets

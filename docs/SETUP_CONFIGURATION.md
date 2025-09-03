@@ -1,5 +1,7 @@
 # Setup and Configuration Guide
 
+Last Updated: September 2, 2025
+
 ## Table of Contents
 1. [System Requirements](#system-requirements)
 2. [Installation](#installation)
@@ -13,6 +15,7 @@
 10. [Backup and Recovery](#backup-and-recovery)
 11. [Monitoring and Logging](#monitoring-and-logging)
 12. [Performance Tuning](#performance-tuning)
+13. [Troubleshooting](#troubleshooting)
 
 ## System Requirements
 

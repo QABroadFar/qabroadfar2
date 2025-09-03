@@ -1,5 +1,7 @@
 # Quality Assurance Portal User Guide
 
+Last Updated: September 2, 2025
+
 ## Table of Contents
 1. [Getting Started](#getting-started)
 2. [Login and Authentication](#login-and-authentication)
