@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
 import { createNCPReport, logSystemEvent } from "@/lib/database"
+import fs from "fs"
+import path from "path"
 
 // Submit new NCP report
 export async function POST(request: NextRequest) {
@@ -11,6 +13,7 @@ export async function POST(request: NextRequest) {
 
   try {
     let data: any;
+    let photoFilename: string | null = null;
     
     // Try to parse form data first
     try {
@@ -21,9 +24,21 @@ export async function POST(request: NextRequest) {
       for (const [key, value] of formData.entries()) {
         // Handle File objects specially
         if (value instanceof File) {
-          // For simplicity, we'll store the filename
-          // In a real app, you'd want to save the file somewhere
-          data[key] = value.name
+          // Save the file to public/uploads directory
+          const buffer = Buffer.from(await value.arrayBuffer())
+          const filename = `${Date.now()}-${value.name}`
+          const filepath = path.join(process.cwd(), "public", "uploads", filename)
+          
+          // Ensure uploads directory exists
+          const uploadsDir = path.join(process.cwd(), "public", "uploads")
+          if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true })
+          }
+          
+          // Save file
+          fs.writeFileSync(filepath, buffer)
+          photoFilename = filename
+          data[key] = filename
         } else {
           data[key] = value
         }

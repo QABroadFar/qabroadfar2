@@ -170,19 +170,18 @@ Response:
 ### Submit NCP Report
 ```
 POST /api/ncp/submit
-Content-Type: application/json
+Content-Type: multipart/form-data
 
-{
-  "skuCode": "SKU001",
-  "machineCode": "MCH001",
-  "date": "2023-01-01",
-  "timeIncident": "10:30",
-  "holdQuantity": 100,
-  "holdQuantityUOM": "PCS",
-  "problemDescription": "Product defect found",
-  "photoAttachment": "base64-encoded-image",
-  "qaLeader": "qa_leader_username"
-}
+Form Data:
+- skuCode: "SKU001"
+- machineCode: "MCH001"
+- date: "2023-01-01"
+- timeIncident: "10:30"
+- holdQuantity: 100
+- holdQuantityUOM: "PCS"
+- problemDescription: "Product defect found"
+- photoAttachment: (file upload)
+- qaLeader: "qa_leader_username"
 
 Response:
 {
@@ -728,6 +727,16 @@ Response:
 {
   "message": "Database restored successfully"
 }
+```
+
+## Image Management
+
+### Get NCP Image
+```
+GET /api/ncp/image?filename=image.jpg
+
+Response:
+Binary image data with appropriate Content-Type header
 ```
 
 ## Error Handling

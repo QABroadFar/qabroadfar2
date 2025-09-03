@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
+import { formatToWIB } from "@/lib/date-utils"
 import {
   Dialog,
   DialogContent,
@@ -200,19 +201,7 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A"
-    // Import and use the WIB formatting function
-    const { formatToWIBID } = require("@/lib/date-utils")
-    try {
-      return formatToWIBID(new Date(dateString))
-    } catch (error) {
-      return new Date(dateString).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    }
+    return formatToWIB(dateString)
   }
 
   const getStatusBadge = (status: string) => {

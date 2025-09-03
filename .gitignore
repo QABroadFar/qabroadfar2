@@ -31,3 +31,7 @@ pnpm-debug.log*
 # Ignore local databases
 *.db
 qa_portal.db
+
+# Ignore uploaded files
+public/uploads/*
+!public/uploads/.gitkeep

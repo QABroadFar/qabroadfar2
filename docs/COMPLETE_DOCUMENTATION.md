@@ -1233,6 +1233,14 @@ export function getUserById(id: number) {
 - Log errors for debugging
 - Provide user-friendly error messages
 
+### Timezone Handling
+All timestamps in the application are displayed in Western Indonesia Time (WIB / GMT+7) to ensure consistency across all users. The application uses the `date-fns-tz` library to properly format dates and times in WIB.
+
+Key date utility functions:
+- `formatToWIB`: Formats dates with time in WIB (dd MMM yyyy, HH:mm:ss)
+- `formatDateOnlyWIB`: Formats date only in WIB (dd MMM yyyy)
+- `formatTimeOnlyWIB`: Formats time only in WIB (HH:mm:ss)
+
 ### Testing
 - Write unit tests for utility functions
 - Test API routes with different scenarios

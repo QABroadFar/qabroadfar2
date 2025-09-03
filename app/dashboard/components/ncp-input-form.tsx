@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { formatToWIB } from "@/lib/date-utils"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   Dialog,
@@ -156,33 +157,12 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "Not specified"
-    // Import and use the WIB formatting function
-    const { formatToWIBID } = require("@/lib/date-utils")
-    try {
-      return formatToWIBID(new Date(dateString))
-    } catch (error) {
-      return new Date(dateString).toLocaleDateString("en-US", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    }
+    return formatToWIB(dateString, 'EEEE, dd MMMM yyyy')
   }
 
   const formatTime = (timeString: string) => {
     if (!timeString) return "Not specified"
-    // Import and use the WIB formatting function
-    const { formatTimeOnlyWIB } = require("@/lib/date-utils")
-    try {
-      return formatTimeOnlyWIB(new Date(`2000-01-01T${timeString}`))
-    } catch (error) {
-      return new Date(`2000-01-01T${timeString}`).toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      })
-    }
+    return formatToWIB(`2023-01-01T${timeString}:00`, 'HH:mm:ss')
   }
 
   return (

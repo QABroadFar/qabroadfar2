@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { formatToWIB } from "@/lib/date-utils"
 import {
   ArrowLeft,
   Search,
@@ -223,13 +224,7 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
 
   const formatDate = (dateString: string) => {
     if (!dateString) return ""
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+    return formatToWIB(dateString)
   }
 
   if (isLoading) {

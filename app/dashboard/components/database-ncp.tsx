@@ -660,8 +660,25 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     Photo Attachment
                   </h3>
                   <div className="space-y-3">
-                    <p className="text-gray-600 text-sm">{selectedNCP.photo_attachment.split("/").pop()}</p>
-                    <p className="text-xs text-gray-500">Photo is not displayed in this view. Click filename to download.</p>
+                    <p className="text-gray-600 text-sm">{selectedNCP.photo_attachment}</p>
+                    <div className="relative w-full max-w-md h-64 bg-gray-100 rounded-lg overflow-hidden border">
+                      <img
+                        src={`/api/ncp/image?filename=${selectedNCP.photo_attachment}`}
+                        alt="NCP Photo Attachment"
+                        className="w-full h-full object-contain"
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder.svg?height=200&width=300&text=Image+Not+Found"
+                        }}
+                      />
+                    </div>
+                    <a 
+                      href={`/api/ncp/image?filename=${selectedNCP.photo_attachment}`} 
+                      download={selectedNCP.photo_attachment}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download Image
+                    </a>
                   </div>
                 </div>
               )}
