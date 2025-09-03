@@ -61,7 +61,7 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
     {id: 2, username: "qaleader2", full_name: "QA Leader 2"},
     {id: 3, username: "qaleader3", full_name: "QA Leader 3"}
   ])
-  const [isLoadingQaLeaders, setIsLoadingQaLeaders] = useState(true)
+  const [isLoadingQaLeaders, setIsLoadingQaLeaders] = useState(false)
 
   const [showPreview, setShowPreview] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
@@ -71,10 +71,15 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
 
   // Load QA Leaders from localStorage if available
   useEffect(() => {
+    console.log("Loading QA Leaders from localStorage");
     const savedQaLeaders = localStorage.getItem("qaLeaders")
     if (savedQaLeaders) {
+      console.log("Found saved QA Leaders:", JSON.parse(savedQaLeaders));
       setQaLeaders(JSON.parse(savedQaLeaders))
+    } else {
+      console.log("No saved QA Leaders found, using defaults");
     }
+    setIsLoadingQaLeaders(false)
   }, [])
 
   const handleInputChange = (field: string, value: string | File | null) => {
