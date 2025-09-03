@@ -56,7 +56,6 @@ export function TeamLeaderProcessing({ onBack }: TeamLeaderProcessingProps) {
   })
 
   useEffect(() => {
-    console.log("TeamLeaderProcessing mounted with userInfo:", userInfo);
     fetchAssignedNCPs()
   }, [])
 
