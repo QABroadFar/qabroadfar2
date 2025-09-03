@@ -49,13 +49,19 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
 
   const fetchPendingNCPs = async () => {
     try {
+      console.log("Fetching pending NCPs for QA Leader");
       setIsLoading(true)
       const response = await fetch("/api/dashboard/ncps?pending=true")
+      console.log("API response status:", response.status);
       if (response.ok) {
         const data = await response.json()
+        console.log("Raw API data:", data);
         // Handle both API response formats
         const ncpData = data.data || data
-        setPendingNCPs(Array.isArray(ncpData) ? ncpData.filter((ncp: any) => ncp.status === "pending") : [])
+        console.log("Processed NCP data:", ncpData);
+        const filteredNCPs = Array.isArray(ncpData) ? ncpData.filter((ncp: any) => ncp.status === "pending") : []
+        console.log("Filtered pending NCPs:", filteredNCPs);
+        setPendingNCPs(filteredNCPs)
       } else {
         console.error("Failed to fetch pending NCPs")
       }
