@@ -1104,7 +1104,10 @@ Props:
 - `userInfo`: User information object
 
 #### UserManagement
-Component for managing system users (Super Admin feature).
+Component for managing fixed QA Leaders and Team Leaders (Super Admin feature).
+- Fixed lists of 3 QA Leaders and 3 Team Leaders
+- Ability to edit username, full name, and password
+- Changes persisted to localStorage for session-to-session consistency
 
 #### SystemSettings
 Component for managing system-wide configurations (Super Admin feature).
