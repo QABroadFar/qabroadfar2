@@ -65,22 +65,39 @@ export function TeamLeaderProcessing({ onBack }: TeamLeaderProcessingProps) {
       console.log("Fetching assigned NCPs for user:", userInfo);
       setIsLoading(true)
       const response = await fetch("/api/dashboard/ncps?pending=true")
+      console.log("API response status:", response.status);
       if (response.ok) {
         const data = await response.json()
+        console.log("Raw API data:", data);
         // Handle both API response formats
         const ncpData = data.data || data
-        console.log("All NCPs fetched:", ncpData);
+        console.log("Processed NCP data:", ncpData);
+        
+        // Log each item to see what we're working with
+        if (Array.isArray(ncpData)) {
+          console.log("NCP data items:", ncpData.map(item => ({
+            id: item.id,
+            ncp_id: item.ncp_id,
+            status: item.status,
+            assigned_team_leader: item.assigned_team_leader
+          })));
+        }
         
         // Filter for NCPs assigned to current team leader with qa_approved status only (not processed)
         const assignedToMe = Array.isArray(ncpData) ? ncpData.filter(
-          (ncp: any) =>
-            ncp.status === "qa_approved" &&
-            ncp.assigned_team_leader === (userInfo?.username || "teamlead1"), // Use actual logged in user's username
+          (ncp: any) => {
+            const match = ncp.status === "qa_approved" && 
+                         ncp.assigned_team_leader === (userInfo?.username || "teamlead1");
+            console.log("Checking NCP", ncp.ncp_id, "status match:", ncp.status === "qa_approved", 
+                        "leader match:", ncp.assigned_team_leader === (userInfo?.username || "teamlead1"),
+                        "overall match:", match);
+            return match;
+          }
         ) : []
         console.log("Filtered NCPs for this user:", assignedToMe);
         setAssignedNCPs(assignedToMe)
       } else {
-        console.error("Failed to fetch assigned NCPs")
+        console.error("Failed to fetch assigned NCPs, status:", response.status)
       }
     } catch (error) {
       console.error("Error fetching assigned NCPs:", error)
