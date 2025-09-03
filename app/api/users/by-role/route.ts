@@ -11,8 +11,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  // Only super admin and admin can access this
-  if (auth.role !== "super_admin" && auth.role !== "admin") {
+  // Allow users with specific roles to access this based on the role being requested
+  const allowedRoles = ["super_admin", "admin", "user", "qa_leader", "team_leader", "process_lead", "qa_manager"]
+  if (!allowedRoles.includes(auth.role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
@@ -22,6 +23,12 @@ export async function GET(request: NextRequest) {
     
     if (!role) {
       return NextResponse.json({ error: "Role parameter is required" }, { status: 400 })
+    }
+    
+    // For security, only allow fetching specific roles
+    const fetchableRoles = ["qa_leader", "team_leader"]
+    if (!fetchableRoles.includes(role)) {
+      return NextResponse.json({ error: "Cannot fetch users for this role" }, { status: 403 })
     }
     
     const users = getUsersByRole(role)
