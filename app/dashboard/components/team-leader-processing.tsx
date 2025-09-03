@@ -32,6 +32,11 @@ import {
 
 interface TeamLeaderProcessingProps {
   onBack: () => void
+  userInfo?: {
+    id: number
+    username: string
+    role: string
+  }
 }
 
 export function TeamLeaderProcessing({ onBack }: TeamLeaderProcessingProps) {
@@ -66,9 +71,7 @@ export function TeamLeaderProcessing({ onBack }: TeamLeaderProcessingProps) {
         const assignedToMe = Array.isArray(ncpData) ? ncpData.filter(
           (ncp: any) =>
             ncp.status === "qa_approved" &&
-            (ncp.assigned_team_leader === "teamlead1" || // Match with actual team leader usernames
-              ncp.assigned_team_leader === "teamlead2" ||
-              ncp.assigned_team_leader === "teamlead3"),
+            ncp.assigned_team_leader === (userInfo?.username || "teamlead1"), // Use actual logged in user's username
         ) : []
         setAssignedNCPs(assignedToMe)
       } else {
