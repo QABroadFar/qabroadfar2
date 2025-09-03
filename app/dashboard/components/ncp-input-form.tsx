@@ -78,6 +78,12 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
       setQaLeaders(JSON.parse(savedQaLeaders))
     } else {
       console.log("No saved QA Leaders found, using defaults");
+      // Initialize localStorage with default values if not present
+      localStorage.setItem("qaLeaders", JSON.stringify([
+        {id: 1, username: "qaleader1", full_name: "QA Leader 1"},
+        {id: 2, username: "qaleader2", full_name: "QA Leader 2"},
+        {id: 3, username: "qaleader3", full_name: "QA Leader 3"}
+      ]));
     }
     setIsLoadingQaLeaders(false)
   }, [])
