@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { ArrowLeft, CheckCircle, XCircle, Loader2, User, Package, FileText, Clock, ImageIcon } from "lucide-react"
+import { ArrowLeft, CheckCircle, XCircle, Loader2, User, Package, FileText, Clock, ImageIcon, Download } from "lucide-react"
 import { formatToWIB } from "@/lib/date-utils"
 
 interface QALeaderApprovalProps {
@@ -279,20 +279,27 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
                         Photo Attachment:
                       </div>
                       <div className="space-y-2">
-                        <p className="text-gray-600 text-sm">{ncp.photo_attachment.split("/").pop()}</p>
+                        <p className="text-gray-600 text-sm">{ncp.photo_attachment}</p>
                         {/* Display actual image */}
                         <div className="relative w-full max-w-md h-48 bg-gray-100 rounded-lg overflow-hidden border">
                           <img
-                            src={ncp.photo_attachment || "/placeholder.svg"}
+                            src={`/api/ncp/image?filename=${ncp.photo_attachment}`}
                             alt="NCP Photo Attachment"
-                            className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
+                            className="w-full h-full object-contain cursor-pointer hover:scale-105 transition-transform"
                             onError={(e) => {
                               e.currentTarget.src = "/placeholder.svg?height=200&width=300&text=Image+Not+Found"
                             }}
-                            onClick={() => window.open(ncp.photo_attachment, "_blank")}
+                            onClick={() => window.open(`/api/ncp/image?filename=${ncp.photo_attachment}`, "_blank")}
                           />
                         </div>
-                        <p className="text-xs text-gray-500">Click image to view full size</p>
+                        <a 
+                          href={`/api/ncp/image?filename=${ncp.photo_attachment}`} 
+                          download={ncp.photo_attachment}
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                        >
+                          <Download className="h-4 w-4" />
+                          Download Image
+                        </a>
                       </div>
                     </div>
                   )}

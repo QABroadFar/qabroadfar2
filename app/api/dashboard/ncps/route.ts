@@ -28,6 +28,8 @@ export async function GET(request: NextRequest) {
     }
     
     console.log("Reports fetched successfully, count:", reports.length);
+    console.log("Sample report submitted_at:", reports[0]?.submitted_at);
+    
     // Return data in format expected by frontend
     return NextResponse.json({ data: reports })
   } catch (error) {
