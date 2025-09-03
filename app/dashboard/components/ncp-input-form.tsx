@@ -37,8 +37,6 @@ import {
 
 const machineOptions = ["SC1", "DC1A", "MAX", "DC1B", "SC2", "DC2", "HLP1", "HLP2", "HLP3", "HLP4", "SC3"]
 
-const qaLeaderOptions = ["qaleader1"]
-
 const uomOptions = ["Tray", "Pack", "Carton", "Mastercase"]
 
 interface NCPInputFormProps {
@@ -57,12 +55,36 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
     photoAttachment: null as File | null,
     qaLeader: "",
   })
+  
+  const [qaLeaders, setQaLeaders] = useState<{id: number, username: string, full_name?: string}[]>([])
+  const [isLoadingQaLeaders, setIsLoadingQaLeaders] = useState(true)
 
   const [showPreview, setShowPreview] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submittedNCPId, setSubmittedNCPId] = useState("")
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
+  const [qaLeaders, setQaLeaders] = useState<{id: number, username: string, full_name?: string}[]>([])
+  const [isLoadingQaLeaders, setIsLoadingQaLeaders] = useState(true)
+
+  useEffect(() => {
+    const fetchQaLeaders = async () => {
+      try {
+        setIsLoadingQaLeaders(true)
+        const response = await fetch("/api/users/by-role?role=qa_leader")
+        if (response.ok) {
+          const data = await response.json()
+          setQaLeaders(data)
+        }
+      } catch (error) {
+        console.error("Failed to fetch QA Leaders:", error)
+      } finally {
+        setIsLoadingQaLeaders(false)
+      }
+    }
+
+    fetchQaLeaders()
+  }, [])
 
   const handleInputChange = (field: string, value: string | File | null) => {
     setFormData((prev) => ({
@@ -306,11 +328,17 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
                       <SelectValue placeholder="Select QA Leader" />
                     </SelectTrigger>
                     <SelectContent>
-                      {qaLeaderOptions.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {option}
+                      {isLoadingQaLeaders ? (
+                        <SelectItem value="loading" disabled>
+                          Loading QA Leaders...
                         </SelectItem>
-                      ))}
+                      ) : (
+                        qaLeaders.map((leader) => (
+                          <SelectItem key={leader.id} value={leader.username}>
+                            {leader.full_name || leader.username}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>

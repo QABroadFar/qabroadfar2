@@ -23,8 +23,6 @@ interface QALeaderApprovalProps {
   onBack: () => void
 }
 
-const teamLeaderOptions = ["teamlead1", "teamlead2", "teamlead3"]
-
 export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
   const [pendingNCPs, setPendingNCPs] = useState([])
   const [selectedNCP, setSelectedNCP] = useState(null)
@@ -34,6 +32,8 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
   const [successMessage, setSuccessMessage] = useState("") // State for success message
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [teamLeaders, setTeamLeaders] = useState<{id: number, username: string, full_name?: string}[]>([])
+  const [isLoadingTeamLeaders, setIsLoadingTeamLeaders] = useState(true)
 
   // Approval form data
   const [approvalData, setApprovalData] = useState({
@@ -48,7 +48,23 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
 
   useEffect(() => {
     fetchPendingNCPs()
+    fetchTeamLeaders()
   }, [])
+
+  const fetchTeamLeaders = async () => {
+    try {
+      setIsLoadingTeamLeaders(true)
+      const response = await fetch("/api/users/by-role?role=team_leader")
+      if (response.ok) {
+        const data = await response.json()
+        setTeamLeaders(data)
+      }
+    } catch (error) {
+      console.error("Failed to fetch Team Leaders:", error)
+    } finally {
+      setIsLoadingTeamLeaders(false)
+    }
+  }
 
   const fetchPendingNCPs = async () => {
     try {
@@ -408,11 +424,17 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
                   <SelectValue placeholder="Select team leader" />
                 </SelectTrigger>
                 <SelectContent>
-                  {teamLeaderOptions.map((leader) => (
-                    <SelectItem key={leader} value={leader}>
-                      {leader}
+                  {isLoadingTeamLeaders ? (
+                    <SelectItem value="loading" disabled>
+                      Loading Team Leaders...
                     </SelectItem>
-                  ))}
+                  ) : (
+                    teamLeaders.map((leader) => (
+                      <SelectItem key={leader.id} value={leader.username}>
+                        {leader.full_name || leader.username}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </div>
