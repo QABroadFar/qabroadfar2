@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { formatToWIB } from "@/lib/date-utils"
+import { formatToWIB, formatDateOnlyWIB } from "@/lib/date-utils"
 import { Eye } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import {
