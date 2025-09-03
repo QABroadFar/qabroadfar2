@@ -69,6 +69,14 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
   const [submittedNCPId, setSubmittedNCPId] = useState("")
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
 
+  // Load QA Leaders from localStorage if available
+  useEffect(() => {
+    const savedQaLeaders = localStorage.getItem("qaLeaders")
+    if (savedQaLeaders) {
+      setQaLeaders(JSON.parse(savedQaLeaders))
+    }
+  }, [])
+
   const handleInputChange = (field: string, value: string | File | null) => {
     setFormData((prev) => ({
       ...prev,

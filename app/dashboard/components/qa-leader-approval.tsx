@@ -39,6 +39,14 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
   ])
   const [isLoadingTeamLeaders, setIsLoadingTeamLeaders] = useState(false)
 
+  // Load Team Leaders from localStorage if available
+  useEffect(() => {
+    const savedTeamLeaders = localStorage.getItem("teamLeaders")
+    if (savedTeamLeaders) {
+      setTeamLeaders(JSON.parse(savedTeamLeaders))
+    }
+  }, [])
+
   const fetchPendingNCPs = async () => {
     try {
       setIsLoading(true)
