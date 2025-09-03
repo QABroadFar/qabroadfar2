@@ -56,23 +56,28 @@ export function TeamLeaderProcessing({ onBack }: TeamLeaderProcessingProps) {
   })
 
   useEffect(() => {
+    console.log("TeamLeaderProcessing mounted with userInfo:", userInfo);
     fetchAssignedNCPs()
   }, [])
 
   const fetchAssignedNCPs = async () => {
     try {
+      console.log("Fetching assigned NCPs for user:", userInfo);
       setIsLoading(true)
       const response = await fetch("/api/dashboard/ncps?pending=true")
       if (response.ok) {
         const data = await response.json()
         // Handle both API response formats
         const ncpData = data.data || data
+        console.log("All NCPs fetched:", ncpData);
+        
         // Filter for NCPs assigned to current team leader with qa_approved status only (not processed)
         const assignedToMe = Array.isArray(ncpData) ? ncpData.filter(
           (ncp: any) =>
             ncp.status === "qa_approved" &&
             ncp.assigned_team_leader === (userInfo?.username || "teamlead1"), // Use actual logged in user's username
         ) : []
+        console.log("Filtered NCPs for this user:", assignedToMe);
         setAssignedNCPs(assignedToMe)
       } else {
         console.error("Failed to fetch assigned NCPs")

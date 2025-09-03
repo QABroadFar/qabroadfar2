@@ -97,6 +97,7 @@ export default function DashboardPage() {
       case "qa-approval":
         return <QALeaderApproval onBack={() => setCurrentPage("dashboard")} />
       case "tl-processing":
+        console.log("Rendering TeamLeaderProcessing with userInfo:", userInfo);
         return <TeamLeaderProcessing userInfo={userInfo} onBack={() => setCurrentPage("dashboard")} />
       case "process-approval":
         return <ProcessLeadApproval onBack={() => setCurrentPage("dashboard")} />
