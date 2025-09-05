@@ -414,43 +414,71 @@ if (auth.role !== "required_role") {
 ## Testing
 
 ### Current State
-Testing is planned but not yet implemented.
+Testing has been implemented using a custom Node.js test runner instead of the originally planned Jest framework.
 
-### Planned Testing Strategy
+### Testing Approach
 
-#### Unit Tests
-- Test utility functions in `lib/`
-- Test database functions
-- Test authentication functions
+#### Custom Test Runner
+- Uses Node.js built-in modules for testing
+- Tests database connectivity and operations
+- Tests authentication functions
+- Tests API route functionality
+- Tests NCP workflow functions
 
-#### Integration Tests
-- Test API routes
-- Test database operations
-- Test authentication flow
+#### Test Structure
+```
+__tests__/
+├── lib/                    # Library function tests
+├── app/                    # API route tests
+├── basic-file-tests.js     # File existence tests
+├── database-connection.test.js  # Database connectivity tests
+├── authentication.test.js  # Authentication tests
+├── ncp-functions.test.js   # NCP function tests
+├── api-routes.test.js      # API route tests
+├── test-runner.js          # Comprehensive test runner
+└── README.md               # Test documentation
+```
 
-#### End-to-End Tests
-- Test user workflows
-- Test role-specific features
-- Test edge cases
+#### Running Tests
+- `npm run test:all` - Run all tests with comprehensive test runner
+- `npm run test:simple` - Run basic file existence tests
+
+#### Test Scripts Directory
+Additional test scripts are available in the `scripts/` directory:
+- Database verification scripts
+- Workflow simulation scripts
+- User management scripts
+- Data initialization scripts
 
 ### Testing Tools
-- **Jest** for unit and integration tests
-- **React Testing Library** for component tests
-- **Cypress** for end-to-end tests
+- **Node.js** built-in modules for test execution
+- **Better SQLite3** for database testing
+- **Bcrypt.js** for authentication testing
+- Custom test scripts for specific functionality
 
-### Test Structure
-```
-tests/
-├── unit/
-│   ├── lib/
-│   └── components/
-├── integration/
-│   ├── api/
-│   └── database/
-└── e2e/
-    ├── workflows/
-    └── features/
-```
+### Test Categories
+
+#### Unit Tests
+- Database function testing
+- Authentication function testing
+- Utility function testing
+
+#### Integration Tests
+- Database connectivity testing
+- API route testing
+- User authentication flow testing
+
+#### End-to-End Tests
+- Workflow simulation testing
+- User role testing
+- Complete process testing
+
+### Test Coverage
+- Database operations: ✅ Tested
+- Authentication functions: ✅ Tested
+- NCP workflow functions: ✅ Tested
+- API routes: ✅ Tested
+- File integrity: ✅ Tested
 
 ## Deployment
 

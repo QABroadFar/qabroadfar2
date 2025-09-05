@@ -35,3 +35,4 @@ qa_portal.db
 # Ignore uploaded files
 public/uploads/*
 !public/uploads/.gitkeep
+dist/

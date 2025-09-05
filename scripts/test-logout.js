@@ -1,16 +1,26 @@
-
-const { db } = require("../lib/database")
+const Database = require("better-sqlite3")
+const path = require("path")
 
 async function testLogout() {
   console.log("🧪 Testing Logout Functionality...")
-
-  // Check all users in database
-  const users = db.prepare("SELECT username, role FROM users").all()
   
-  console.log("\n👥 Available users for testing:")
-  users.forEach(user => {
-    console.log(`   ✓ ${user.username} (${user.role})`)
-  })
+  try {
+    // Connect directly to the database
+    const dbPath = path.join(process.cwd(), "qa_portal.db")
+    const db = new Database(dbPath)
+    
+    // Check all users in database
+    const users = db.prepare("SELECT username, role FROM users").all()
+    
+    console.log("\n👥 Available users for testing:")
+    users.forEach(user => {
+      console.log(`   ✓ ${user.username} (${user.role})`)
+    })
+    
+    db.close()
+  } catch (error) {
+    console.error("❌ Error accessing database:", error.message)
+  }
 
   console.log("\n🔄 Test Steps:")
   console.log("1. Login dengan salah satu user")

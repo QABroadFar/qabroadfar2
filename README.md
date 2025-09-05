@@ -293,6 +293,8 @@ Contains all fields needed for the complete workflow:
 - `npm start` - Start production server
 - `npm run lint` - Run ESLint
 - `npm run format` - Format code with Prettier
+- `npm run test:all` - Run all tests with custom test runner
+- `npm run test:simple` - Run basic file existence tests
 
 ### Development Guidelines
 1. Use TypeScript for type safety
