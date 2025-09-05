@@ -156,11 +156,6 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
     }
   }
 
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "N/A"
-    return formatToWIB(dateString)
-  }
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "tl_processed":
@@ -226,7 +221,7 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
                     </div>
                     <div className="text-sm text-gray-500">
                       <Clock className="h-4 w-4 inline mr-1" />
-                      Processed: {formatDate(ncp.tl_processed_at)}
+                      Processed: {formatToWIB(ncp.tl_processed_at)}
                     </div>
                   </div>
                 </CardHeader>

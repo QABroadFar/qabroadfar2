@@ -199,11 +199,6 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
     XLSX.writeFile(workbook, "pending_ncps_for_approval.xlsx");
   };
 
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "N/A"
-    return formatToWIB(dateString)
-  }
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "process_approved":
@@ -275,7 +270,7 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                     </div>
                     <div className="text-sm text-gray-500">
                       <Clock className="h-4 w-4 inline mr-1" />
-                      Process Approved: {formatDate(ncp.process_approved_at)}
+                      Process Approved: {formatToWIB(ncp.process_approved_at)}
                     </div>
                   </div>
                 </CardHeader>

@@ -172,8 +172,6 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
     }
   }
 
-  const formatDate = (dateString: string) => {
-    return formatToWIB(dateString)
   }
 
   if (isLoading) {
@@ -230,7 +228,7 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
                     </div>
                     <div className="text-sm text-gray-500">
                       <Clock className="h-4 w-4 inline mr-1" />
-                      {formatDate(ncp.submitted_at)}
+                      {formatToWIB(ncp.submitted_at)}
                     </div>
                   </div>
                 </CardHeader>

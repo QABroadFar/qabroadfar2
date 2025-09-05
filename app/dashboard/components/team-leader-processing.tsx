@@ -134,11 +134,6 @@ export function TeamLeaderProcessing({ onBack, userInfo }: TeamLeaderProcessingP
     }
   }
 
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "N/A"
-    return formatToWIB(dateString)
-  }
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "qa_approved":
@@ -202,7 +197,7 @@ export function TeamLeaderProcessing({ onBack, userInfo }: TeamLeaderProcessingP
                       </Badge>
                       {getStatusBadge(ncp.status)}
                     </div>
-                    <div className="text-sm text-gray-500">Approved: {formatDate(ncp.qa_approved_at)}</div>
+                    <div className="text-sm text-gray-500">Approved: {formatToWIB(ncp.qa_approved_at)}</div>
                   </div>
                 </CardHeader>
 
@@ -324,7 +319,7 @@ export function TeamLeaderProcessing({ onBack, userInfo }: TeamLeaderProcessingP
                   {ncp.status === "tl_processed" && (
                     <div className="p-4 bg-green-50/50 rounded-lg border border-green-200/50">
                       <div className="text-sm font-medium text-green-700 mb-2">
-                        ✅ Processed on {formatDate(ncp.tl_processed_at)}
+                        ✅ Processed on {formatToWIB(ncp.tl_processed_at)}
                       </div>
                       <div className="text-sm text-gray-600">
                         This NCP has been processed and forwarded to Process Lead for final review.
