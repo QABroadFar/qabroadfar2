@@ -38,6 +38,14 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
     {id: 3, username: "teamlead3", full_name: "Team Leader 3"}
   ])
   const [isLoadingTeamLeaders, setIsLoadingTeamLeaders] = useState(false)
+  const [approvalData, setApprovalData] = useState({
+    disposisi: "",
+    jumlahSortir: "",
+    jumlahRelease: "",
+    jumlahReject: "",
+    assignedTeamLeader: "",
+  })
+  const [rejectionReason, setRejectionReason] = useState("")
 
   // Load Team Leaders from localStorage if available
   useEffect(() => {
