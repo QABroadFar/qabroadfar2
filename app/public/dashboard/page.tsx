@@ -178,8 +178,8 @@ export default function PublicDashboard() {
 
   const router = useRouter()
 
-  const handleBackToLogin = () => {
-    router.push("/login")
+  const handleBackToHome = () => {
+    router.push("/")
   }
 
   return (
@@ -193,12 +193,12 @@ export default function PublicDashboard() {
               <p className="text-gray-600 mt-2">View all Non-Conformance Product reports in real-time</p>
             </div>
             <Button 
-              onClick={handleBackToLogin}
+              onClick={handleBackToHome}
               variant="outline"
               className="flex items-center gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back to Login
+              Back to Home
             </Button>
           </div>
         </div>
