@@ -128,8 +128,11 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
       }
     }
 
-    fetchUsersByRole("qa_leader")
-    fetchUsersByRole("team_leader")
+    // Only fetch users if not public user
+    if (userInfo.role !== "public") {
+      fetchUsersByRole("qa_leader")
+      fetchUsersByRole("team_leader")
+    }
   }, [])
 
   useEffect(() => {
@@ -144,6 +147,8 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
       let apiUrl = "/api/dashboard/ncps"
       if (userInfo.role === "super_admin") {
         apiUrl = "/api/ncp/list"
+      } else if (userInfo.role === "public") {
+        apiUrl = "/api/public/ncps"
       }
       
       const response = await fetch(apiUrl)
@@ -499,40 +504,40 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <div className="flex justify-between items-center">
-              <div>
-                <DialogTitle className="text-2xl font-bold text-gray-800">
-                  NCP Details: {selectedNCP?.ncp_id}
-                </DialogTitle>
-                <DialogDescription>
-                  Complete information for Non-Conformance Product report
-                </DialogDescription>
+                <div>
+                  <DialogTitle className="text-2xl font-bold text-gray-800">
+                    NCP Details: {selectedNCP?.ncp_id}
+                  </DialogTitle>
+                  <DialogDescription>
+                    Complete information for Non-Conformance Product report
+                  </DialogDescription>
+                </div>
+                <div className="flex gap-2">
+                  {userInfo.role === 'super_admin' && !isEditing && (
+                    <>
+                      <Button onClick={() => setShowRevertDialog(true)} variant="outline">Revert Status</Button>
+                      <Button onClick={() => setShowReassignDialog(true)} variant="outline">Reassign</Button>
+                      <Button onClick={() => setIsEditing(true)}>Edit</Button>
+                      <Button 
+                        onClick={() => {
+                          if (confirm("Are you sure you want to permanently delete this NCP report? This action cannot be undone.")) {
+                            handleDeleteNCP(selectedNCP!.id)
+                          }
+                        }} 
+                        variant="destructive"
+                      >
+                        Delete
+                      </Button>
+                    </>
+                  )}
+                  {isEditing && userInfo.role !== 'public' && (
+                    <div className="flex gap-2">
+                      <Button onClick={handleSaveChanges}>Save</Button>
+                      <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex gap-2">
-                {userInfo.role === 'super_admin' && !isEditing && (
-                  <>
-                    <Button onClick={() => setShowRevertDialog(true)} variant="outline">Revert Status</Button>
-                    <Button onClick={() => setShowReassignDialog(true)} variant="outline">Reassign</Button>
-                    <Button onClick={() => setIsEditing(true)}>Edit</Button>
-                    <Button 
-                      onClick={() => {
-                        if (confirm("Are you sure you want to permanently delete this NCP report? This action cannot be undone.")) {
-                          handleDeleteNCP(selectedNCP!.id)
-                        }
-                      }} 
-                      variant="destructive"
-                    >
-                      Delete
-                    </Button>
-                  </>
-                )}
-                {isEditing && (
-                  <div className="flex gap-2">
-                    <Button onClick={handleSaveChanges}>Save</Button>
-                    <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
-                  </div>
-                )}
-              </div>
-            </div>
           </DialogHeader>
 
           {selectedNCP && (

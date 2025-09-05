@@ -23,12 +23,13 @@ Last Updated: September 2, 2025
 ## Features
 
 ### Core Functionality
-- **Multi-role User Management**: 7 distinct roles with role-based access control
+- **Multi-role User Management**: 8 distinct roles with role-based access control
 - **Complete NCP Workflow**: End-to-end process from submission to final approval
 - **Real-time Notifications**: Keep users informed of status changes
 - **Comprehensive Reporting**: Detailed analytics and reporting capabilities
 - **Audit Trail**: Complete history of all system changes
 - **System Administration**: Full system configuration and management
+- **Public Access**: Read-only view of all NCP reports without authentication
 
 ### User Roles
 1. **QA User**: Submit NCP reports
@@ -38,6 +39,7 @@ Last Updated: September 2, 2025
 5. **QA Manager**: Final approval
 6. **Admin**: System administration
 7. **Super Admin**: Full system access and configuration
+8. **Public**: Read-only access to all NCP reports without authentication
 
 ### Workflow Process
 1. **Submission**: QA User submits NCP report
@@ -54,6 +56,15 @@ Last Updated: September 2, 2025
 - **System Settings Management**: Manage SKU codes and descriptions; manage manufacturing machines; manage units of measure (UOM); configure NCP numbering format; set auto-reset settings
 - **System Monitoring**: Comprehensive audit logs; system event logging; API key management; analytics dashboard with visualizations
 - **Database Management**: Backup and restore functionality; data integrity monitoring
+
+### Public Access Feature
+- **No Authentication Required**: Access NCP data without login
+- **Read-Only Dashboard**: View all NCP reports with filtering capabilities
+- **Data Visualization**: Charts showing NCP statistics by machine and status
+- **Detailed Reports**: View complete NCP report details
+- **Filtering Options**: Filter by machine code, SKU code, and date range
+
+For detailed information about the public access feature, see [Public Access Feature Documentation](PUBLIC_ACCESS_FEATURE.md).
 
 ## Technology Stack
 
@@ -234,6 +245,7 @@ qabroadfar2/
 ### Dashboard
 - `GET /api/dashboard/stats` - Get dashboard statistics
 - `GET /api/dashboard/ncps` - Get dashboard NCPs
+- `GET /api/public/ncps` - Get all NCPs for public access (no authentication required)
 
 ## Database Schema
 
@@ -270,20 +282,20 @@ Contains all fields needed for the complete workflow:
 
 ## User Roles and Permissions
 
-| Feature | User | QA Leader | Team Leader | Process Lead | QA Manager | Admin | Super Admin |
-|---------|------|-----------|-------------|--------------|------------|-------|-------------|
-| Submit NCP | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| View Own NCPs | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| View All NCPs |  |  |  |  |  | ✓ | ✓ |
-| QA Approval |  | ✓ |  |  |  | ✓ | ✓ |
-| RCA Processing |  |  | ✓ |  |  | ✓ | ✓ |
-| Process Review |  |  |  | ✓ |  | ✓ | ✓ |
-| Final Approval |  |  |  |  | ✓ | ✓ | ✓ |
-| User Management |  |  |  |  |  | ✓ | ✓ |
-| System Settings |  |  |  |  |  | ✓ | ✓ |
-| Audit Logs |  |  |  |  |  | ✓ | ✓ |
-| Delete NCPs |  |  |  |  |  |  | ✓ |
-| Workflow Intervention |  |  |  |  |  |  | ✓ |
+| Feature | User | QA Leader | Team Leader | Process Lead | QA Manager | Admin | Super Admin | Public |
+|---------|------|-----------|-------------|--------------|------------|-------|-------------|--------|
+| Submit NCP | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |  |
+| View Own NCPs | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |  |
+| View All NCPs |  |  |  |  |  | ✓ | ✓ | ✓ |
+| QA Approval |  | ✓ |  |  |  | ✓ | ✓ |  |
+| RCA Processing |  |  | ✓ |  |  | ✓ | ✓ |  |
+| Process Review |  |  |  | ✓ |  | ✓ | ✓ |  |
+| Final Approval |  |  |  |  | ✓ | ✓ | ✓ |  |
+| User Management |  |  |  |  |  | ✓ | ✓ |  |
+| System Settings |  |  |  |  |  | ✓ | ✓ |  |
+| Audit Logs |  |  |  |  |  | ✓ | ✓ |  |
+| Delete NCPs |  |  |  |  |  |  | ✓ |  |
+| Workflow Intervention |  |  |  |  |  |  | ✓ |  |
 
 ## Development
 

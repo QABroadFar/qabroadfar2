@@ -1,9 +1,18 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
+  const router = useRouter()
+
+  const handlePublicAccess = () => {
+    router.push("/public/dashboard")
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -41,6 +50,24 @@ export default function LoginPage() {
             >
               Login
             </Button>
+            
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">Or</span>
+              </div>
+            </div>
+            
+            <Button
+              onClick={handlePublicAccess}
+              variant="outline"
+              className="w-full h-12 border-gray-300 text-gray-700 font-medium text-base transition-colors hover:bg-gray-50"
+            >
+              View Public Dashboard
+            </Button>
+            
             <div className="text-center">
               <a href="#" className="text-sm text-blue-600 hover:text-blue-800 transition-colors">
                 Lupa password?

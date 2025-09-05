@@ -5,7 +5,7 @@ import { jwtVerify } from "jose"
 const secret = new TextEncoder().encode(process.env.JWT_SECRET || "your-secret-key")
 
 // List of paths that don't require authentication
-const publicPaths = ["/login", "/api/auth/login", "/api/auth/logout"]
+const publicPaths = ["/login", "/api/auth/login", "/api/auth/logout", "/public"]
 
 // Function to verify JWT token
 async function verifyToken(token: string) {
@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Allow access to public paths
-  if (publicPaths.includes(pathname)) {
+  if (publicPaths.includes(pathname) || pathname.startsWith("/public")) {
     return NextResponse.next()
   }
 
@@ -69,6 +69,7 @@ export const config = {
     "/superadmin/:path*",
     "/login",
     "/api/auth/login",
-    "/api/auth/logout"
+    "/api/auth/logout",
+    "/public/:path*"
   ],
 }
