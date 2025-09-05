@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { motion } from "framer-motion"
 import { Shield, Eye, Users, BarChart3, Zap, Globe } from "lucide-react"
 
 export default function HomePage() {
@@ -65,30 +64,16 @@ export default function HomePage() {
         </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-4xl z-10"
-      >
-        <motion.div
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
-        >
+      <div className="w-full max-w-4xl z-10 animate-fade-in-up">
+        <div className="animate-scale-in">
           <Card className="bg-white/10 backdrop-blur-xl border-0 rounded-3xl overflow-hidden shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0 pointer-events-none"></div>
             <CardHeader className="space-y-6 pb-6 pt-10 text-center relative">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="flex justify-center"
-              >
-                <div className="p-5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-xl">
+              <div className="flex justify-center animate-fade-in-scale">
+                <div className="p-5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-xl animate-scale-in">
                   <Shield className="h-16 w-16 text-white" />
                 </div>
-              </motion.div>
+              </div>
               <CardTitle className="text-4xl md:text-5xl font-bold text-white">
                 Quality Assurance Portal
               </CardTitle>
@@ -100,13 +85,8 @@ export default function HomePage() {
               </p>
             </CardHeader>
             <CardContent className="space-y-8 px-8 pb-10">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-                className="grid grid-cols-1 md:grid-cols-3 gap-6"
-              >
-                <Card className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in-up delay-200">
+                <Card className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-1">
                   <div className="flex flex-col items-center text-center space-y-3">
                     <div className="p-3 bg-blue-500/20 rounded-xl">
                       <Users className="h-8 w-8 text-blue-400" />
@@ -118,7 +98,7 @@ export default function HomePage() {
                   </div>
                 </Card>
                 
-                <Card className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300">
+                <Card className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-1">
                   <div className="flex flex-col items-center text-center space-y-3">
                     <div className="p-3 bg-purple-500/20 rounded-xl">
                       <BarChart3 className="h-8 w-8 text-purple-400" />
@@ -130,7 +110,7 @@ export default function HomePage() {
                   </div>
                 </Card>
                 
-                <Card className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300">
+                <Card className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-1">
                   <div className="flex flex-col items-center text-center space-y-3">
                     <div className="p-3 bg-indigo-500/20 rounded-xl">
                       <Zap className="h-8 w-8 text-indigo-400" />
@@ -141,15 +121,10 @@ export default function HomePage() {
                     </p>
                   </div>
                 </Card>
-              </motion.div>
+              </div>
               
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
-                className="grid grid-cols-1 md:grid-cols-2 gap-4"
-              >
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in-up delay-300">
+                <div className="transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
                   <Button 
                     onClick={handleLogin}
                     className="w-full h-16 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white text-lg font-semibold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -157,9 +132,9 @@ export default function HomePage() {
                     <Shield className="mr-3 h-6 w-6" />
                     Login to Your Account
                   </Button>
-                </motion.div>
+                </div>
                 
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <div className="transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
                   <Button
                     onClick={handlePublicAccess}
                     variant="outline"
@@ -168,30 +143,20 @@ export default function HomePage() {
                     <Eye className="mr-3 h-6 w-6 text-blue-300" />
                     View Public Dashboard
                   </Button>
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
               
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 1.0 }}
-                className="text-center text-blue-300/70 text-sm"
-              >
+              <div className="text-center text-blue-300/70 text-sm animate-fade-in delay-500">
                 <p>For authorized users only. Public access is read-only.</p>
-              </motion.div>
+              </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
         
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 1.2 }}
-          className="text-center text-blue-300/70 text-sm mt-8"
-        >
+        <div className="text-center text-blue-300/70 text-sm mt-8 animate-fade-in">
           <p>© 2025 Quality Assurance Portal. All rights reserved.</p>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   )
 }

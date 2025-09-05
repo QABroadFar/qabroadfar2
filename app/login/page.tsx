@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertCircle, Loader2, Shield, Lock, Eye, EyeOff } from "lucide-react"
-import { motion } from "framer-motion"
 
 export default function LoginPage() {
   const [error, setError] = useState("")
@@ -68,30 +67,16 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md z-10"
-      >
-        <motion.div
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
-        >
+      <div className="w-full max-w-md z-10 animate-fade-in-up">
+        <div className="animate-scale-in">
           <Card className="shadow-2xl border-0 bg-white/10 backdrop-blur-xl rounded-2xl overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0 pointer-events-none"></div>
             <CardHeader className="space-y-1 pb-8 pt-8 relative">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="flex justify-center mb-4"
-              >
-                <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg">
+              <div className="flex justify-center mb-4 animate-fade-in">
+                <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg animate-scale-in">
                   <Shield className="h-10 w-10 text-white" />
                 </div>
-              </motion.div>
+              </div>
               <CardTitle className="text-3xl font-bold text-center text-white">
                 Quality Assurance Portal
               </CardTitle>
@@ -104,15 +89,10 @@ export default function LoginPage() {
             </CardHeader>
             <CardContent className="space-y-6 px-8 pb-8">
               {error && (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex items-center space-x-2 text-red-300 bg-red-900/30 p-3 rounded-lg border border-red-500/30"
-                >
+                <div className="flex items-center space-x-2 text-red-300 bg-red-900/30 p-3 rounded-lg border border-red-500/30 animate-fade-in-left">
                   <AlertCircle className="h-5 w-5 flex-shrink-0" />
                   <span className="text-sm">{error}</span>
-                </motion.div>
+                </div>
               )}
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
@@ -120,11 +100,7 @@ export default function LoginPage() {
                     Username
                   </Label>
                   <div className="relative">
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileFocusWithin={{ scale: 1.02 }}
-                      className="transition-all duration-300"
-                    >
+                    <div className="transition-all duration-300 hover:scale-[1.02] focus-within:scale-[1.02]">
                       <Input
                         id="username"
                         name="username"
@@ -139,7 +115,7 @@ export default function LoginPage() {
                           <div className="h-4 w-4 bg-blue-400 rounded-full"></div>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -147,11 +123,7 @@ export default function LoginPage() {
                     Password
                   </Label>
                   <div className="relative">
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileFocusWithin={{ scale: 1.02 }}
-                      className="transition-all duration-300"
-                    >
+                    <div className="transition-all duration-300 hover:scale-[1.02] focus-within:scale-[1.02]">
                       <Input
                         id="password"
                         name="password"
@@ -177,10 +149,10 @@ export default function LoginPage() {
                           <Eye className="h-5 w-5" />
                         )}
                       </button>
-                    </motion.div>
+                    </div>
                   </div>
                 </div>
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <div className="transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
                   <Button
                     type="submit"
                     className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-semibold text-lg transition-all duration-300 rounded-xl shadow-lg hover:shadow-xl"
@@ -195,7 +167,7 @@ export default function LoginPage() {
                       "Secure Login"
                     )}
                   </Button>
-                </motion.div>
+                </div>
               </form>
               
               <div className="relative my-6">
@@ -207,7 +179,7 @@ export default function LoginPage() {
                 </div>
               </div>
               
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <div className="transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
                 <Button
                   onClick={handlePublicAccess}
                   variant="outline"
@@ -216,20 +188,15 @@ export default function LoginPage() {
                   <Shield className="mr-2 h-5 w-5 text-blue-300" />
                   Public Dashboard Access
                 </Button>
-              </motion.div>
+              </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
         
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.8 }}
-          className="text-center text-blue-300/70 text-sm mt-6"
-        >
+        <div className="text-center text-blue-300/70 text-sm mt-6 animate-fade-in">
           <p>© 2025 Quality Assurance Portal. All rights reserved.</p>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   )
 }
