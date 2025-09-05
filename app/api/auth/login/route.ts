@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { authenticateUser, logSystemEvent } from "@/lib/database"
+import { authenticateUser, logSystemEvent, getUserByUsername } from "@/lib/database"
 import { SignJWT } from "jose"
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET || "your-secret-key")
@@ -12,11 +12,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Username and password are required" }, { status: 400 })
     }
 
+    // Check if user exists first
+    const existingUser = getUserByUsername(username)
+    if (!existingUser) {
+      logSystemEvent("warn", "Failed login attempt - user not found", { username })
+      return NextResponse.json({ error: "Username not found" }, { status: 401 })
+    }
+
+    // Check if user is active
+    if (!existingUser.is_active) {
+      logSystemEvent("warn", "Failed login attempt - user inactive", { username })
+      return NextResponse.json({ error: "Account is deactivated. Please contact administrator." }, { status: 401 })
+    }
+
     const user = await authenticateUser(username, password)
 
     if (!user) {
-      logSystemEvent("warn", "Failed login attempt", { username })
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
+      logSystemEvent("warn", "Failed login attempt - invalid password", { username })
+      return NextResponse.json({ error: "Invalid password" }, { status: 401 })
     }
 
     // Create JWT token

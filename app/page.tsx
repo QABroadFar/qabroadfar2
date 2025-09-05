@@ -59,9 +59,25 @@ export default function LoginPage() {
         }
       } else {
         const errorData = await response.json()
+        
+        // Provide more specific error messages
+        let errorMessage = errorData.error || "Login failed"
+        
+        if (errorData.error === "Username not found") {
+          errorMessage = "Username not found. Please check your username."
+        } else if (errorData.error === "Invalid password") {
+          errorMessage = "Invalid password. Please check your password."
+        } else if (errorData.error === "Account is deactivated. Please contact administrator.") {
+          errorMessage = "Account is deactivated. Please contact administrator."
+        } else if (response.status === 400) {
+          errorMessage = "Please enter both username and password."
+        } else if (response.status === 500) {
+          errorMessage = "Server error. Please try again later."
+        }
+        
         toast({
-          title: "Error",
-          description: errorData.error || "Login failed",
+          title: "Login Failed",
+          description: errorMessage,
           variant: "destructive",
         })
       }

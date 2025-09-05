@@ -217,7 +217,7 @@ export async function authenticateUser(username: string, password: string) {
 
 // Get user by username
 export function getUserByUsername(username: string) {
-  return db.prepare("SELECT id, username, role, full_name FROM users WHERE username = ?").get(username)
+  return db.prepare("SELECT id, username, role, full_name, is_active FROM users WHERE username = ?").get(username)
 }
 
 export function getAllUsers() {
