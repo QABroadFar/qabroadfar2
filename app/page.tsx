@@ -155,6 +155,7 @@ export default function HomePage() {
         
         <div className="text-center text-blue-300/70 text-sm mt-8 animate-fade-in">
           <p>© 2025 Quality Assurance Portal. All rights reserved.</p>
+          <p className="mt-1">Developed by Hersandi H. Pratama</p>
         </div>
       </div>
     </div>
