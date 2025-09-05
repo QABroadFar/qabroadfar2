@@ -1,9 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { DatabaseNCP } from "@/app/dashboard/components/database-ncp"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
+import { ArrowLeft } from "lucide-react"
 
 interface NCPReport {
   id: number
@@ -173,13 +176,31 @@ export default function PublicDashboard() {
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8']
 
+  const router = useRouter()
+
+  const handleBackToLogin = () => {
+    router.push("/login")
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-800">Public NCP Dashboard</h1>
-          <p className="text-gray-600 mt-2">View all Non-Conformance Product reports in real-time</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-800">Public NCP Dashboard</h1>
+              <p className="text-gray-600 mt-2">View all Non-Conformance Product reports in real-time</p>
+            </div>
+            <Button 
+              onClick={handleBackToLogin}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Login
+            </Button>
+          </div>
         </div>
 
         {/* Stats Overview */}
