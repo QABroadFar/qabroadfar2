@@ -6,7 +6,7 @@ import { DatabaseNCP } from "@/app/dashboard/components/database-ncp"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Filter, Search, Database, BarChart3, PieChartIcon, Eye } from "lucide-react"
 
 interface NCPReport {
   id: number
@@ -68,12 +68,19 @@ export default function PublicDashboard() {
   const [chartData, setChartData] = useState<any[]>([])
   const [statusData, setStatusData] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState<"overview" | "database">("overview")
 
   // Mock user info for public access
   const userInfo = {
     id: 0,
     username: "public",
     role: "public"
+  }
+
+  const router = useRouter()
+
+  const handleBackToHome = () => {
+    router.push("/")
   }
 
   useEffect(() => {
@@ -174,219 +181,285 @@ export default function PublicDashboard() {
     })
   }
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8']
-
-  const router = useRouter()
-
-  const handleBackToHome = () => {
-    router.push("/")
-  }
+  const COLORS = ['#3b82f6', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899']
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 p-4 md:p-6">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%]">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse delay-500"></div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto z-10 relative">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
+        <div className="mb-8 animate-fade-in-down">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-bold text-gray-800">Public NCP Dashboard</h1>
-              <p className="text-gray-600 mt-2">View all Non-Conformance Product reports in real-time</p>
+              <h1 className="text-3xl md:text-4xl font-bold text-white">Public NCP Dashboard</h1>
+              <p className="text-blue-200 mt-2">View all Non-Conformance Product reports in real-time</p>
             </div>
-            <Button 
-              onClick={handleBackToHome}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Home
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button 
+                onClick={handleBackToHome}
+                variant="outline"
+                className="flex items-center gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-300"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Home
+              </Button>
+            </div>
           </div>
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fade-in-up">
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
             <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="rounded-full bg-blue-100 p-3 mr-4">
-                  <BarChart className="h-6 w-6 text-blue-600" />
-                </div>
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total NCPs</p>
-                  <p className="text-2xl font-bold text-gray-800">{filteredNCPs.length}</p>
+                  <p className="text-sm text-blue-200">Total NCPs</p>
+                  <p className="text-3xl font-bold text-white mt-1">{filteredNCPs.length}</p>
+                </div>
+                <div className="p-3 bg-blue-500/20 rounded-xl">
+                  <Database className="h-8 w-8 text-blue-400" />
                 </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
             <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="rounded-full bg-green-100 p-3 mr-4">
-                  <BarChart className="h-6 w-6 text-green-600" />
-                </div>
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Machines</p>
-                  <p className="text-2xl font-bold text-gray-800">{machines.length}</p>
+                  <p className="text-sm text-blue-200">Machines</p>
+                  <p className="text-3xl font-bold text-white mt-1">{machines.length}</p>
+                </div>
+                <div className="p-3 bg-purple-500/20 rounded-xl">
+                  <BarChart3 className="h-8 w-8 text-purple-400" />
                 </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
             <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="rounded-full bg-purple-100 p-3 mr-4">
-                  <BarChart className="h-6 w-6 text-purple-600" />
-                </div>
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">SKU Codes</p>
-                  <p className="text-2xl font-bold text-gray-800">{skuCodes.length}</p>
+                  <p className="text-sm text-blue-200">SKU Codes</p>
+                  <p className="text-3xl font-bold text-white mt-1">{skuCodes.length}</p>
+                </div>
+                <div className="p-3 bg-indigo-500/20 rounded-xl">
+                  <PieChartIcon className="h-8 w-8 text-indigo-400" />
                 </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
             <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="rounded-full bg-orange-100 p-3 mr-4">
-                  <BarChart className="h-6 w-6 text-orange-600" />
-                </div>
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Status Types</p>
-                  <p className="text-2xl font-bold text-gray-800">{statusData.length}</p>
+                  <p className="text-sm text-blue-200">Status Types</p>
+                  <p className="text-3xl font-bold text-white mt-1">{statusData.length}</p>
+                </div>
+                <div className="p-3 bg-cyan-500/20 rounded-xl">
+                  <Eye className="h-8 w-8 text-cyan-400" />
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Filters */}
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg mb-8">
-          <CardHeader>
-            <CardTitle className="text-xl">Filter NCP Reports</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Machine Code</label>
-                <select
-                  value={filters.machineCode}
-                  onChange={(e) => handleFilterChange('machineCode', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">All Machines</option>
-                  {machines.map(machine => (
-                    <option key={machine} value={machine}>{machine}</option>
-                  ))}
-                </select>
-              </div>
+        {/* Tabs */}
+        <div className="flex space-x-1 bg-white/10 p-1 rounded-xl mb-8 animate-fade-in-up delay-100">
+          <button
+            onClick={() => setActiveTab("overview")}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all duration-300 ${
+              activeTab === "overview"
+                ? "bg-white/20 text-white shadow-lg"
+                : "text-blue-200 hover:text-white hover:bg-white/10"
+            }`}
+          >
+            <BarChart3 className="h-5 w-5" />
+            <span className="font-medium">Overview</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("database")}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all duration-300 ${
+              activeTab === "database"
+                ? "bg-white/20 text-white shadow-lg"
+                : "text-blue-200 hover:text-white hover:bg-white/10"
+            }`}
+          >
+            <Database className="h-5 w-5" />
+            <span className="font-medium">Database</span>
+          </button>
+        </div>
+
+        {activeTab === "overview" ? (
+          <>
+            {/* Filters */}
+            <Card className="bg-white/10 backdrop-blur-xl border-white/20 rounded-2xl shadow-xl mb-8 animate-fade-in-up delay-200">
+              <CardHeader>
+                <CardTitle className="text-xl text-white flex items-center gap-2">
+                  <Filter className="h-5 w-5" />
+                  Filter NCP Reports
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-blue-200 mb-2">Machine Code</label>
+                    <select
+                      value={filters.machineCode}
+                      onChange={(e) => handleFilterChange('machineCode', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-blue-200/70 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/30 transition-all duration-300"
+                    >
+                      <option value="">All Machines</option>
+                      {machines.map(machine => (
+                        <option key={machine} value={machine} className="bg-gray-800">{machine}</option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-blue-200 mb-2">SKU Code</label>
+                    <select
+                      value={filters.skuCode}
+                      onChange={(e) => handleFilterChange('skuCode', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-blue-200/70 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/30 transition-all duration-300"
+                    >
+                      <option value="">All SKUs</option>
+                      {skuCodes.map(sku => (
+                        <option key={sku} value={sku} className="bg-gray-800">{sku}</option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-blue-200 mb-2">Start Date</label>
+                    <input
+                      type="date"
+                      value={filters.startDate}
+                      onChange={(e) => handleFilterChange('startDate', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:border-blue-400 focus:ring-2 focus:ring-blue-400/30 transition-all duration-300"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-blue-200 mb-2">End Date</label>
+                    <input
+                      type="date"
+                      value={filters.endDate}
+                      onChange={(e) => handleFilterChange('endDate', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:border-blue-400 focus:ring-2 focus:ring-blue-400/30 transition-all duration-300"
+                    />
+                  </div>
+                  
+                  <div className="flex items-end">
+                    <Button
+                      onClick={resetFilters}
+                      variant="outline"
+                      className="w-full px-4 py-3 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-300"
+                    >
+                      Reset Filters
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 animate-fade-in-up delay-300">
+              <Card className="bg-white/10 backdrop-blur-xl border-white/20 rounded-2xl shadow-xl">
+                <CardHeader>
+                  <CardTitle className="text-xl text-white flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5" />
+                    NCP Reports by Machine
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={chartData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                      <XAxis dataKey="machine" stroke="#94a3b8" />
+                      <YAxis stroke="#94a3b8" />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(15, 23, 42, 0.8)', 
+                          borderColor: 'rgba(255, 255, 255, 0.2)',
+                          borderRadius: '12px',
+                          backdropFilter: 'blur(10px)'
+                        }} 
+                        itemStyle={{ color: '#fff' }}
+                        labelStyle={{ color: '#3b82f6', fontWeight: 'bold' }}
+                      />
+                      <Legend />
+                      <Bar dataKey="count" name="Number of NCPs" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">SKU Code</label>
-                <select
-                  value={filters.skuCode}
-                  onChange={(e) => handleFilterChange('skuCode', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">All SKUs</option>
-                  {skuCodes.map(sku => (
-                    <option key={sku} value={sku}>{sku}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                <input
-                  type="date"
-                  value={filters.startDate}
-                  onChange={(e) => handleFilterChange('startDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-                <input
-                  type="date"
-                  value={filters.endDate}
-                  onChange={(e) => handleFilterChange('endDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              
-              <div className="flex items-end">
-                <button
-                  onClick={resetFilters}
-                  className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
-                >
-                  Reset Filters
-                </button>
-              </div>
+              <Card className="bg-white/10 backdrop-blur-xl border-white/20 rounded-2xl shadow-xl">
+                <CardHeader>
+                  <CardTitle className="text-xl text-white flex items-center gap-2">
+                    <PieChartIcon className="h-5 w-5" />
+                    NCP Reports by Status
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={statusData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {statusData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(15, 23, 42, 0.8)', 
+                          borderColor: 'rgba(255, 255, 255, 0.2)',
+                          borderRadius: '12px',
+                          backdropFilter: 'blur(10px)'
+                        }} 
+                        itemStyle={{ color: '#fff' }}
+                        labelStyle={{ color: '#3b82f6', fontWeight: 'bold' }}
+                      />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          </>
+        ) : (
+          /* Database View */
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20 rounded-2xl shadow-xl animate-fade-in-up delay-200">
             <CardHeader>
-              <CardTitle>NCP Reports by Machine</CardTitle>
+              <CardTitle className="text-xl text-white flex items-center gap-2">
+                <Database className="h-5 w-5" />
+                NCP Database
+              </CardTitle>
             </CardHeader>
-            <CardContent className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="machine" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="count" name="Number of NCPs" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
+            <CardContent>
+              <DatabaseNCP userInfo={userInfo} />
             </CardContent>
           </Card>
-          
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle>NCP Reports by Status</CardTitle>
-            </CardHeader>
-            <CardContent className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={statusData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                  >
-                    {statusData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* NCP Database Table */}
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle>NCP Database</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <DatabaseNCP userInfo={userInfo} />
-          </CardContent>
-        </Card>
+        )}
       </div>
     </div>
   )
