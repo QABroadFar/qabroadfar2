@@ -367,13 +367,13 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
                         {/* Display actual image */}
                         <div className="relative w-full max-w-md h-48 bg-gray-100 rounded-lg overflow-hidden border">
                           <img
-                            src={ncp.photo_attachment || "/placeholder.svg"}
+                            src={`/api/ncp/image?filename=${encodeURIComponent(ncp.photo_attachment)}` || "/placeholder.svg"}
                             alt="NCP Photo Attachment"
                             className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
                             onError={(e) => {
                               e.currentTarget.src = "/placeholder.svg?height=200&width=300&text=Image+Not+Found"
                             }}
-                            onClick={() => window.open(ncp.photo_attachment, "_blank")}
+                            onClick={() => window.open(`/api/ncp/image?filename=${encodeURIComponent(ncp.photo_attachment)}`, "_blank")}
                           />
                         </div>
                         <p className="text-xs text-gray-500">Click image to view full size</p>
