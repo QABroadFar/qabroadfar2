@@ -132,18 +132,7 @@ export default function LoginPage() {
               View Public Dashboard
             </Button>
             
-            <div className="text-center text-sm text-gray-500 mt-6">
-              <p className="mb-2">Akun yang tersedia:</p>
-              <div className="text-xs space-y-1">
-                <p><strong>user1</strong> / 123 (User)</p>
-                <p><strong>qaleader1</strong> / 123 (QA Leader)</p>
-                <p><strong>teamlead1</strong> / 123 (Team Leader)</p>
-                <p><strong>processlead1</strong> / 123 (Process Lead)</p>
-                <p><strong>qamanager1</strong> / 123 (QA Manager)</p>
-                <p><strong>admin</strong> / 123 (Admin)</p>
-                <p><strong>q</strong> / q (Quick Admin)</p>
-              </div>
-            </div>
+            {/* Test account information removed as per user request */}
           </CardContent>
         </Card>
       </div>
