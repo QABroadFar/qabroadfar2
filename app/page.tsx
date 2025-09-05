@@ -1,18 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { toast } from "@/hooks/use-toast"
 
-export default function LoginPage() {
+export default function HomePage() {
   const router = useRouter()
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   useEffect(() => {
     // Check if user is already logged in
@@ -21,6 +16,7 @@ export default function LoginPage() {
         const response = await fetch("/api/auth/me")
         if (response.ok) {
           const user = await response.json()
+          setIsLoggedIn(true)
           // Redirect based on user role
           if (user.role === "super_admin") {
             router.push("/superadmin/dashboard")
@@ -36,100 +32,63 @@ export default function LoginPage() {
     checkAuth()
   }, [router])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+  const handleLogin = () => {
+    router.push("/login")
+  }
 
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      })
+  const handlePublicAccess = () => {
+    router.push("/public/dashboard")
+  }
 
-      if (response.ok) {
-        const data = await response.json()
-        // Redirect based on user role
-        if (data.user.role === "super_admin") {
-          router.push("/superadmin/dashboard")
-        } else {
-          router.push("/dashboard")
-        }
-      } else {
-        const errorData = await response.json()
-        
-        // Provide more specific error messages
-        let errorMessage = errorData.error || "Login failed"
-        
-        if (errorData.error === "Username not found") {
-          errorMessage = "Username not found. Please check your username."
-        } else if (errorData.error === "Invalid password") {
-          errorMessage = "Invalid password. Please check your password."
-        } else if (errorData.error === "Account is deactivated. Please contact administrator.") {
-          errorMessage = "Account is deactivated. Please contact administrator."
-        } else if (response.status === 400) {
-          errorMessage = "Please enter both username and password."
-        } else if (response.status === 500) {
-          errorMessage = "Server error. Please try again later."
-        }
-        
-        toast({
-          title: "Login Failed",
-          description: errorMessage,
-          variant: "destructive",
-        })
-      }
-    } catch (error) {
-      console.error("Error logging in:", error)
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred. Please check your connection and try again.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
-    }
+  // If user is logged in, we'll redirect them, so we don't need to show anything
+  if (isLoggedIn) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-800">Redirecting...</h1>
+          <p className="text-gray-600 mt-2">Please wait while we redirect you to your dashboard.</p>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4">
-      <Card className="w-full max-w-md bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-xl">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Quality Assurance Portal</CardTitle>
-          <CardDescription className="text-center">
-            Enter your credentials to access your account
+      <Card className="w-full max-w-2xl bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-xl">
+        <CardHeader className="space-y-4 text-center">
+          <CardTitle className="text-3xl font-bold text-gray-800">Quality Assurance Portal</CardTitle>
+          <CardDescription className="text-lg">
+            Non-Conformance Product Management System
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="Enter your username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign In"}
+        <CardContent className="space-y-6">
+          <div className="text-center">
+            <p className="text-gray-600 mb-6">
+              Welcome to our Quality Assurance Portal. This system helps manage Non-Conformance Product (NCP) reports 
+              through a structured workflow process with multiple approval stages.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Button 
+              onClick={handleLogin}
+              className="h-14 text-lg"
+            >
+              Login to Your Account
             </Button>
-          </form>
+            
+            <Button
+              onClick={handlePublicAccess}
+              variant="outline"
+              className="h-14 text-lg border-gray-300 text-gray-700 hover:bg-gray-50"
+            >
+              View Public Dashboard
+            </Button>
+          </div>
+          
+          <div className="text-center text-sm text-gray-500 mt-8">
+            <p>For authorized users only. Public access is read-only.</p>
+          </div>
         </CardContent>
       </Card>
     </div>
