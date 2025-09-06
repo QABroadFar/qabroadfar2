@@ -13,7 +13,6 @@ import {
   Package, User, Calendar, BarChart3, PieChartIcon 
 } from "lucide-react"
 import { formatToWIB, formatDateOnlyWIB, formatSubmissionDate } from "@/lib/date-utils"
-import { SuperAdminDashboard } from "./super-admin-dashboard"
 
 interface DashboardStats {
   total: number
@@ -248,6 +247,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
                       <div className="flex items-center gap-2">
                         {getStatusBadge(ncp.status)}
                       </div>
+                    </div>
                   ))}
                 </div>
               ) : (
@@ -647,10 +647,6 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
   }
 
   const renderAdminDashboard = () => {
-    if (userInfo.role === "super_admin") {
-      return <SuperAdminDashboard />
-    }
-    
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6">

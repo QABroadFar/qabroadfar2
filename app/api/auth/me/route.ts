@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get full user details
-    const userDetails: any = getUserByUsername(user.username)
+    const userDetails: any = await getUserByUsername(user.username)
 
     return NextResponse.json({
       success: true,

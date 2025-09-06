@@ -5,7 +5,9 @@ const secret = new TextEncoder().encode(process.env.JWT_SECRET || "your-secret-k
 
 export async function verifyAuth(request: NextRequest) {
   try {
-    const token = request.cookies.get("auth-token")?.value
+    // Get token from cookies using a more compatible approach
+    const tokenCookie = request.cookies.get("auth-token")
+    const token = tokenCookie?.value
 
     if (!token) {
       return null

@@ -29,8 +29,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Get the auth token from cookies
-  const token = request.cookies.get("auth-token")?.value
+  // Get the auth token from cookies using a more compatible approach
+  const tokenCookie = request.cookies.get("auth-token")
+  const token = tokenCookie?.value
 
   // If no token and not a public path, redirect to login
   if (!token) {
