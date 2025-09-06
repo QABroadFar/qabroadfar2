@@ -190,30 +190,30 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
   }
 
   return (
-    <div className="p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen">
+    <div className="p-6 gradient-bg min-h-screen">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
-          <Button variant="ghost" onClick={onBack} className="text-gray-600 hover:text-gray-900 p-0 h-auto">
+          <Button variant="ghost" onClick={onBack} className="text-blue-200 hover:text-blue-50 p-0 h-auto glass-panel">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
         </div>
 
-        <Card className="bg-white/90 backdrop-blur-md border-0 shadow-2xl ring-1 ring-gray-200/50">
-          <CardHeader className="pb-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg">
-            <CardTitle className="text-3xl font-bold text-center">NCP Input Form</CardTitle>
-            <p className="text-center text-blue-100 mt-2">Non-Conformance Product Report</p>
+        <Card className="glass-card">
+          <CardHeader className="pb-8 bg-gradient-to-r from-blue-900/50 to-cyan-900/50 text-blue-100 rounded-t-lg border-b border-cyan-500/20">
+            <CardTitle className="text-3xl font-bold text-center futuristic-heading">NCP Input Form</CardTitle>
+            <p className="text-center text-blue-200 mt-2">Non-Conformance Product Report</p>
           </CardHeader>
 
           <CardContent className="p-8 space-y-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Left Column */}
-              <div className="space-y-6 bg-white/50 p-6 rounded-xl border border-gray-200/50">
-                <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">Basic Information</h3>
+              <div className="space-y-6 glass-panel p-6 rounded-xl">
+                <h3 className="text-lg font-semibold futuristic-subheading border-b border-cyan-500/20 pb-2">Basic Information</h3>
 
                 {/* SKU Code */}
                 <div className="space-y-2">
-                  <Label htmlFor="skuCode" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="skuCode" className="text-sm font-medium text-blue-200">
                     SKU Code
                   </Label>
                   <Input
@@ -222,25 +222,25 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
                     placeholder="Enter SKU code"
                     value={formData.skuCode}
                     onChange={(e) => handleInputChange("skuCode", e.target.value)}
-                    className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    className="h-11 glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 text-blue-100 placeholder:text-blue-300/50"
                   />
                 </div>
 
                 {/* Machine Code */}
                 <div className="space-y-2">
-                  <Label htmlFor="machineCode" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="machineCode" className="text-sm font-medium text-blue-200">
                     Machine Code
                   </Label>
                   <Select
                     value={formData.machineCode}
                     onValueChange={(value) => handleInputChange("machineCode", value)}
                   >
-                    <SelectTrigger className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500">
-                      <SelectValue placeholder="Select machine code" />
+                    <SelectTrigger className="h-11 glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 text-blue-100">
+                      <SelectValue placeholder="Select machine code" className="text-blue-100" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="glass-panel border-cyan-500/30">
                       {machineOptions.map((option) => (
-                        <SelectItem key={option} value={option}>
+                        <SelectItem key={option} value={option} className="text-blue-100 hover:bg-cyan-500/20">
                           {option}
                         </SelectItem>
                       ))}
@@ -250,7 +250,7 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
 
                 {/* Date */}
                 <div className="space-y-2">
-                  <Label htmlFor="date" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="date" className="text-sm font-medium text-blue-200">
                     Date
                   </Label>
                   <div className="relative">
@@ -259,15 +259,15 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
                       type="date"
                       value={formData.date}
                       onChange={(e) => handleInputChange("date", e.target.value)}
-                      className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500 pl-10"
+                      className="h-11 glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 pl-10 text-blue-100"
                     />
-                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-300" />
                   </div>
                 </div>
 
                 {/* Time of Incident */}
                 <div className="space-y-2">
-                  <Label htmlFor="timeIncident" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="timeIncident" className="text-sm font-medium text-blue-200">
                     Time of Incident
                   </Label>
                   <div className="relative">
@@ -276,22 +276,22 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
                       type="time"
                       value={formData.timeIncident}
                       onChange={(e) => handleInputChange("timeIncident", e.target.value)}
-                      className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500 pl-10"
+                      className="h-11 glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 pl-10 text-blue-100"
                     />
-                    <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-300" />
                   </div>
                 </div>
               </div>
 
               {/* Right Column */}
-              <div className="space-y-6 bg-white/50 p-6 rounded-xl border border-gray-200/50">
-                <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">
+              <div className="space-y-6 glass-panel p-6 rounded-xl">
+                <h3 className="text-lg font-semibold futuristic-subheading border-b border-cyan-500/20 pb-2">
                   Details & Assignment
                 </h3>
 
                 {/* Hold Quantity with UOM */}
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">Hold Quantity</Label>
+                  <Label className="text-sm font-medium text-blue-200">Hold Quantity</Label>
                   <div className="grid grid-cols-2 gap-3">
                     <Input
                       id="holdQuantity"
@@ -299,19 +299,19 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
                       placeholder="Enter quantity"
                       value={formData.holdQuantity}
                       onChange={(e) => handleInputChange("holdQuantity", e.target.value)}
-                      className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      className="h-11 glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 text-blue-100 placeholder:text-blue-300/50"
                       min="0"
                     />
                     <Select
                       value={formData.holdQuantityUOM}
                       onValueChange={(value) => handleInputChange("holdQuantityUOM", value)}
                     >
-                      <SelectTrigger className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500">
-                        <SelectValue placeholder="Select UOM" />
+                      <SelectTrigger className="h-11 glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 text-blue-100">
+                        <SelectValue placeholder="Select UOM" className="text-blue-100" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="glass-panel border-cyan-500/30">
                         {uomOptions.map((option) => (
-                          <SelectItem key={option} value={option}>
+                          <SelectItem key={option} value={option} className="text-blue-100 hover:bg-cyan-500/20">
                             {option}
                           </SelectItem>
                         ))}
@@ -322,21 +322,21 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
 
                 {/* QA Leader */}
                 <div className="space-y-2">
-                  <Label htmlFor="qaLeader" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="qaLeader" className="text-sm font-medium text-blue-200">
                     Select QA Leader
                   </Label>
                   <Select value={formData.qaLeader} onValueChange={(value) => handleInputChange("qaLeader", value)}>
-                    <SelectTrigger className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500">
-                      <SelectValue placeholder="Select QA Leader" />
+                    <SelectTrigger className="h-11 glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 text-blue-100">
+                      <SelectValue placeholder="Select QA Leader" className="text-blue-100" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="glass-panel border-cyan-500/30">
                       {isLoadingQaLeaders ? (
-                        <SelectItem value="loading" disabled>
+                        <SelectItem value="loading" disabled className="text-blue-100">
                           Loading QA Leaders...
                         </SelectItem>
                       ) : (
                         qaLeaders.map((leader) => (
-                          <SelectItem key={leader.id} value={leader.username}>
+                          <SelectItem key={leader.id} value={leader.username} className="text-blue-100 hover:bg-cyan-500/20">
                             {leader.full_name || leader.username}
                           </SelectItem>
                         ))
@@ -347,7 +347,7 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
 
                 {/* Photo Attachment */}
                 <div className="space-y-2">
-                  <Label htmlFor="photoAttachment" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="photoAttachment" className="text-sm font-medium text-blue-200">
                     Photo Attachment
                   </Label>
                   <div className="relative">
@@ -356,15 +356,15 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
                       type="file"
                       accept="image/*"
                       onChange={handleFileChange}
-                      className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                      className="h-11 glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-cyan-900/30 file:text-blue-200 hover:file:bg-cyan-800/50 text-blue-100 placeholder:text-blue-300/50"
                     />
-                    <Upload className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                    <Upload className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-300 pointer-events-none" />
                   </div>
                   {formData.photoAttachment && (
                     <div className="mt-2">
-                      <p className="text-sm text-green-600 mb-2">Selected: {formData.photoAttachment.name}</p>
+                      <p className="text-sm text-green-400 mb-2">Selected: {formData.photoAttachment.name}</p>
                       {previewImageUrl && (
-                        <div className="relative w-full h-32 bg-gray-100 rounded-lg overflow-hidden">
+                        <div className="relative w-full h-32 glass-panel rounded-lg overflow-hidden border border-cyan-500/30">
                           <img
                             src={previewImageUrl || "/placeholder.svg"}
                             alt="Preview"
@@ -379,32 +379,32 @@ export function NCPInputForm({ onBack }: NCPInputFormProps) {
             </div>
 
             {/* Problem Description - Full Width */}
-            <div className="space-y-2 bg-white/50 p-6 rounded-xl border border-gray-200/50">
-              <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">Problem Description</h3>
+            <div className="space-y-2 glass-panel p-6 rounded-xl">
+              <h3 className="text-lg font-semibold futuristic-subheading border-b border-cyan-500/20 pb-2">Problem Description</h3>
               <Textarea
                 id="problemDescription"
                 placeholder="Describe the problem in detail..."
                 value={formData.problemDescription}
                 onChange={(e) => handleInputChange("problemDescription", e.target.value)}
-                className="min-h-32 border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none bg-white/80"
+                className="min-h-32 glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 resize-none text-blue-100 placeholder:text-blue-300/50"
                 rows={6}
               />
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200/50">
+            <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-cyan-500/20">
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleReset}
-                className="flex-1 h-12 border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 bg-transparent"
+                className="flex-1 h-12 glass-panel border-cyan-500/30 text-blue-200 hover:bg-cyan-500/20 hover:text-blue-50"
               >
                 Reset
               </Button>
               <Button
                 type="button"
                 onClick={handlePreview}
-                className="flex-1 h-12 bg-blue-600 hover:bg-blue-700 text-white"
+                className="flex-1 h-12 bg-gradient-to-r from-cyan-700 to-blue-700 hover:from-cyan-600 hover:to-blue-600 text-white"
               >
                 <Eye className="h-4 w-4 mr-2" />
                 Preview

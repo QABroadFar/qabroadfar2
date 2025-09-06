@@ -183,30 +183,30 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
 
   if (isLoading) {
     return (
-      <div className="p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen">
+      <div className="p-6 gradient-bg min-h-screen">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-          <span className="ml-2 text-gray-600">Loading pending NCPs...</span>
+          <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
+          <span className="ml-2 text-blue-200">Loading pending NCPs...</span>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen">
+    <div className="p-6 gradient-bg min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <Button variant="ghost" onClick={onBack} className="text-gray-600 hover:text-gray-900 p-0 h-auto mb-4">
+          <Button variant="ghost" onClick={onBack} className="text-blue-200 hover:text-blue-50 p-0 h-auto mb-4 glass-panel">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">QA Leader Approval</h1>
-              <p className="text-gray-600 mt-1">Review and approve pending NCP reports</p>
+              <h1 className="text-3xl font-bold futuristic-heading">QA Leader Approval</h1>
+              <p className="text-blue-200 mt-1">Review and approve pending NCP reports</p>
             </div>
-            <Badge variant="secondary" className="text-lg px-4 py-2">
+            <Badge variant="secondary" className="text-lg px-4 py-2 glass-panel border-cyan-500/30">
               {pendingNCPs.length} Pending
             </Badge>
           </div>
@@ -214,24 +214,24 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
 
         {/* NCP Cards */}
         {pendingNCPs.length === 0 ? (
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="glass-card">
             <CardContent className="p-12 text-center">
-              <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">No Pending NCPs</h3>
-              <p className="text-gray-600">All NCP reports have been reviewed.</p>
+              <CheckCircle className="h-16 w-16 text-green-400 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold futuristic-subheading mb-2">No Pending NCPs</h3>
+              <p className="text-blue-200">All NCP reports have been reviewed.</p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-6">
             {pendingNCPs.map((ncp: any) => (
-              <Card key={ncp.id} className="bg-white/90 backdrop-blur-md border-0 shadow-xl ring-1 ring-gray-200/50">
+              <Card key={ncp.id} className="glass-card">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Badge variant="outline" className="font-mono text-lg px-3 py-1">
+                      <Badge variant="outline" className="font-mono text-lg px-3 py-1 glass-panel border-cyan-500/30 text-blue-200">
                         {ncp.ncp_id}
                       </Badge>
-                      <Badge className="bg-yellow-100 text-yellow-800">Pending Review</Badge>
+                      <Badge className="bg-yellow-900/50 text-yellow-300 border border-yellow-500/30">Pending Review</Badge>
                     </div>
                     <div className="text-sm text-gray-500">
                       <Clock className="h-4 w-4 inline mr-1" />
@@ -242,26 +242,26 @@ qwen                    </div>
 
                 <CardContent className="space-y-4">
                   {/* NCP Details Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4 bg-gray-50/50 rounded-lg">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 glass-panel p-4 rounded-lg">
                     <div className="flex items-center gap-2">
-                      <Package className="h-4 w-4 text-gray-500" />
+                      <Package className="h-4 w-4 text-blue-300" />
                       <div>
-                        <div className="text-xs text-gray-500">SKU Code</div>
-                        <div className="font-medium">{ncp.sku_code}</div>
+                        <div className="text-xs text-blue-300">SKU Code</div>
+                        <div className="font-medium text-blue-100">{ncp.sku_code}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-gray-500" />
+                      <FileText className="h-4 w-4 text-blue-300" />
                       <div>
-                        <div className="text-xs text-gray-500">Machine</div>
-                        <div className="font-medium">{ncp.machine_code}</div>
+                        <div className="text-xs text-blue-300">Machine</div>
+                        <div className="font-medium text-blue-100">{ncp.machine_code}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-gray-500" />
+                      <Clock className="h-4 w-4 text-blue-300" />
                       <div>
-                        <div className="text-xs text-gray-500">Incident Date</div>
-                        <div className="font-medium">
+                        <div className="text-xs text-blue-300">Incident Date</div>
+                        <div className="font-medium text-blue-100">
                           {new Date(ncp.date).toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",
@@ -271,38 +271,38 @@ qwen                    </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-gray-500" />
+                      <Clock className="h-4 w-4 text-blue-300" />
                       <div>
-                        <div className="text-xs text-gray-500">Incident Time</div>
-                        <div className="font-medium">{ncp.time_incident}</div>
+                        <div className="text-xs text-blue-300">Incident Time</div>
+                        <div className="font-medium text-blue-100">{ncp.time_incident}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-gray-500" />
+                      <User className="h-4 w-4 text-blue-300" />
                       <div>
-                        <div className="text-xs text-gray-500">Submitted By</div>
-                        <div className="font-medium">{ncp.submitted_by}</div>
+                        <div className="text-xs text-blue-300">Submitted By</div>
+                        <div className="font-medium text-blue-100">{ncp.submitted_by}</div>
                       </div>
                     </div>
                   </div>
 
                   {/* Problem Description */}
-                  <div className="p-4 bg-orange-50/50 rounded-lg border border-orange-200/50">
-                    <div className="text-sm font-medium text-gray-700 mb-2">Problem Description:</div>
-                    <p className="text-gray-800 text-sm leading-relaxed">{ncp.problem_description}</p>
+                  <div className="p-4 glass-panel rounded-lg border border-orange-500/20">
+                    <div className="text-sm font-medium text-blue-200 mb-2">Problem Description:</div>
+                    <p className="text-blue-100 text-sm leading-relaxed">{ncp.problem_description}</p>
                   </div>
 
                   {/* Photo Attachment Display */}
                   {ncp.photo_attachment && (
-                    <div className="p-4 bg-purple-50/50 rounded-lg border border-purple-200/50">
-                      <div className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <div className="p-4 glass-panel rounded-lg border border-purple-500/20">
+                      <div className="text-sm font-medium text-blue-200 mb-2 flex items-center gap-2">
                         <ImageIcon className="h-4 w-4" />
                         Photo Attachment:
                       </div>
                       <div className="space-y-2">
-                        <p className="text-gray-600 text-sm">{ncp.photo_attachment}</p>
+                        <p className="text-blue-200 text-sm">{ncp.photo_attachment}</p>
                         {/* Display actual image */}
-                        <div className="relative w-full max-w-md h-48 bg-gray-100 rounded-lg overflow-hidden border">
+                        <div className="relative w-full max-w-md h-48 glass-panel rounded-lg overflow-hidden border border-cyan-500/20">
                           <img
                             src={`/api/ncp/image?filename=${ncp.photo_attachment}`}
                             alt="NCP Photo Attachment"
@@ -316,7 +316,7 @@ qwen                    </div>
                         <a 
                           href={`/api/ncp/image?filename=${ncp.photo_attachment}`} 
                           download={ncp.photo_attachment}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-700 to-blue-700 text-white rounded-md hover:from-cyan-600 hover:to-blue-600 transition-all"
                         >
                           <Download className="h-4 w-4" />
                           Download Image
@@ -326,15 +326,15 @@ qwen                    </div>
                   )}
 
                   {/* Action Buttons */}
-                  <div className="flex gap-3 pt-4 border-t border-gray-200/50">
+                  <div className="flex gap-3 pt-4 border-t border-cyan-500/20">
                     <Button
                       onClick={() => handleApprove(ncp)}
-                      className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                      className="flex-1 bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-600 hover:to-emerald-600 text-white"
                     >
                       <CheckCircle className="h-4 w-4 mr-2" />
                       Approve
                     </Button>
-                    <Button onClick={() => handleReject(ncp)} variant="destructive" className="flex-1">
+                    <Button onClick={() => handleReject(ncp)} variant="destructive" className="flex-1 bg-gradient-to-r from-red-700 to-rose-700 hover:from-red-600 hover:to-rose-600 text-white">
                       <XCircle className="h-4 w-4 mr-2" />
                       Reject
                     </Button>
@@ -348,17 +348,17 @@ qwen                    </div>
 
       {/* Approval Dialog */}
       <Dialog open={showApprovalDialog} onOpenChange={setShowApprovalDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl glass-card border-cyan-500/30">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-green-600">Approve NCP: {selectedNCP?.ncp_id}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl font-bold text-green-400 futuristic-heading">Approve NCP: {selectedNCP?.ncp_id}</DialogTitle>
+            <DialogDescription className="text-blue-200">
               Provide disposition details and assign to a team leader for RCA analysis.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="disposisi" className="text-sm font-medium">
+              <Label htmlFor="disposisi" className="text-sm font-medium text-blue-200">
                 Disposition *
               </Label>
               <Textarea
@@ -366,14 +366,14 @@ qwen                    </div>
                 placeholder="Enter disposition details..."
                 value={approvalData.disposisi}
                 onChange={(e) => setApprovalData((prev) => ({ ...prev, disposisi: e.target.value }))}
-                className="min-h-24"
+                className="min-h-24 glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 text-blue-100 placeholder:text-blue-300/50"
                 rows={4}
               />
             </div>
 
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="jumlahSortir" className="text-sm font-medium">
+                <Label htmlFor="jumlahSortir" className="text-sm font-medium text-blue-200">
                   Jumlah Sortir ({selectedNCP?.hold_quantity_uom || "units"})
                 </Label>
                 <Input
@@ -381,10 +381,11 @@ qwen                    </div>
                   placeholder="0"
                   value={approvalData.jumlahSortir}
                   onChange={(e) => setApprovalData((prev) => ({ ...prev, jumlahSortir: e.target.value }))}
+                  className="glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 text-blue-100 placeholder:text-blue-300/50"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="jumlahRelease" className="text-sm font-medium">
+                <Label htmlFor="jumlahRelease" className="text-sm font-medium text-blue-200">
                   Jumlah Release ({selectedNCP?.hold_quantity_uom || "units"})
                 </Label>
                 <Input
@@ -392,10 +393,11 @@ qwen                    </div>
                   placeholder="0"
                   value={approvalData.jumlahRelease}
                   onChange={(e) => setApprovalData((prev) => ({ ...prev, jumlahRelease: e.target.value }))}
+                  className="glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 text-blue-100 placeholder:text-blue-300/50"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="jumlahReject" className="text-sm font-medium">
+                <Label htmlFor="jumlahReject" className="text-sm font-medium text-blue-200">
                   Jumlah Reject ({selectedNCP?.hold_quantity_uom || "units"})
                 </Label>
                 <Input
@@ -403,39 +405,40 @@ qwen                    </div>
                   placeholder="0"
                   value={approvalData.jumlahReject}
                   onChange={(e) => setApprovalData((prev) => ({ ...prev, jumlahReject: e.target.value }))}
+                  className="glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 text-blue-100 placeholder:text-blue-300/50"
                 />
               </div>
             </div>
 
             {/* Total Hold Quantity Display */}
-            <div className="mt-4 p-3 bg-gray-100 rounded-lg">
-              <div className="text-sm text-gray-600 text-center">
+            <div className="mt-4 p-3 glass-panel rounded-lg border border-cyan-500/20">
+              <div className="text-sm text-blue-200 text-center">
                 <strong>Total Hold Quantity:</strong> {selectedNCP?.hold_quantity} {selectedNCP?.hold_quantity_uom}
               </div>
-              <div className="text-xs text-gray-500 text-center mt-1">
+              <div className="text-xs text-blue-400 text-center mt-1">
                 Ensure Sortir + Release + Reject = Total Hold Quantity
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="assignedTeamLeader" className="text-sm font-medium">
+              <Label htmlFor="assignedTeamLeader" className="text-sm font-medium text-blue-200">
                 Assign to Team Leader *
               </Label>
               <Select
                 value={approvalData.assignedTeamLeader}
                 onValueChange={(value) => setApprovalData((prev) => ({ ...prev, assignedTeamLeader: value }))}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select team leader" />
+                <SelectTrigger className="glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 text-blue-100">
+                  <SelectValue placeholder="Select team leader" className="text-blue-100" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="glass-panel border-cyan-500/30">
                   {isLoadingTeamLeaders ? (
-                    <SelectItem value="loading" disabled>
+                    <SelectItem value="loading" disabled className="text-blue-100">
                       Loading Team Leaders...
                     </SelectItem>
                   ) : (
                     teamLeaders.map((leader) => (
-                      <SelectItem key={leader.id} value={leader.username}>
+                      <SelectItem key={leader.id} value={leader.username} className="text-blue-100 hover:bg-cyan-500/20">
                         {leader.full_name || leader.username}
                       </SelectItem>
                     ))
@@ -445,11 +448,11 @@ qwen                    </div>
             </div>
           </div>
 
-          <DialogFooter className="gap-3">
-            <Button variant="outline" onClick={() => setShowApprovalDialog(false)} disabled={isSubmitting}>
+          <DialogFooter className="gap-3 border-t border-cyan-500/20 pt-4">
+            <Button variant="outline" onClick={() => setShowApprovalDialog(false)} disabled={isSubmitting} className="glass-panel border-cyan-500/30 text-blue-200 hover:bg-cyan-500/20">
               Cancel
             </Button>
-            <Button onClick={submitApproval} disabled={isSubmitting} className="bg-green-600 hover:bg-green-700">
+            <Button onClick={submitApproval} disabled={isSubmitting} className="bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-600 hover:to-emerald-600 text-white">
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -465,15 +468,15 @@ qwen                    </div>
 
       {/* Rejection Dialog */}
       <Dialog open={showRejectionDialog} onOpenChange={setShowRejectionDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md glass-card border-cyan-500/30">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-red-600">Reject NCP: {selectedNCP?.ncp_id}</DialogTitle>
-            <DialogDescription>Please provide a reason for rejecting this NCP report.</DialogDescription>
+            <DialogTitle className="text-xl font-bold text-red-400 futuristic-heading">Reject NCP: {selectedNCP?.ncp_id}</DialogTitle>
+            <DialogDescription className="text-blue-200">Please provide a reason for rejecting this NCP report.</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="rejectionReason" className="text-sm font-medium">
+              <Label htmlFor="rejectionReason" className="text-sm font-medium text-blue-200">
                 Rejection Reason *
               </Label>
               <Textarea
@@ -481,17 +484,17 @@ qwen                    </div>
                 placeholder="Enter reason for rejection..."
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                className="min-h-24"
+                className="min-h-24 glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 text-blue-100 placeholder:text-blue-300/50"
                 rows={4}
               />
             </div>
           </div>
 
-          <DialogFooter className="gap-3">
-            <Button variant="outline" onClick={() => setShowRejectionDialog(false)} disabled={isSubmitting}>
+          <DialogFooter className="gap-3 border-t border-cyan-500/20 pt-4">
+            <Button variant="outline" onClick={() => setShowRejectionDialog(false)} disabled={isSubmitting} className="glass-panel border-cyan-500/30 text-blue-200 hover:bg-cyan-500/20">
               Cancel
             </Button>
-            <Button onClick={submitRejection} disabled={isSubmitting} variant="destructive">
+            <Button onClick={submitRejection} disabled={isSubmitting} variant="destructive" className="bg-gradient-to-r from-red-700 to-rose-700 hover:from-red-600 hover:to-rose-600 text-white">
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -507,13 +510,15 @@ qwen                    </div>
 
       {/* Success Dialog */}
       <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md glass-card border-cyan-500/30">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-green-600">Success!</DialogTitle>
-            <DialogDescription>{successMessage}</DialogDescription>
+            <DialogTitle className="text-xl font-bold text-green-400 futuristic-heading">Success!</DialogTitle>
+            <DialogDescription className="text-blue-200">{successMessage}</DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-3">
-            <Button onClick={() => setShowSuccessDialog(false)}>Close</Button>
+          <DialogFooter className="gap-3 border-t border-cyan-500/20 pt-4">
+            <Button onClick={() => setShowSuccessDialog(false)} className="w-full bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-600 hover:to-emerald-600 text-white">
+              Close
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

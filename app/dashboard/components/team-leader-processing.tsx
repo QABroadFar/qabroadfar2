@@ -157,20 +157,20 @@ export function TeamLeaderProcessing({ onBack, userInfo }: TeamLeaderProcessingP
   }
 
   return (
-    <div className="p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen">
+    <div className="p-6 gradient-bg min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <Button variant="ghost" onClick={() => onBack()} className="text-gray-600 hover:text-gray-900 p-0 h-auto mb-4">
+          <Button variant="ghost" onClick={() => onBack()} className="text-blue-200 hover:text-blue-50 p-0 h-auto mb-4 glass-panel">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">Team Leader Processing</h1>
-              <p className="text-gray-600 mt-1">Process assigned NCP reports with RCA analysis</p>
+              <h1 className="text-3xl font-bold futuristic-heading">Team Leader Processing</h1>
+              <p className="text-blue-200 mt-1">Process assigned NCP reports with RCA analysis</p>
             </div>
-            <Badge variant="secondary" className="text-lg px-4 py-2">
+            <Badge variant="secondary" className="text-lg px-4 py-2 glass-panel border-cyan-500/30">
               {assignedNCPs.filter((ncp: any) => ncp.status === "qa_approved").length} Pending
             </Badge>
           </div>
@@ -178,52 +178,52 @@ export function TeamLeaderProcessing({ onBack, userInfo }: TeamLeaderProcessingP
 
         {/* NCP Cards */}
         {assignedNCPs.length === 0 ? (
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="glass-card">
             <CardContent className="p-12 text-center">
-              <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">No Pending NCPs</h3>
-              <p className="text-gray-600">All assigned NCP reports have been processed successfully.</p>
+              <CheckCircle className="h-16 w-16 text-green-400 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold futuristic-subheading mb-2">No Pending NCPs</h3>
+              <p className="text-blue-200">All assigned NCP reports have been processed successfully.</p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-6">
             {assignedNCPs.map((ncp: any) => (
-              <Card key={ncp.id} className="bg-white/90 backdrop-blur-md border-0 shadow-xl ring-1 ring-gray-200/50">
+              <Card key={ncp.id} className="glass-card">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Badge variant="outline" className="font-mono text-lg px-3 py-1">
+                      <Badge variant="outline" className="font-mono text-lg px-3 py-1 glass-panel border-cyan-500/30 text-blue-200">
                         {ncp.ncp_id}
                       </Badge>
                       {getStatusBadge(ncp.status)}
                     </div>
-                    <div className="text-sm text-gray-500">Approved: {formatToWIB(ncp.qa_approved_at)}</div>
+                    <div className="text-sm text-blue-300">Approved: {formatToWIB(ncp.qa_approved_at)}</div>
                   </div>
                 </CardHeader>
 
                 <CardContent className="space-y-4">
                   {/* NCP Details Grid */}
                   {/* NCP Details Grid - Enhanced with incident date/time */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4 bg-gray-50/50 rounded-lg">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 glass-panel p-4 rounded-lg">
                     <div className="flex items-center gap-2">
-                      <Package className="h-4 w-4 text-gray-500" />
+                      <Package className="h-4 w-4 text-blue-300" />
                       <div>
-                        <div className="text-xs text-gray-500">SKU Code</div>
-                        <div className="font-medium">{ncp.sku_code}</div>
+                        <div className="text-xs text-blue-300">SKU Code</div>
+                        <div className="font-medium text-blue-100">{ncp.sku_code}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-gray-500" />
+                      <FileText className="h-4 w-4 text-blue-300" />
                       <div>
-                        <div className="text-xs text-gray-500">Machine</div>
-                        <div className="font-medium">{ncp.machine_code}</div>
+                        <div className="text-xs text-blue-300">Machine</div>
+                        <div className="font-medium text-blue-100">{ncp.machine_code}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-gray-500" />
+                      <Clock className="h-4 w-4 text-blue-300" />
                       <div>
-                        <div className="text-xs text-gray-500">Incident Date</div>
-                        <div className="font-medium">
+                        <div className="text-xs text-blue-300">Incident Date</div>
+                        <div className="font-medium text-blue-100">
                           {new Date(ncp.date).toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",
@@ -234,15 +234,15 @@ export function TeamLeaderProcessing({ onBack, userInfo }: TeamLeaderProcessingP
                     </div>
                     <div className="flex items-center gap-2">
                       <div>
-                        <div className="text-xs text-gray-500">Incident Time</div>
-                        <div className="font-medium">{ncp.time_incident}</div>
+                        <div className="text-xs text-blue-300">Incident Time</div>
+                        <div className="font-medium text-blue-100">{ncp.time_incident}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-gray-500" />
+                      <User className="h-4 w-4 text-blue-300" />
                       <div>
-                        <div className="text-xs text-gray-500">QA Leader</div>
-                        <div className="font-medium">{ncp.qa_approved_by}</div>
+                        <div className="text-xs text-blue-300">QA Leader</div>
+                        <div className="font-medium text-blue-100">{ncp.qa_approved_by}</div>
                       </div>
                     </div>
                   </div>
@@ -250,33 +250,33 @@ export function TeamLeaderProcessing({ onBack, userInfo }: TeamLeaderProcessingP
                   {/* QA Leader Approval Details */}
                   {/* QA Leader Approval Details - Enhanced display */}
                   {ncp.disposisi && (
-                    <div className="p-4 bg-blue-50/50 rounded-lg border border-blue-200/50">
-                      <div className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-blue-600" />
+                    <div className="p-4 glass-panel rounded-lg border border-cyan-500/20">
+                      <div className="text-sm font-medium text-blue-200 mb-2 flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-cyan-400" />
                         QA Leader Disposition:
                       </div>
-                      <p className="text-gray-800 text-sm leading-relaxed mb-4">{ncp.disposisi}</p>
+                      <p className="text-blue-100 text-sm leading-relaxed mb-4">{ncp.disposisi}</p>
                       <div className="grid grid-cols-3 gap-4">
-                        <div className="bg-white p-3 rounded-lg border border-blue-200 text-center">
-                          <div className="text-xs text-gray-500 mb-1">Sortir</div>
-                          <div className="text-lg font-bold text-orange-600">{ncp.jumlah_sortir || "0"}</div>
-                          <div className="text-xs text-gray-400">{ncp.hold_quantity_uom}</div>
+                        <div className="glass-panel p-3 rounded-lg text-center border border-cyan-500/20">
+                          <div className="text-xs text-blue-300 mb-1">Sortir</div>
+                          <div className="text-lg font-bold text-orange-400">{ncp.jumlah_sortir || "0"}</div>
+                          <div className="text-xs text-blue-400">{ncp.hold_quantity_uom}</div>
                         </div>
-                        <div className="bg-white p-3 rounded-lg border border-blue-200 text-center">
-                          <div className="text-xs text-gray-500 mb-1">Release</div>
-                          <div className="text-lg font-bold text-green-600">{ncp.jumlah_release || "0"}</div>
-                          <div className="text-xs text-gray-400">{ncp.hold_quantity_uom}</div>
+                        <div className="glass-panel p-3 rounded-lg text-center border border-cyan-500/20">
+                          <div className="text-xs text-blue-300 mb-1">Release</div>
+                          <div className="text-lg font-bold text-green-400">{ncp.jumlah_release || "0"}</div>
+                          <div className="text-xs text-blue-400">{ncp.hold_quantity_uom}</div>
                         </div>
-                        <div className="bg-white p-3 rounded-lg border border-blue-200 text-center">
-                          <div className="text-xs text-gray-500 mb-1">Reject</div>
-                          <div className="text-lg font-bold text-red-600">{ncp.jumlah_reject || "0"}</div>
-                          <div className="text-xs text-gray-400">{ncp.hold_quantity_uom}</div>
+                        <div className="glass-panel p-3 rounded-lg text-center border border-cyan-500/20">
+                          <div className="text-xs text-blue-300 mb-1">Reject</div>
+                          <div className="text-lg font-bold text-red-400">{ncp.jumlah_reject || "0"}</div>
+                          <div className="text-xs text-blue-400">{ncp.hold_quantity_uom}</div>
                         </div>
                       </div>
                       {/* Total Hold Quantity - Add this after the grid */}
-                      <div className="mt-3 p-2 bg-gray-100 rounded text-center">
-                        <div className="text-xs text-gray-500">Total Hold Quantity</div>
-                        <div className="font-semibold text-gray-800">
+                      <div className="mt-3 p-2 glass-panel rounded text-center border border-cyan-500/20">
+                        <div className="text-xs text-blue-300">Total Hold Quantity</div>
+                        <div className="font-semibold text-blue-100">
                           {ncp.hold_quantity} {ncp.hold_quantity_uom}
                         </div>
                       </div>
@@ -284,22 +284,22 @@ export function TeamLeaderProcessing({ onBack, userInfo }: TeamLeaderProcessingP
                   )}
 
                   {/* Problem Description */}
-                  <div className="p-4 bg-orange-50/50 rounded-lg border border-orange-200/50">
-                    <div className="text-sm font-medium text-gray-700 mb-2">Problem Description:</div>
-                    <p className="text-gray-800 text-sm leading-relaxed">{ncp.problem_description}</p>
+                  <div className="p-4 glass-panel rounded-lg border border-orange-500/20">
+                    <div className="text-sm font-medium text-blue-200 mb-2">Problem Description:</div>
+                    <p className="text-blue-100 text-sm leading-relaxed">{ncp.problem_description}</p>
                   </div>
 
                   {/* Photo Attachment */}
                   {ncp.photo_attachment && (
-                    <div className="p-4 bg-purple-50/50 rounded-lg border border-purple-200/50">
-                      <div className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <div className="p-4 glass-panel rounded-lg border border-purple-500/20">
+                      <div className="text-sm font-medium text-blue-200 mb-2 flex items-center gap-2">
                         <ImageIcon className="h-4 w-4" />
                         Photo Attachment:
                       </div>
                       <div className="space-y-2">
-                        <p className="text-gray-600 text-sm">{ncp.photo_attachment.split("/").pop()}</p>
+                        <p className="text-blue-200 text-sm">{ncp.photo_attachment.split("/").pop()}</p>
                         {/* Display actual image */}
-                        <div className="relative w-full max-w-md h-48 bg-gray-100 rounded-lg overflow-hidden border">
+                        <div className="relative w-full max-w-md h-48 glass-panel rounded-lg overflow-hidden border border-cyan-500/20">
                           <img
                             src={`/uploads/${encodeURIComponent(ncp.photo_attachment)}` || "/placeholder.svg"}
                             alt="NCP Photo Attachment"
@@ -310,35 +310,35 @@ export function TeamLeaderProcessing({ onBack, userInfo }: TeamLeaderProcessingP
                             onClick={() => window.open(`/uploads/${encodeURIComponent(ncp.photo_attachment)}`, "_blank")}
                           />
                         </div>
-                        <p className="text-xs text-gray-500">Click image to view full size</p>
+                        <p className="text-xs text-blue-400">Click image to view full size</p>
                       </div>
                     </div>
                   )}
 
                   {/* Processing Status */}
                   {ncp.status === "tl_processed" && (
-                    <div className="p-4 bg-green-50/50 rounded-lg border border-green-200/50">
-                      <div className="text-sm font-medium text-green-700 mb-2">
+                    <div className="p-4 glass-panel rounded-lg border border-green-500/20">
+                      <div className="text-sm font-medium text-green-400 mb-2">
                         ✅ Processed on {formatToWIB(ncp.tl_processed_at)}
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-blue-200">
                         This NCP has been processed and forwarded to Process Lead for final review.
                       </div>
                     </div>
                   )}
 
                   {/* Action Buttons */}
-                  <div className="flex gap-3 pt-4 border-t border-gray-200/50">
+                  <div className="flex gap-3 pt-4 border-t border-cyan-500/20">
                     {ncp.status === "qa_approved" ? (
                       <Button
                         onClick={() => handleProcess(ncp)}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                        className="flex-1 bg-gradient-to-r from-cyan-700 to-blue-700 hover:from-cyan-600 hover:to-blue-600 text-white"
                       >
                         <Wrench className="h-4 w-4 mr-2" />
                         Process RCA
                       </Button>
                     ) : (
-                      <Button onClick={() => handleProcess(ncp)} variant="outline" className="flex-1">
+                      <Button onClick={() => handleProcess(ncp)} variant="outline" className="flex-1 glass-panel border-cyan-500/30 text-blue-200 hover:bg-cyan-500/20">
                         <Eye className="h-4 w-4 mr-2" />
                         View Processing Details
                       </Button>
