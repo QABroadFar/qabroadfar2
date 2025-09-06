@@ -174,6 +174,7 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
 
   }
 
+
   if (isLoading) {
     return (
       <div className="p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen">
@@ -512,4 +513,3 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
       </Dialog>
     </div>
   )
-}

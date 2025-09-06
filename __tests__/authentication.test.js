@@ -29,7 +29,7 @@ async function testAuthentication() {
   
   // Test 1: Valid user authentication
   try {
-    const user = await authenticateUser("teamlead2", "password123")
+    const user = await authenticateUser("teamlead2", "123")
     if (user) {
       console.log("✅ Valid user authentication successful")
       console.log(`   User: ${user.username} (${user.role})`)
