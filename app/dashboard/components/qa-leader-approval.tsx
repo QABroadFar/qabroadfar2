@@ -16,8 +16,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { ArrowLeft, CheckCircle, XCircle, Loader2, User, Package, FileText, Clock, ImageIcon, Download } from "lucide-react"
-import { formatToWIB } from "@/lib/date-utils"
+import { ArrowLeft, CheckCircle, XCircle, Loader2, User, Package, FileText, Clock, ImageIcon, Download, Search, AlertCircle, Calendar } from "lucide-react"
+import { formatToWIB, formatSubmissionDate } from "@/lib/date-utils"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 interface QALeaderApprovalProps {
   onBack: () => void
@@ -227,7 +235,7 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
                     </div>
                     <div className="text-sm text-gray-500">
                       <Clock className="h-4 w-4 inline mr-1" />
-                      {formatToWIB(ncp.submitted_at)}
+                      {formatSubmissionDate(ncp.submitted_at)}
                     </div>
                   </div>
                 </CardHeader>
