@@ -268,7 +268,7 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
                           if (step.status === "completed") {
                             statusClass = "bg-green-500"
                           } else if (step.status === "current") {
-                            statusClass = "bg-blue-500"
+                            statusClass = "bg-blue-500 animate-pulse"
                           }
                           
                           return (
@@ -277,13 +277,13 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
                                 {step.status === "completed" ? (
                                   <CheckCircle className="h-4 w-4 text-white" />
                                 ) : step.status === "current" ? (
-                                  <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>
+                                  <div className="w-2 h-2 rounded-full bg-white"></div>
                                 ) : (
                                   <div className="w-2 h-2 rounded-full bg-blue-300"></div>
                                 )}
                               </div>
                               <div className="text-xs mt-2 text-center max-w-24">
-                                <div className={`font-medium ${step.status === "current" ? "text-white" : "text-blue-300"}`}>
+                                <div className={`font-medium ${step.status === "current" ? "text-white animate-pulse" : "text-blue-300"}`}>
                                   {step.title}
                                 </div>
                                 {step.assignee && (
