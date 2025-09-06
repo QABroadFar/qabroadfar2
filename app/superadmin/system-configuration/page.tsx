@@ -13,15 +13,15 @@ import { toast } from "@/hooks/use-toast"
 import { formatToWIB } from "@/lib/date-utils"
 
 export default function SystemConfigurationPage() {
-  const [skuCodes, setSkuCodes] = useState([])
-  const [machines, setMachines] = useState([])
-  const [uoms, setUoms] = useState([])
+  const [skuCodes, setSkuCodes] = useState<any[]>([])
+  const [machines, setMachines] = useState<any[]>([])
+  const [uoms, setUoms] = useState<any[]>([])
   const [isSkuDialogOpen, setIsSkuDialogOpen] = useState(false)
   const [isMachineDialogOpen, setIsMachineDialogOpen] = useState(false)
   const [isUomDialogOpen, setIsUomDialogOpen] = useState(false)
-  const [editingSku, setEditingSku] = useState(null)
-  const [editingMachine, setEditingMachine] = useState(null)
-  const [editingUom, setEditingUom] = useState(null)
+  const [editingSku, setEditingSku] = useState<any>(null)
+  const [editingMachine, setEditingMachine] = useState<any>(null)
+  const [editingUom, setEditingUom] = useState<any>(null)
   const [newSku, setNewSku] = useState({ code: "", description: "" })
   const [newMachine, setNewMachine] = useState({ code: "", name: "" })
   const [newUom, setNewUom] = useState({ code: "", name: "" })
@@ -137,7 +137,7 @@ export default function SystemConfigurationPage() {
     }
   }
 
-  const handleUpdateSKU = async (id, updatedData) => {
+  const handleUpdateSKU = async (id: number, updatedData: any) => {
     try {
       const response = await fetch("/api/system-settings/sku-codes", {
         method: "PUT",
@@ -173,7 +173,7 @@ export default function SystemConfigurationPage() {
     }
   }
 
-  const handleDeleteSKU = async (id) => {
+  const handleDeleteSKU = async (id: number) => {
     if (!confirm("Are you sure you want to delete this SKU code?")) {
       return
     }
@@ -243,7 +243,7 @@ export default function SystemConfigurationPage() {
     }
   }
 
-  const handleUpdateMachine = async (id, updatedData) => {
+  const handleUpdateMachine = async (id: number, updatedData: any) => {
     try {
       const response = await fetch("/api/system-settings/machines", {
         method: "PUT",
@@ -279,7 +279,7 @@ export default function SystemConfigurationPage() {
     }
   }
 
-  const handleDeleteMachine = async (id) => {
+  const handleDeleteMachine = async (id: number) => {
     if (!confirm("Are you sure you want to delete this machine?")) {
       return
     }
@@ -349,7 +349,7 @@ export default function SystemConfigurationPage() {
     }
   }
 
-  const handleUpdateUOM = async (id, updatedData) => {
+  const handleUpdateUOM = async (id: number, updatedData: any) => {
     try {
       const response = await fetch("/api/system-settings/uoms", {
         method: "PUT",
@@ -385,7 +385,7 @@ export default function SystemConfigurationPage() {
     }
   }
 
-  const handleDeleteUOM = async (id) => {
+  const handleDeleteUOM = async (id: number) => {
     if (!confirm("Are you sure you want to delete this UOM?")) {
       return
     }

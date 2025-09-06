@@ -13,10 +13,10 @@ import { toast } from "@/hooks/use-toast"
 import { formatToWIB } from "@/lib/date-utils"
 
 export default function NCPManagementPage() {
-  const [ncpReports, setNcpReports] = useState([])
+  const [ncpReports, setNcpReports] = useState<any[]>([])
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [editingReport, setEditingReport] = useState(null)
+  const [editingReport, setEditingReport] = useState<any>(null)
   const [newReport, setNewReport] = useState({
     skuCode: "",
     machineCode: "",
@@ -27,10 +27,10 @@ export default function NCPManagementPage() {
     problemDescription: "",
     qaLeader: ""
   })
-  const [users, setUsers] = useState([])
-  const [skuCodes, setSkuCodes] = useState([])
-  const [machines, setMachines] = useState([])
-  const [uoms, setUoms] = useState([])
+  const [users, setUsers] = useState<any[]>([])
+  const [skuCodes, setSkuCodes] = useState<any[]>([])
+  const [machines, setMachines] = useState<any[]>([])
+  const [uoms, setUoms] = useState<any[]>([])
 
   useEffect(() => {
     fetchNCPReports()
@@ -209,7 +209,7 @@ export default function NCPManagementPage() {
     }
   }
 
-  const handleUpdateReport = async (reportId, updatedData) => {
+  const handleUpdateReport = async (reportId: number, updatedData: any) => {
     try {
       const response = await fetch(`/api/ncp/details/${reportId}`, {
         method: "PUT",
@@ -245,7 +245,7 @@ export default function NCPManagementPage() {
     }
   }
 
-  const handleDeleteReport = async (reportId) => {
+  const handleDeleteReport = async (reportId: number) => {
     if (!confirm("Are you sure you want to delete this NCP report? This action cannot be undone.")) {
       return
     }
@@ -279,8 +279,8 @@ export default function NCPManagementPage() {
     }
   }
 
-  const getStatusBadge = (status) => {
-    const statusMap = {
+  const getStatusBadge = (status: string) => {
+    const statusMap: Record<string, string> = {
       pending: "bg-yellow-100 text-yellow-800",
       qa_approved: "bg-blue-100 text-blue-800",
       tl_processed: "bg-indigo-100 text-indigo-800",
@@ -290,7 +290,7 @@ export default function NCPManagementPage() {
       process_rejected: "bg-red-100 text-red-800"
     }
     
-    const statusLabels = {
+    const statusLabels: Record<string, string> = {
       pending: "Pending",
       qa_approved: "QA Approved",
       tl_processed: "TL Processed",

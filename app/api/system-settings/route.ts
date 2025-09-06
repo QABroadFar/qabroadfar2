@@ -20,10 +20,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
+  const { searchParams } = new URL(request.url)
+  const type = searchParams.get("type") || "audit"
+
   try {
-    const { searchParams } = new URL(request.url)
-    const type = searchParams.get("type") || "audit"
-    
     switch (type) {
       case "audit":
         const auditLogs = getAuditLog()

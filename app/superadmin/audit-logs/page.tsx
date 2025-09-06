@@ -10,8 +10,8 @@ import { toast } from "@/hooks/use-toast"
 import { formatToWIB } from "@/lib/date-utils"
 
 export default function AuditLogsPage() {
-  const [auditLogs, setAuditLogs] = useState([])
-  const [systemLogs, setSystemLogs] = useState([])
+  const [auditLogs, setAuditLogs] = useState<any[]>([])
+  const [systemLogs, setSystemLogs] = useState<any[]>([])
 
   useEffect(() => {
     fetchAuditLogs()

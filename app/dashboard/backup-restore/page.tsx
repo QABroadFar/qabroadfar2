@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const BackupRestorePage = () => {
-  const [backups, setBackups] = useState([])
+  const [backups, setBackups] = useState<any[]>([])
   const [selectedBackup, setSelectedBackup] = useState("")
   const [message, setMessage] = useState("")
 

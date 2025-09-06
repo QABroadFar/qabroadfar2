@@ -21,15 +21,15 @@ export async function GET(request: NextRequest) {
     }
     
     const stats = {
-      total: ncpStats.total,
-      pending: ncpStats.pending,
-      approved: ncpStats.qaApproved + ncpStats.tlProcessed,
-      processed: ncpStats.tlProcessed,
-      qaApproved: ncpStats.qaApproved,
-      tlProcessed: ncpStats.tlProcessed,
-      process_approved: ncpStats.process_approved,
-      manager_approved: ncpStats.manager_approved,
-      rejected: ncpStats.rejected
+      total: (ncpStats as any).total,
+      pending: (ncpStats as any).pending,
+      approved: (ncpStats as any).qaApproved + (ncpStats as any).tlProcessed,
+      processed: (ncpStats as any).tlProcessed,
+      qaApproved: (ncpStats as any).qaApproved,
+      tlProcessed: (ncpStats as any).tlProcessed,
+      process_approved: (ncpStats as any).process_approved,
+      manager_approved: (ncpStats as any).manager_approved,
+      rejected: (ncpStats as any).rejected
     }
 
     // Return data in format expected by frontend

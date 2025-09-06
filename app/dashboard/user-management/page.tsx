@@ -10,11 +10,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 const UserManagementPage = () => {
-  const [users, setUsers] = useState([])
-  const [session, setSession] = useState(null)
+  const [users, setUsers] = useState<any[]>([])
+  const [session, setSession] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [showPasswordDialog, setShowPasswordDialog] = useState(false)
-  const [selectedUserForPassword, setSelectedUserForPassword] = useState(null)
+  const [selectedUserForPassword, setSelectedUserForPassword] = useState<any>(null)
   const [newPassword, setNewPassword] = useState("")
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const UserManagementPage = () => {
     return <div>Access Denied</div>
   }
 
-  const handleStatusChange = async (user, isActive) => {
+  const handleStatusChange = async (user: any, isActive: boolean) => {
     try {
       const response = await fetch(`/api/users/${user.id}/status`, {
         method: 'PUT',
@@ -79,7 +79,7 @@ const UserManagementPage = () => {
     }
   };
 
-  const handleRoleChange = async (user, newRole) => {
+  const handleRoleChange = async (user: any, newRole: string) => {
     try {
       const response = await fetch(`/api/users/${user.id}/role`, {
         method: 'PUT',
@@ -98,7 +98,7 @@ const UserManagementPage = () => {
     }
   };
 
-  const handleOpenPasswordDialog = (user) => {
+  const handleOpenPasswordDialog = (user: any) => {
     setSelectedUserForPassword(user)
     setShowPasswordDialog(true)
     setNewPassword("")

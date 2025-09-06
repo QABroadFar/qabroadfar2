@@ -13,14 +13,14 @@ import { toast } from "@/hooks/use-toast"
 import { formatToWIB } from "@/lib/date-utils"
 
 export default function WorkflowInterventionPage() {
-  const [ncpReports, setNcpReports] = useState([])
+  const [ncpReports, setNcpReports] = useState<any[]>([])
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [editingReport, setEditingReport] = useState(null)
+  const [editingReport, setEditingReport] = useState<any>(null)
   const [isReassignDialogOpen, setIsReassignDialogOpen] = useState(false)
-  const [reassignData, setReassignData] = useState({ ncpId: null, newAssignee: "", role: "qa_leader" })
+  const [reassignData, setReassignData] = useState({ ncpId: null as number | null, newAssignee: "", role: "qa_leader" })
   const [isRevertDialogOpen, setIsRevertDialogOpen] = useState(false)
-  const [revertData, setRevertData] = useState({ ncpId: null, newStatus: "" })
-  const [users, setUsers] = useState([])
+  const [revertData, setRevertData] = useState({ ncpId: null as number | null, newStatus: "" })
+  const [users, setUsers] = useState<any[]>([])
 
   useEffect(() => {
     fetchNCPReports()
@@ -73,7 +73,7 @@ export default function WorkflowInterventionPage() {
     }
   }
 
-  const handleEditReport = async (reportId, updatedData) => {
+  const handleEditReport = async (reportId: number, updatedData: any) => {
     try {
       const response = await fetch(`/api/ncp/details/${reportId}`, {
         method: "PUT",
@@ -183,8 +183,8 @@ export default function WorkflowInterventionPage() {
     }
   }
 
-  const getStatusBadge = (status) => {
-    const statusMap = {
+  const getStatusBadge = (status: string) => {
+    const statusMap: Record<string, string> = {
       pending: "bg-yellow-100 text-yellow-800",
       qa_approved: "bg-blue-100 text-blue-800",
       tl_processed: "bg-indigo-100 text-indigo-800",
@@ -194,7 +194,7 @@ export default function WorkflowInterventionPage() {
       process_rejected: "bg-red-100 text-red-800"
     }
     
-    const statusLabels = {
+    const statusLabels: Record<string, string> = {
       pending: "Pending",
       qa_approved: "QA Approved",
       tl_processed: "TL Processed",

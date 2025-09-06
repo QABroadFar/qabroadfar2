@@ -80,11 +80,20 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
         const statsData = await statsResponse.json()
         // Ensure we're setting the correct data structure
         if (statsData && typeof statsData === 'object') {
-          setDashboardData(prev => ({
-            ...prev,
-            stats: statsData.stats || statsData,
-            charts: statsData.charts || { monthly: [], statusDistribution: [], topSubmitters: [] }
-          }))
+          setDashboardData(prev => {
+            if (!prev) {
+              return {
+                stats: statsData.stats || statsData,
+                charts: statsData.charts || { monthly: [], statusDistribution: [], topSubmitters: [] },
+                teamLeaders: []
+              }
+            }
+            return {
+              ...prev,
+              stats: statsData.stats || statsData,
+              charts: statsData.charts || { monthly: [], statusDistribution: [], topSubmitters: [] }
+            }
+          })
         }
       }
 

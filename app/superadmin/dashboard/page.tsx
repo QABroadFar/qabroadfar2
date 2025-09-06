@@ -14,9 +14,9 @@ export default function SuperAdminDashboard() {
       approvedReports: 0,
       rejectedReports: 0
     },
-    monthlyReports: [],
-    statusDistribution: [],
-    topSubmitters: []
+    monthlyReports: [] as { month: string; count: number }[],
+    statusDistribution: [] as { status: string; count: number }[],
+    topSubmitters: [] as { submitted_by: string; count: number }[]
   })
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function SuperAdminDashboard() {
     }
   }
 
-  const statusColors = {
+  const statusColors: Record<string, string> = {
     pending: "#f59e0b",
     qa_approved: "#3b82f6",
     tl_processed: "#8b5cf6",

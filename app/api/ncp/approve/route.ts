@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       result = rejectNCPByQALeader(id, rejectionReason, user.username)
     }
 
-    if (result.changes === 0) {
+    if (!result || result.changes === 0) {
       return NextResponse.json({ error: "NCP report not found" }, { status: 404 })
     }
 

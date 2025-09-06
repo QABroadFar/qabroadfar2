@@ -191,7 +191,7 @@ export function generateNCPNumber(): string {
   let serialNumber = 1
 
   if (latestRecord) {
-    const existingSerial = latestRecord.ncp_id.split("-")[1]
+    const existingSerial = (latestRecord as any).ncp_id.split("-")[1]
     serialNumber = Number.parseInt(existingSerial) + 1
   }
 
@@ -201,7 +201,7 @@ export function generateNCPNumber(): string {
 
 // FIXED: User authentication functions
 export async function authenticateUser(username: string, password: string) {
-  const user = db.prepare("SELECT * FROM users WHERE username = ?").get(username)
+  const user: any = db.prepare("SELECT * FROM users WHERE username = ?").get(username)
   if (!user) return null
 
   const isValid = await compare(password, user.password)
@@ -289,13 +289,13 @@ export function superEditNCP(ncpId: number, data: any, changedBy: string) {
   }
 
   for (const field of fields) {
-    if (ncp[field] !== data[field]) {
+    if ((ncp as any)[field] !== (data as any)[field]) {
       logNCPChange(
-        ncp.ncp_id,
+        (ncp as any).ncp_id,
         changedBy,
         field,
-        ncp[field],
-        data[field],
+        (ncp as any)[field],
+        (data as any)[field],
         `Field ${field} updated by super_admin`,
       )
     }
@@ -314,7 +314,7 @@ export function superEditNCP(ncpId: number, data: any, changedBy: string) {
 }
 
 export function revertNCPStatus(ncpId: number, newStatus: string, changedBy: string) {
-  const ncp = getNCPById(ncpId)
+  const ncp: any = getNCPById(ncpId)
   if (ncp) {
     logNCPChange(
       ncp.ncp_id,
@@ -332,7 +332,7 @@ export function revertNCPStatus(ncpId: number, newStatus: string, changedBy: str
 }
 
 export function reassignNCP(ncpId: number, newAssignee: string, role: "qa_leader" | "team_leader", changedBy: string) {
-  const ncp = getNCPById(ncpId)
+  const ncp: any = getNCPById(ncpId)
   if (!ncp) return { changes: 0 }
 
   let columnToUpdate = ""
@@ -378,7 +378,7 @@ export function getAverageApprovalTime() {
     FROM ncp_reports
     WHERE status = 'manager_approved';
   `
-  const result = db.prepare(query).get()
+  const result: any = db.prepare(query).get()
   return result ? result.avg_minutes : 0
 }
 
@@ -469,7 +469,7 @@ export function createNCPReport(data: any, submittedBy: string) {
   )
 
   // Create notification for the selected QA Leader
-  const qaLeaderUser = db.prepare("SELECT id FROM users WHERE username = ?").get(data.qaLeader)
+  const qaLeaderUser: any = db.prepare("SELECT id FROM users WHERE username = ?").get(data.qaLeader)
   if (qaLeaderUser) {
     createNotification(
       qaLeaderUser.id,
@@ -587,10 +587,10 @@ export function approveNCPByQALeader(id: number, approvalData: any, qaLeaderUser
 
   if (result.changes > 0) {
     // Get NCP details for notification
-    const ncp = db.prepare("SELECT ncp_id FROM ncp_reports WHERE id = ?").get(id)
+    const ncp: any = db.prepare("SELECT ncp_id FROM ncp_reports WHERE id = ?").get(id)
 
     // FIXED: Create notification for assigned team leader using the exact username
-    const teamLeaderUser = db.prepare("SELECT id FROM users WHERE username = ?").get(approvalData.assignedTeamLeader)
+    const teamLeaderUser: any = db.prepare("SELECT id FROM users WHERE username = ?").get(approvalData.assignedTeamLeader)
     if (teamLeaderUser) {
       createNotification(
         teamLeaderUser.id,
@@ -644,7 +644,7 @@ export function processNCPByTeamLeader(id: number, processData: any, teamLeaderU
 
   if (result.changes > 0) {
     // Get NCP details for notification
-    const ncp = db.prepare("SELECT ncp_id FROM ncp_reports WHERE id = ?").get(id)
+    const ncp: any = db.prepare("SELECT ncp_id FROM ncp_reports WHERE id = ?").get(id)
 
     // Create notification for process leads
     createNotificationForRole(
@@ -673,7 +673,7 @@ export function approveNCPByProcessLead(id: number, comment: string, processLead
 
   if (result.changes > 0) {
     // Get NCP details for notification
-    const ncp = db.prepare("SELECT ncp_id FROM ncp_reports WHERE id = ?").get(id)
+    const ncp: any = db.prepare("SELECT ncp_id FROM ncp_reports WHERE id = ?").get(id)
 
     // Create notification for QA Managers
     createNotificationForRole(
@@ -701,10 +701,10 @@ export function rejectNCPByProcessLead(id: number, rejectionReason: string, proc
 
   if (result.changes > 0) {
     // Get NCP details for notification
-    const ncp = db.prepare("SELECT ncp_id, assigned_team_leader FROM ncp_reports WHERE id = ?").get(id)
+    const ncp: any = db.prepare("SELECT ncp_id, assigned_team_leader FROM ncp_reports WHERE id = ?").get(id)
 
     // Create notification for assigned team leader
-    const teamLeaderUser = db.prepare("SELECT id FROM users WHERE username = ?").get(ncp.assigned_team_leader)
+    const teamLeaderUser: any = db.prepare("SELECT id FROM users WHERE username = ?").get(ncp.assigned_team_leader)
     if (teamLeaderUser) {
       createNotification(
         teamLeaderUser.id,
@@ -734,10 +734,10 @@ export function approveNCPByQAManager(id: number, comment: string, qaManagerUser
 
   if (result.changes > 0) {
     // Get NCP details for notification
-    const ncp = db.prepare("SELECT ncp_id, submitted_by FROM ncp_reports WHERE id = ?").get(id)
+    const ncp: any = db.prepare("SELECT ncp_id, submitted_by FROM ncp_reports WHERE id = ?").get(id)
 
     // Create notification for original submitter
-    const submitterUser = db.prepare("SELECT id FROM users WHERE username = ?").get(ncp.submitted_by)
+    const submitterUser: any = db.prepare("SELECT id FROM users WHERE username = ?").get(ncp.submitted_by)
     if (submitterUser) {
       createNotification(
         submitterUser.id,
@@ -748,9 +748,9 @@ export function approveNCPByQAManager(id: number, comment: string, qaManagerUser
     }
 
     // Also notify QA Leader
-    const ncpDetails = db.prepare("SELECT qa_approved_by FROM ncp_reports WHERE id = ?").get(id)
+    const ncpDetails: any = db.prepare("SELECT qa_approved_by FROM ncp_reports WHERE id = ?").get(id)
     if (ncpDetails.qa_approved_by) {
-      const qaLeaderUser = db.prepare("SELECT id FROM users WHERE username = ?").get(ncpDetails.qa_approved_by)
+      const qaLeaderUser: any = db.prepare("SELECT id FROM users WHERE username = ?").get(ncpDetails.qa_approved_by)
       if (qaLeaderUser) {
         createNotification(
           qaLeaderUser.id,
@@ -779,10 +779,10 @@ export function rejectNCPByQAManager(id: number, rejectionReason: string, qaMana
 
   if (result.changes > 0) {
     // Get NCP details for notification
-    const ncp = db.prepare("SELECT ncp_id, assigned_team_leader FROM ncp_reports WHERE id = ?").get(id)
+    const ncp: any = db.prepare("SELECT ncp_id, assigned_team_leader FROM ncp_reports WHERE id = ?").get(id)
 
     // Create notification for assigned team leader
-    const teamLeaderUser = db.prepare("SELECT id FROM users WHERE username = ?").get(ncp.assigned_team_leader)
+    const teamLeaderUser: any = db.prepare("SELECT id FROM users WHERE username = ?").get(ncp.assigned_team_leader)
     if (teamLeaderUser) {
       createNotification(
         teamLeaderUser.id,
@@ -808,7 +808,7 @@ export function createNotification(userId: number, ncpId: string, title: string,
 }
 
 export function createNotificationForRole(role: string, ncpId: string, title: string, message: string, type = "info") {
-  const users = db.prepare("SELECT id FROM users WHERE role = ?").all(role)
+  const users: any[] = db.prepare("SELECT id FROM users WHERE role = ?").all(role)
 
   for (const user of users) {
     createNotification(user.id, ncpId, title, message, type)
@@ -827,7 +827,7 @@ export function getNotificationsForUser(userId: number, limit = 10) {
 }
 
 export function getUnreadNotificationCount(userId: number) {
-  const result = db
+  const result: any = db
     .prepare("SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = FALSE")
     .get(userId)
   return result.count
@@ -843,11 +843,11 @@ export function markAllNotificationsAsRead(userId: number) {
 
 // Statistics functions
 export function getNCPStatistics() {
-  const total = db.prepare("SELECT COUNT(*) as count FROM ncp_reports").get()
-  const pending = db.prepare("SELECT COUNT(*) as count FROM ncp_reports WHERE status = 'pending'").get()
-  const qaApproved = db.prepare("SELECT COUNT(*) as count FROM ncp_reports WHERE status = 'qa_approved'").get()
-  const tlProcessed = db.prepare("SELECT COUNT(*) as count FROM ncp_reports WHERE status = 'tl_processed'").get()
-  const rejected = db.prepare("SELECT COUNT(*) as count FROM ncp_reports WHERE status LIKE '%rejected'").get()
+  const total: any = db.prepare("SELECT COUNT(*) as count FROM ncp_reports").get()
+  const pending: any = db.prepare("SELECT COUNT(*) as count FROM ncp_reports WHERE status = 'pending'").get()
+  const qaApproved: any = db.prepare("SELECT COUNT(*) as count FROM ncp_reports WHERE status = 'qa_approved'").get()
+  const tlProcessed: any = db.prepare("SELECT COUNT(*) as count FROM ncp_reports WHERE status = 'tl_processed'").get()
+  const rejected: any = db.prepare("SELECT COUNT(*) as count FROM ncp_reports WHERE status LIKE '%rejected'").get()
 
   return {
     total: total.count,
@@ -878,10 +878,10 @@ export function getNCPStatisticsForRole(userRole: string, username: string) {
       baseQuery = "FROM ncp_reports"
   }
 
-  const total = db.prepare(`SELECT COUNT(*) as count ${baseQuery}`).get(...params)
-  const pending = db.prepare(`SELECT COUNT(*) as count ${baseQuery} AND status = 'pending'`).get(...params)
-  const approved = db.prepare(`SELECT COUNT(*) as count ${baseQuery} AND status LIKE '%approved'`).get(...params)
-  const processed = db.prepare(`SELECT COUNT(*) as count ${baseQuery} AND status LIKE '%processed'`).get(...params)
+  const total: any = db.prepare(`SELECT COUNT(*) as count ${baseQuery}`).get(...params)
+  const pending: any = db.prepare(`SELECT COUNT(*) as count ${baseQuery} AND status = 'pending'`).get(...params)
+  const approved: any = db.prepare(`SELECT COUNT(*) as count ${baseQuery} AND status LIKE '%approved'`).get(...params)
+  const processed: any = db.prepare(`SELECT COUNT(*) as count ${baseQuery} AND status LIKE '%processed'`).get(...params)
 
   return {
     total: total.count,
@@ -907,7 +907,7 @@ export function updateExistingRecords() {
 
 // System Settings Functions
 export function getSystemSetting(key: string): string | null {
-  const result = db.prepare("SELECT setting_value FROM system_settings WHERE setting_key = ?").get(key)
+  const result: any = db.prepare("SELECT setting_value FROM system_settings WHERE setting_key = ?").get(key)
   return result ? result.setting_value : null
 }
 

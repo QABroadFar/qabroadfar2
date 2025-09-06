@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user exists first
-    const existingUser = getUserByUsername(username)
+    const existingUser: any = getUserByUsername(username)
     if (!existingUser) {
       logSystemEvent("warn", "Failed login attempt - user not found", { username })
       return NextResponse.json({ error: "Username not found" }, { status: 401 })

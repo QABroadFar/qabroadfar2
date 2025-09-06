@@ -39,8 +39,8 @@ interface QAManagerApprovalProps {
 }
 
 export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
-  const [pendingNCPs, setPendingNCPs] = useState([])
-  const [selectedNCP, setSelectedNCP] = useState(null)
+  const [pendingNCPs, setPendingNCPs] = useState<any[]>([])
+  const [selectedNCP, setSelectedNCP] = useState<any>(null)
   const [showApprovalDialog, setShowApprovalDialog] = useState(false)
   const [showRejectionDialog, setShowRejectionDialog] = useState(false)
   const [showSuccessDialog, setShowSuccessDialog] = useState(false) // State for the success dialog

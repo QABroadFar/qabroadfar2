@@ -12,10 +12,10 @@ import { toast } from "@/hooks/use-toast"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 const UserManagementPage = () => {
-  const [users, setUsers] = useState([])
+  const [users, setUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showPasswordDialog, setShowPasswordDialog] = useState(false)
-  const [selectedUserForPassword, setSelectedUserForPassword] = useState(null)
+  const [selectedUserForPassword, setSelectedUserForPassword] = useState<any>(null)
   const [newPassword, setNewPassword] = useState("")
   const [showCreateUserDialog, setShowCreateUserDialog] = useState(false)
   const [newUser, setNewUser] = useState({
@@ -54,7 +54,7 @@ const UserManagementPage = () => {
     }
   }
 
-  const handleStatusChange = async (user, isActive) => {
+  const handleStatusChange = async (user: any, isActive: boolean) => {
     try {
       const response = await fetch(`/api/users/${user.id}/status`, {
         method: 'PUT',
@@ -84,7 +84,7 @@ const UserManagementPage = () => {
     }
   }
 
-  const handleRoleChange = async (user, newRole) => {
+  const handleRoleChange = async (user: any, newRole: string) => {
     try {
       const response = await fetch(`/api/users/${user.id}/role`, {
         method: 'PUT',
@@ -114,7 +114,7 @@ const UserManagementPage = () => {
     }
   }
 
-  const handleOpenPasswordDialog = (user) => {
+  const handleOpenPasswordDialog = (user: any) => {
     setSelectedUserForPassword(user)
     setShowPasswordDialog(true)
     setNewPassword("")
@@ -211,7 +211,7 @@ const UserManagementPage = () => {
     }
   }
 
-  const handleDeleteUser = async (user) => {
+  const handleDeleteUser = async (user: any) => {
     if (!confirm(`Are you sure you want to delete user ${user.username}?`)) {
       return
     }

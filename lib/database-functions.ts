@@ -1,5 +1,5 @@
 import { db } from "./database" // Assuming db is imported from a database module
-import { createNotificationForRole, createNotification } from "./notification" // Assuming these functions are imported from a notification module
+import { createNotificationForRole, createNotification } from "./database" // Importing from database.ts
 
 // Add these functions to your lib/database.ts if missing
 
@@ -18,7 +18,7 @@ export function approveNCPByProcessLead(id: number, comment: string, processLead
 
   if (result.changes > 0) {
     // Get NCP details for notification
-    const ncp = db.prepare("SELECT ncp_id FROM ncp_reports WHERE id = ?").get(id)
+    const ncp: any = db.prepare("SELECT ncp_id FROM ncp_reports WHERE id = ?").get(id)
 
     // Create notification for QA Managers
     createNotificationForRole(
@@ -46,10 +46,10 @@ export function rejectNCPByProcessLead(id: number, rejectionReason: string, proc
 
   if (result.changes > 0) {
     // Get NCP details for notification
-    const ncp = db.prepare("SELECT ncp_id, assigned_team_leader FROM ncp_reports WHERE id = ?").get(id)
+    const ncp: any = db.prepare("SELECT ncp_id, assigned_team_leader FROM ncp_reports WHERE id = ?").get(id)
 
     // Create notification for assigned team leader
-    const teamLeaderUser = db.prepare("SELECT id FROM users WHERE username = ?").get(ncp.assigned_team_leader)
+    const teamLeaderUser: any = db.prepare("SELECT id FROM users WHERE username = ?").get(ncp.assigned_team_leader)
     if (teamLeaderUser) {
       createNotification(
         teamLeaderUser.id,

@@ -107,7 +107,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
 
   useEffect(() => {
     fetchAllNCPs()
-    const fetchUsersByRole = async (role) => {
+    const fetchUsersByRole = async (role: string) => {
       try {
         // Only fetch users by role if user is super_admin or admin
         if (userInfo.role !== "super_admin" && userInfo.role !== "admin") {
@@ -278,7 +278,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setEditableNCP((prev) => ({ ...prev, [name]: value }))
+    setEditableNCP((prev) => prev ? { ...prev, [name]: value } : null)
   }
 
   const handleSaveChanges = async () => {
@@ -349,15 +349,15 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
       if (response.ok) {
         fetchAllNCPs()
         setShowDetailDialog(false)
-        toast.success("NCP report deleted successfully")
+        alert("NCP report deleted successfully")
       } else {
         const result = await response.json()
         console.error("Failed to delete NCP:", result.error)
-        toast.error(result.error || "Failed to delete NCP report")
+        alert(result.error || "Failed to delete NCP report")
       }
     } catch (error) {
       console.error("Error deleting NCP:", error)
-      toast.error("Error deleting NCP report")
+      alert("Error deleting NCP report")
     }
   }
 
@@ -559,7 +559,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     {isEditing ? (
                       <Input
                         name="sku_code"
-                        value={editableNCP.sku_code}
+                        value={editableNCP?.sku_code || ""}
                         onChange={handleInputChange}
                       />
                     ) : (
@@ -571,7 +571,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     {isEditing ? (
                       <Input
                         name="machine_code"
-                        value={editableNCP.machine_code}
+                        value={editableNCP?.machine_code || ""}
                         onChange={handleInputChange}
                       />
                     ) : (
@@ -584,7 +584,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                       <Input
                         type="date"
                         name="date"
-                        value={editableNCP.date ? new Date(editableNCP.date).toISOString().split('T')[0] : ''}
+                        value={editableNCP?.date ? new Date(editableNCP.date).toISOString().split('T')[0] : ''}
                         onChange={handleInputChange}
                       />
                     ) : (
@@ -604,7 +604,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                       <Input
                         type="time"
                         name="time_incident"
-                        value={editableNCP.time_incident}
+                        value={editableNCP?.time_incident || ""}
                         onChange={handleInputChange}
                       />
                     ) : (
@@ -618,12 +618,12 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                         <Input
                           type="number"
                           name="hold_quantity"
-                          value={editableNCP.hold_quantity}
+                          value={editableNCP?.hold_quantity || ""}
                           onChange={handleInputChange}
                         />
                         <Input
                           name="hold_quantity_uom"
-                          value={editableNCP.hold_quantity_uom}
+                          value={editableNCP?.hold_quantity_uom || ""}
                           onChange={handleInputChange}
                         />
                       </div>
@@ -647,7 +647,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                   {isEditing ? (
                     <Textarea
                       name="problem_description"
-                      value={editableNCP.problem_description}
+                      value={editableNCP?.problem_description || ""}
                       onChange={handleInputChange}
                       rows={5}
                     />
@@ -699,7 +699,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">Approved At</label>
-                      <p className="text-gray-800 font-medium">{formatToWIB(selectedNCP.qa_approved_at)}</p>
+                      <p className="text-gray-800 font-medium">{selectedNCP.qa_approved_at ? formatToWIB(selectedNCP.qa_approved_at) : ""}</p>
                     </div>
                     {selectedNCP.assigned_team_leader && (
                       <div>
@@ -746,7 +746,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">Processed At</label>
-                      <p className="text-gray-800 font-medium">{formatToWIB(selectedNCP.tl_processed_at)}</p>
+                      <p className="text-gray-800 font-medium">{selectedNCP.tl_processed_at ? formatToWIB(selectedNCP.tl_processed_at) : ""}</p>
                     </div>
                   </div>
                   {(isEditing || selectedNCP.root_cause_analysis) && (
@@ -757,7 +757,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                           {isEditing ? (
                             <Textarea
                               name="root_cause_analysis"
-                              value={editableNCP.root_cause_analysis}
+                              value={editableNCP?.root_cause_analysis || ""}
                               onChange={handleInputChange}
                               rows={3}
                             />
@@ -772,7 +772,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                           {isEditing ? (
                             <Textarea
                               name="corrective_action"
-                              value={editableNCP.corrective_action}
+                              value={editableNCP?.corrective_action || ""}
                               onChange={handleInputChange}
                               rows={3}
                             />
@@ -787,7 +787,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                           {isEditing ? (
                             <Textarea
                               name="preventive_action"
-                              value={editableNCP.preventive_action}
+                              value={editableNCP?.preventive_action || ""}
                               onChange={handleInputChange}
                               rows={3}
                             />
@@ -812,7 +812,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">Approved At</label>
-                      <p className="text-gray-800 font-medium">{formatToWIB(selectedNCP.process_approved_at)}</p>
+                      <p className="text-gray-800 font-medium">{selectedNCP.process_approved_at ? formatToWIB(selectedNCP.process_approved_at) : ""}</p>
                     </div>
                   </div>
                   {selectedNCP.process_comment && (
@@ -836,14 +836,14 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">Approved At</label>
-                      <p className="text-gray-800 font-medium">{formatToWIB(selectedNCP.manager_approved_at)}</p>
+                      <p className="text-gray-800 font-medium">{selectedNCP.manager_approved_at ? formatToWIB(selectedNCP.manager_approved_at) : ""}</p>
                     </div>
                   </div>
-                  {selectedNCP.final_comment && (
+                  {selectedNCP.manager_comment && (
                     <div className="mt-4">
                       <label className="text-sm font-medium text-gray-600">Final Comment</label>
                       <div className="bg-white p-4 rounded border mt-2">
-                        <p className="text-gray-800">{selectedNCP.final_comment}</p>
+                        <p className="text-gray-800">{selectedNCP.manager_comment}</p>
                       </div>
                     </div>
                   )}

@@ -74,18 +74,20 @@ export default function Dashboard() {
       case "settings":
         return <SystemSettings />
       default:
-        return <WelcomeContent onNavigate={setActiveComponent} />
+        return <WelcomeContent />
     }
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <SidebarProvider>
-        <AppSidebar 
-          userInfo={userInfo} 
-          currentPage={activeComponent}
-          setCurrentPage={setActiveComponent}
-        />
+        {userInfo && (
+          <AppSidebar 
+            userInfo={userInfo} 
+            currentPage={activeComponent}
+            setCurrentPage={setActiveComponent}
+          />
+        )}
         <SidebarInset>
           <DashboardHeader userInfo={userInfo} />
           <main className="flex-1">

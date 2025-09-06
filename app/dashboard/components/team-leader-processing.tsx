@@ -40,8 +40,8 @@ interface TeamLeaderProcessingProps {
 }
 
 export function TeamLeaderProcessing({ onBack, userInfo }: TeamLeaderProcessingProps) {
-  const [assignedNCPs, setAssignedNCPs] = useState([])
-  const [selectedNCP, setSelectedNCP] = useState(null)
+  const [assignedNCPs, setAssignedNCPs] = useState<any[]>([])
+  const [selectedNCP, setSelectedNCP] = useState<any>(null)
   const [showProcessDialog, setShowProcessDialog] = useState(false)
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")

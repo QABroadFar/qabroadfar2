@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { Loader2, UserPlus, Users, Edit, Key, UserX } from "lucide-react"
+import { Loader2, UserPlus, Users, Edit, Key, UserX, Trash2 } from "lucide-react"
 
 interface User {
   id: number
@@ -60,7 +60,7 @@ export function UserManagement() {
     }
   }
 
-  const handleAddUser = async (e: React.FormEvent) {
+  const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!newUser.username || !newUser.password) {

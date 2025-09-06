@@ -20,8 +20,8 @@ import {
   ClipboardCheck
 } from "lucide-react"
 
-export function NCPTracker({ ncpReports }) {
-  const getStatusInfo = (status) => {
+export function NCPTracker({ ncpReports }: { ncpReports: any[] }) {
+  const getStatusInfo = (status: string) => {
     switch (status) {
       case "pending":
         return { 

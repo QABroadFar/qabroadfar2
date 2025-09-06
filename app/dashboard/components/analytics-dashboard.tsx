@@ -148,7 +148,7 @@ export function AnalyticsDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-blue-700">Total NCPs</p>
-                <p className="text-2xl font-bold text-blue-900">{ncpStats?.total}</p>
+                <p className="text-2xl font-bold text-blue-900">{ncpStats?.total || 0}</p>
               </div>
               <FileText className="h-8 w-8 text-blue-500" />
             </div>
@@ -160,7 +160,7 @@ export function AnalyticsDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-yellow-700">Pending Review</p>
-                <p className="text-2xl font-bold text-yellow-900">{ncpStats?.pending}</p>
+                <p className="text-2xl font-bold text-yellow-900">{ncpStats?.pending || 0}</p>
               </div>
               <Clock className="h-8 w-8 text-yellow-500" />
             </div>
@@ -172,7 +172,7 @@ export function AnalyticsDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-green-700">In Progress</p>
-                <p className="text-2xl font-bold text-green-900">{ncpStats?.qaApproved + ncpStats?.tlProcessed}</p>
+                <p className="text-2xl font-bold text-green-900">{(ncpStats?.qaApproved || 0) + (ncpStats?.tlProcessed || 0)}</p>
               </div>
               <TrendingUp className="h-8 w-8 text-green-500" />
             </div>
@@ -184,7 +184,7 @@ export function AnalyticsDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-purple-700">Completed</p>
-                <p className="text-2xl font-bold text-purple-900">{ncpStats?.tlProcessed + 210 + 226}</p>
+                <p className="text-2xl font-bold text-purple-900">{(ncpStats?.tlProcessed || 0) + 210 + 226}</p>
               </div>
               <CheckCircle className="h-8 w-8 text-purple-500" />
             </div>
@@ -196,7 +196,7 @@ export function AnalyticsDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-red-700">Rejected</p>
-                <p className="text-2xl font-bold text-red-900">{ncpStats?.rejected}</p>
+                <p className="text-2xl font-bold text-red-900">{ncpStats?.rejected || 0}</p>
               </div>
               <AlertCircle className="h-8 w-8 text-red-500" />
             </div>

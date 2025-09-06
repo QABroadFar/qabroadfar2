@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/sidebar"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  userInfo: { username: string; role: string; fullName?: string; id?: number }
+  userInfo?: { username: string; role: string; fullName?: string; id?: number } | null
   currentPage: string
   setCurrentPage: (page: string) => void
 }
@@ -85,27 +85,28 @@ const menuData = {
       url: "#",
       icon: Users,
       disabled: true,
+      page: "inprocess-qa-maker"
     },
     {
       title: "Inprocess QA Packer",
       url: "#",
       icon: Package,
       disabled: true,
+      page: "inprocess-qa-packer"
     },
     {
       title: "Document Control",
       url: "#",
       icon: FileText,
       disabled: true,
+      page: "document-control"
     },
   ],
 }
 
 export function AppSidebar({ userInfo, currentPage, setCurrentPage, ...props }: AppSidebarProps) {
   const handleNavigation = (component: string) => {
-    if (onNavigationChange) {
-      onNavigationChange(component);
-    }
+    setCurrentPage(component);
   };
 
   return (
@@ -129,7 +130,7 @@ export function AppSidebar({ userInfo, currentPage, setCurrentPage, ...props }: 
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     onClick={() => handleNavigation(item.component)}
-                    isActive={activeComponent === item.component}
+                    isActive={currentPage === item.component}
                     className="text-gray-300 hover:text-white hover:bg-gray-800 data-[active=true]:bg-blue-600 data-[active=true]:text-white"
                   >
                     <item.icon className="h-4 w-4" />
@@ -142,7 +143,7 @@ export function AppSidebar({ userInfo, currentPage, setCurrentPage, ...props }: 
         </SidebarGroup>
 
         {/* Super Admin Group - Only visible to super admins */}
-        {userInfo.role === "super_admin" && (
+        {userInfo && userInfo.role === "super_admin" && (
           <SidebarGroup>
             <SidebarGroupLabel className="text-gray-300 text-xs font-medium uppercase tracking-wider">
               Super Admin
@@ -176,8 +177,7 @@ export function AppSidebar({ userInfo, currentPage, setCurrentPage, ...props }: 
               {menuData.othersGroup.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton 
-                    isActive={currentPage === item.page}
-                    onClick={() => !item.disabled && setCurrentPage(item.page)}
+                    onClick={() => !item.disabled && item.url !== "#" && setCurrentPage(item.url)}
                     disabled={item.disabled} 
                     className={`text-gray-300 hover:text-white hover:bg-gray-800 data-[active=true]:bg-blue-600 data-[active=true]:text-white cursor-pointer ${item.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >

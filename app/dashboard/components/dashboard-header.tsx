@@ -34,9 +34,10 @@ interface UserInfo {
 
 interface DashboardHeaderProps {
   userInfo?: UserInfo | null
+  onLogout?: () => void
 }
 
-export function DashboardHeader({ userInfo }: DashboardHeaderProps) {
+export function DashboardHeader({ userInfo, onLogout }: DashboardHeaderProps) {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const router = useRouter()
@@ -44,16 +45,20 @@ export function DashboardHeader({ userInfo }: DashboardHeaderProps) {
   const handleLogout = async () => {
     setIsLoggingOut(true)
     try {
-      // Call the logout API
-      const response = await fetch("/api/auth/logout", {
-        method: "POST",
-      })
-      
-      if (response.ok) {
-        // Redirect to login page
-        router.push("/login")
+      // If onLogout prop is provided, call it
+      if (onLogout) {
+        await onLogout()
       } else {
-        console.error("Logout failed")
+        // Otherwise, use the default logout logic
+        const response = await fetch("/api/auth/logout", {
+          method: "POST",
+        })
+        
+        if (response.ok) {
+          router.push("/login")
+        } else {
+          console.error("Logout failed")
+        }
       }
     } catch (error) {
       console.error("Logout error:", error)

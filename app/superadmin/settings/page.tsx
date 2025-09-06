@@ -12,7 +12,7 @@ import { toast } from "@/hooks/use-toast"
 import { formatToWIB } from "@/lib/date-utils"
 
 export default function SystemSettingsPage() {
-  const [apiKeys, setApiKeys] = useState([])
+  const [apiKeys, setApiKeys] = useState<any[]>([])
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [newApiKey, setNewApiKey] = useState({
     serviceName: "",
@@ -90,7 +90,7 @@ export default function SystemSettingsPage() {
     }
   }
 
-  const handleDeleteApiKey = async (id) => {
+  const handleDeleteApiKey = async (id: number) => {
     if (!confirm("Are you sure you want to delete this API key?")) {
       return
     }
@@ -124,7 +124,7 @@ export default function SystemSettingsPage() {
     }
   }
 
-  const handleToggleApiKeyStatus = async (id, isActive) => {
+  const handleToggleApiKeyStatus = async (id: number, isActive: boolean) => {
     try {
       // Get current API key details first
       const getKeyResponse = await fetch(`/api/api-keys/${id}`)

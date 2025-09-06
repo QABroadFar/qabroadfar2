@@ -28,11 +28,11 @@ export async function GET(request: NextRequest) {
     }
     
     console.log("Reports fetched successfully, count:", reports.length);
-    console.log("Sample report submitted_at:", reports[0]?.submitted_at);
+    console.log("Sample report submitted_at:", (reports as any)[0]?.submitted_at);
     
     // Return data in format expected by frontend
     return NextResponse.json({ data: reports })
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching NCP reports:", error)
     console.error("Error details:", {
       name: error.name,

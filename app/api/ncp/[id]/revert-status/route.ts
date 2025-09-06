@@ -34,7 +34,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     
     if (result.changes > 0) {
       // Get NCP details for logging
-      const ncp = getNCPById(id)
+      const ncp: any = getNCPById(id)
       
       logSystemEvent("info", "NCP Status Reverted by Super Admin", {
         ncp_id: ncp?.ncp_id || id,

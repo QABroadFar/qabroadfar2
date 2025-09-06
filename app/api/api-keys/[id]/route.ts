@@ -25,7 +25,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     const apiKeys = getApiKeys()
-    const apiKey = apiKeys.find(key => key.id === id)
+    const apiKey = apiKeys.find((key: any) => key.id === id)
     
     if (!apiKey) {
       return NextResponse.json({ error: "API key not found" }, { status: 404 })

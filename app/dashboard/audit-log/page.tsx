@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { formatToWIB } from "@/lib/date-utils"
 
 const AuditLogPage = () => {
-  const [auditLog, setAuditLog] = useState([])
+  const [auditLog, setAuditLog] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

@@ -83,7 +83,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     }
 
     // Get NCP details before deletion for logging
-    const ncp = getNCPById(id)
+    const ncp: any = getNCPById(id)
     
     // Delete NCP report
     const result = deleteNCPReport(id)

@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, Package2, Users, FileText, Settings, Shield, BarChart3, LogOut } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
-export default function SuperAdminLayout({ children }) {
+export default function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { toast } = useToast()
   const [isOpen, setIsOpen] = useState(false)
@@ -76,7 +76,7 @@ export default function SuperAdminLayout({ children }) {
     },
   ]
 
-  const isActive = (path) => {
+  const isActive = (path: string) => {
     return pathname === path
   }
 

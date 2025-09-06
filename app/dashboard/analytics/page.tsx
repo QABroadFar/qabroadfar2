@@ -7,7 +7,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearSca
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
 const AnalyticsPage = () => {
-  const [analyticsData, setAnalyticsData] = useState(null)
+  const [analyticsData, setAnalyticsData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -38,22 +38,22 @@ const AnalyticsPage = () => {
   const { ncpByMonth, statusDistribution, topSubmitters } = analyticsData;
 
   const ncpByMonthData = {
-    labels: ncpByMonth.map(item => item.month),
+    labels: ncpByMonth.map((item: any) => item.month),
     datasets: [
       {
         label: 'NCPs per Month',
-        data: ncpByMonth.map(item => item.count),
+        data: ncpByMonth.map((item: any) => item.count),
         backgroundColor: 'rgba(54, 162, 235, 0.6)',
       },
     ],
   };
 
   const statusDistributionData = {
-    labels: statusDistribution.map(item => item.status),
+    labels: statusDistribution.map((item: any) => item.status),
     datasets: [
       {
         label: 'NCP Status Distribution',
-        data: statusDistribution.map(item => item.count),
+        data: statusDistribution.map((item: any) => item.count),
         backgroundColor: [
           'rgba(255, 99, 132, 0.6)',
           'rgba(54, 162, 235, 0.6)',
@@ -67,11 +67,11 @@ const AnalyticsPage = () => {
   };
 
   const topSubmittersData = {
-    labels: topSubmitters.map(item => item.submitted_by),
+    labels: topSubmitters.map((item: any) => item.submitted_by),
     datasets: [
       {
         label: 'Top NCP Submitters',
-        data: topSubmitters.map(item => item.count),
+        data: topSubmitters.map((item: any) => item.count),
         backgroundColor: 'rgba(75, 192, 192, 0.6)',
       },
     ],

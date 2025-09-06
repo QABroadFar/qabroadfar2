@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar, Upload, Clock } from "lucide-react"
+import { FileText, Calendar, Upload, Clock } from "lucide-react"
 
 const machineOptions = ["SC1", "DC1A", "MAX", "DC1B", "SC2", "DC2", "HLP1", "HLP2", "HLP3", "HLP4", "SC3", "DC2"]
 
@@ -27,6 +27,9 @@ export function NCPInputForm() {
     photoAttachment: null as File | null,
     qaLeader: "",
   })
+
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewData, setPreviewData] = useState({} as any);
 
   const handleInputChange = (field: string, value: string | File | null) => {
     setFormData((prev) => ({
@@ -51,11 +54,10 @@ export function NCPInputForm() {
       problemDescription: "",
       photoAttachment: null,
       qaLeader: "",
-    })
+    });
+    setShowPreview(false);
+    setPreviewData({});
   }
-
-  const [showPreview, setShowPreview] = useState(false);
-  const [previewData, setPreviewData] = useState({});
 
   const handlePreview = () => {
     setPreviewData(formData);
@@ -99,22 +101,6 @@ export function NCPInputForm() {
 
   const handleEdit = () => {
     setShowPreview(false);
-  }
-
-  const handleReset = () => {
-    setFormData({
-      skuCode: "",
-      machineCode: "",
-      date: "",
-      timeIncident: "",
-      holdQuantity: "",
-      holdQuantityUOM: "PCS",
-      problemDescription: "",
-      photoAttachment: null,
-      qaLeader: "",
-    });
-    setShowPreview(false);
-    setPreviewData({});
   }
 
   return (

@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 const ApiKeysPage = () => {
-  const [apiKeys, setApiKeys] = useState([])
+  const [apiKeys, setApiKeys] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [newKeyData, setNewKeyData] = useState({ service_name: "", permissions: "" })
@@ -50,7 +50,7 @@ const ApiKeysPage = () => {
     }
   }
 
-  const handleDeleteKey = async (id) => {
+  const handleDeleteKey = async (id: number) => {
     try {
       await fetch(`/api/api-keys/${id}`, { method: 'DELETE' });
       fetchApiKeys();
