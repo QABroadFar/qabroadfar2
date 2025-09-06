@@ -1,5 +1,7 @@
 # Quality Assurance Portal - Implementation Summary
 
+Last Updated: September 6, 2025
+
 ## Project Overview
 The Quality Assurance Portal is a comprehensive web application built with Next.js 14 that manages Non-Conformance Product (NCP) reports through a structured workflow process. This implementation includes all requested Super Admin features and provides a complete system for quality management.
 

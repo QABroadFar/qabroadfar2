@@ -1,6 +1,6 @@
 # Business Workflow and Process Documentation
 
-Last Updated: September 2, 2025
+Last Updated: September 6, 2025
 
 ## Table of Contents
 1. [Overview](#overview)
@@ -265,6 +265,18 @@ When rejecting a report:
 3. Return to previous stage
 4. Notify responsible party
 5. Track rejection reasons for trend analysis
+
+**Process Lead Rejection**:
+- When a Process Lead rejects an NCP report, it is returned to the assigned Team Leader
+- The rejection reason is recorded in the process_rejection_reason field
+- The Team Leader receives a notification with the specific rejection reason
+- The NCP status is changed from "tl_processed" back to "qa_approved" to indicate it needs reprocessing
+
+**QA Manager Rejection**:
+- When a QA Manager rejects an NCP report, it is returned to the assigned Team Leader
+- The rejection reason is recorded in the manager_rejection_reason field
+- The Team Leader receives a notification with the specific rejection reason
+- The NCP status is changed from "process_approved" back to "qa_approved" to indicate it needs reprocessing
 
 ### Escalation Procedures
 - Reports pending >48 hours: Escalate to next level

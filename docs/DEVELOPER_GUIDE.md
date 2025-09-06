@@ -1,6 +1,6 @@
 # Quality Assurance Portal Developer Guide
 
-Last Updated: September 2, 2025
+Last Updated: September 6, 2025
 
 ## Table of Contents
 1. [Project Overview](#project-overview)

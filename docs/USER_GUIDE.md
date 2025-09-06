@@ -1,6 +1,6 @@
 # Quality Assurance Portal User Guide
 
-Last Updated: September 2, 2025
+Last Updated: September 6, 2025
 
 ## Table of Contents
 1. [Getting Started](#getting-started)
@@ -146,7 +146,7 @@ The NCP Report Workflow is a structured process for managing quality issues from
 3. Evaluate the RCA, corrective, and preventive actions
 4. Approve or reject the report:
    - If approved: Report moves to QA Manager
-   - If rejected: Report returns to Team Leader with feedback
+   - If rejected: Report returns to Team Leader with specific rejection reason
 
 ### Step 5: QA Manager Final Approval
 1. Navigate to "Manager Approval" section
@@ -155,7 +155,7 @@ The NCP Report Workflow is a structured process for managing quality issues from
 4. Provide final comments if needed
 5. Approve or reject the report:
    - If approved: Report is archived and completed
-   - If rejected: Report returns to Team Leader for revision
+   - If rejected: Report returns to Team Leader with specific rejection reason for revision
 
 ## Role-Specific Features
 

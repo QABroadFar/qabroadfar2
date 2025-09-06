@@ -1,6 +1,6 @@
 # Quality Assurance Portal Documentation
 
-Last Updated: September 2, 2025
+Last Updated: September 6, 2025
 
 ## Table of Contents
 1. [System Overview](#system-overview)
@@ -1145,9 +1145,12 @@ Component for viewing system analytics (Super Admin feature).
 - `getAllNCPReports`: Gets all NCP reports
 - `getNCPById`: Gets NCP report by ID
 - `approveNCPByQALeader`: Approves NCP by QA Leader
+- `rejectNCPByQALeader`: Rejects NCP by QA Leader and sends back to submitter
 - `processNCPByTeamLeader`: Processes NCP by Team Leader
 - `approveNCPByProcessLead`: Approves NCP by Process Lead
+- `rejectNCPByProcessLead`: Rejects NCP by Process Lead and sends back to Team Leader
 - `approveNCPByQAManager`: Approves NCP by QA Manager
+- `rejectNCPByQAManager`: Rejects NCP by QA Manager and sends back to Team Leader
 - `superEditNCP`: Edits NCP by Super Admin
 - `revertNCPStatus`: Reverts NCP status by Super Admin
 - `reassignNCP`: Reassigns NCP by Super Admin

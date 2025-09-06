@@ -1,5 +1,7 @@
 # Public Access Feature
 
+Last Updated: September 6, 2025
+
 This document describes the new public access feature that allows users to view NCP data without authentication.
 
 ## Overview

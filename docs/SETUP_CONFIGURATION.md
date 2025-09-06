@@ -1,6 +1,6 @@
 # Setup and Configuration Guide
 
-Last Updated: September 2, 2025
+Last Updated: September 6, 2025
 
 ## Table of Contents
 1. [System Requirements](#system-requirements)

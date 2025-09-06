@@ -691,13 +691,14 @@ export function rejectNCPByProcessLead(id: number, rejectionReason: string, proc
   const stmt = db.prepare(`
     UPDATE ncp_reports 
     SET status = 'qa_approved',
-        process_approved_by = ?,
-        process_approved_at = CURRENT_TIMESTAMP,
-        process_rejection_reason = ?
+        process_approved_by = NULL,
+        process_approved_at = NULL,
+        process_rejection_reason = ?,
+        process_comment = NULL
     WHERE id = ?
   `)
 
-  const result = stmt.run(processLeadUsername, rejectionReason, id)
+  const result = stmt.run(rejectionReason, id)
 
   if (result.changes > 0) {
     // Get NCP details for notification
@@ -713,6 +714,16 @@ export function rejectNCPByProcessLead(id: number, rejectionReason: string, proc
         `NCP ${ncp.ncp_id} has been rejected by Process Lead and returned for reprocessing. Reason: ${rejectionReason}`,
       )
     }
+    
+    // Log the change in audit trail
+    logNCPChange(
+      ncp.ncp_id,
+      processLeadUsername,
+      "status",
+      "tl_processed", // previous status
+      "qa_approved", // new status
+      `NCP rejected by Process Lead. Reason: ${rejectionReason}`
+    )
   }
 
   return result
@@ -769,13 +780,14 @@ export function rejectNCPByQAManager(id: number, rejectionReason: string, qaMana
   const stmt = db.prepare(`
     UPDATE ncp_reports 
     SET status = 'qa_approved',
-        manager_approved_by = ?,
-        manager_approved_at = CURRENT_TIMESTAMP,
-        manager_rejection_reason = ?
+        manager_approved_by = NULL,
+        manager_approved_at = NULL,
+        manager_rejection_reason = ?,
+        manager_comment = NULL
     WHERE id = ?
   `)
 
-  const result = stmt.run(qaManagerUsername, rejectionReason, id)
+  const result = stmt.run(rejectionReason, id)
 
   if (result.changes > 0) {
     // Get NCP details for notification
@@ -791,6 +803,16 @@ export function rejectNCPByQAManager(id: number, rejectionReason: string, qaMana
         `NCP ${ncp.ncp_id} has been rejected by QA Manager and returned for reprocessing. Reason: ${rejectionReason}`,
       )
     }
+    
+    // Log the change in audit trail
+    logNCPChange(
+      ncp.ncp_id,
+      qaManagerUsername,
+      "status",
+      "process_approved", // previous status
+      "qa_approved", // new status
+      `NCP rejected by QA Manager. Reason: ${rejectionReason}`
+    )
   }
 
   return result
