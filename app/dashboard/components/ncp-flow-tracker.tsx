@@ -265,15 +265,17 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
                         
                         {flowSteps.map((step, index) => {
                           let statusClass = "bg-blue-900/50"
+                          let borderClass = ""
                           if (step.status === "completed") {
                             statusClass = "bg-green-500"
                           } else if (step.status === "current") {
-                            statusClass = "bg-blue-500 animate-pulse"
+                            statusClass = "bg-blue-500"
+                            borderClass = "ring-2 ring-blue-400 ring-opacity-70 animate-pulse"
                           }
                           
                           return (
                             <div key={index} className="flex flex-col items-center relative z-10">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${statusClass} transition-all duration-300`}>
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${statusClass} transition-all duration-300 ${borderClass}`}>
                                 {step.status === "completed" ? (
                                   <CheckCircle className="h-4 w-4 text-white" />
                                 ) : step.status === "current" ? (
@@ -283,7 +285,7 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
                                 )}
                               </div>
                               <div className="text-xs mt-2 text-center max-w-24">
-                                <div className={`font-medium ${step.status === "current" ? "text-white animate-pulse" : "text-blue-300"}`}>
+                                <div className={`font-medium ${step.status === "current" ? "text-white" : "text-blue-300"}`}>
                                   {step.title}
                                 </div>
                                 {step.assignee && (
