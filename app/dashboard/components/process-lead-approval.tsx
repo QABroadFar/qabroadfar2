@@ -159,40 +159,40 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "tl_processed":
-        return <Badge className="bg-blue-100 text-blue-800">Ready for Process Review</Badge>
+        return <Badge className="bg-blue-900/50 text-blue-300 border border-blue-500/30">Ready for Process Review</Badge>
       case "process_approved":
-        return <Badge className="bg-green-100 text-green-800">Process Approved</Badge>
+        return <Badge className="bg-green-900/50 text-green-300 border border-green-500/30">Process Approved</Badge>
       default:
-        return <Badge variant="secondary">{status}</Badge>
+        return <Badge variant="secondary" className="glass-panel">{status}</Badge>
     }
   }
 
   if (isLoading) {
     return (
-      <div className="p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen">
+      <div className="p-6 gradient-bg min-h-screen">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-          <span className="ml-2 text-gray-600">Loading NCPs for process review...</span>
+          <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
+          <span className="ml-2 text-blue-200">Loading NCPs for process review...</span>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen">
+    <div className="p-6 gradient-bg min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <Button variant="ghost" onClick={() => onBack()} className="text-gray-600 hover:text-gray-900 p-0 h-auto mb-4">
+          <Button variant="ghost" onClick={() => onBack()} className="text-blue-200 hover:text-blue-50 p-0 h-auto mb-4 glass-panel">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">Process Lead Approval</h1>
-              <p className="text-gray-600 mt-1">Review and approve processed NCP reports</p>
+              <h1 className="text-3xl font-bold futuristic-heading">Process Lead Approval</h1>
+              <p className="text-blue-200 mt-1">Review and approve processed NCP reports</p>
             </div>
-            <Badge variant="secondary" className="text-lg px-4 py-2">
+            <Badge variant="secondary" className="text-lg px-4 py-2 glass-panel border-cyan-500/30">
               {pendingNCPs.length} Pending Review
             </Badge>
           </div>
@@ -200,26 +200,26 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
 
         {/* NCP Cards */}
         {pendingNCPs.length === 0 ? (
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="glass-card">
             <CardContent className="p-12 text-center">
-              <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">No NCPs for Review</h3>
-              <p className="text-gray-600">All processed NCPs have been reviewed.</p>
+              <CheckCircle className="h-16 w-16 text-green-400 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold futuristic-subheading mb-2">No NCPs for Review</h3>
+              <p className="text-blue-200">All processed NCPs have been reviewed.</p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-6">
             {pendingNCPs.map((ncp: any) => (
-              <Card key={ncp.id} className="bg-white/90 backdrop-blur-md border-0 shadow-xl ring-1 ring-gray-200/50">
+              <Card key={ncp.id} className="glass-card">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Badge variant="outline" className="font-mono text-lg px-3 py-1">
+                      <Badge variant="outline" className="font-mono text-lg px-3 py-1 glass-panel border-cyan-500/30 text-blue-200">
                         {ncp.ncp_id}
                       </Badge>
                       {getStatusBadge(ncp.status)}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-blue-300">
                       <Clock className="h-4 w-4 inline mr-1" />
                       Processed: {formatToWIB(ncp.tl_processed_at)}
                     </div>
@@ -228,26 +228,26 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
 
                 <CardContent className="space-y-4">
                   {/* NCP Details Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4 bg-gray-50/50 rounded-lg">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 glass-panel p-4 rounded-lg">
                     <div className="flex items-center gap-2">
-                      <Package className="h-4 w-4 text-gray-500" />
+                      <Package className="h-4 w-4 text-blue-300" />
                       <div>
-                        <div className="text-xs text-gray-500">SKU Code</div>
-                        <div className="font-medium">{ncp.sku_code}</div>
+                        <div className="text-xs text-blue-300">SKU Code</div>
+                        <div className="font-medium text-blue-100">{ncp.sku_code}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-gray-500" />
+                      <FileText className="h-4 w-4 text-blue-300" />
                       <div>
-                        <div className="text-xs text-gray-500">Machine</div>
-                        <div className="font-medium">{ncp.machine_code}</div>
+                        <div className="text-xs text-blue-300">Machine</div>
+                        <div className="font-medium text-blue-100">{ncp.machine_code}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-gray-500" />
+                      <Clock className="h-4 w-4 text-blue-300" />
                       <div>
-                        <div className="text-xs text-gray-500">Incident Date</div>
-                        <div className="font-medium">
+                        <div className="text-xs text-blue-300">Incident Date</div>
+                        <div className="font-medium text-blue-100">
                           {new Date(ncp.date).toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",
@@ -257,59 +257,59 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-gray-500" />
+                      <Clock className="h-4 w-4 text-blue-300" />
                       <div>
-                        <div className="text-xs text-gray-500">Incident Time</div>
-                        <div className="font-medium">{ncp.time_incident}</div>
+                        <div className="text-xs text-blue-300">Incident Time</div>
+                        <div className="font-medium text-blue-100">{ncp.time_incident}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-gray-500" />
+                      <User className="h-4 w-4 text-blue-300" />
                       <div>
-                        <div className="text-xs text-gray-500">Team Leader</div>
-                        <div className="font-medium">{ncp.tl_processed_by}</div>
+                        <div className="text-xs text-blue-300">Team Leader</div>
+                        <div className="font-medium text-blue-100">{ncp.tl_processed_by}</div>
                       </div>
                     </div>
                   </div>
 
                   {/* Problem Description */}
-                  <div className="p-4 bg-orange-50/50 rounded-lg border border-orange-200/50">
-                    <div className="text-sm font-medium text-gray-700 mb-2">Problem Description:</div>
-                    <p className="text-gray-800 text-sm leading-relaxed">{ncp.problem_description}</p>
+                  <div className="p-4 glass-panel rounded-lg border border-orange-500/20">
+                    <div className="text-sm font-medium text-blue-200 mb-2">Problem Description:</div>
+                    <p className="text-blue-100 text-sm leading-relaxed">{ncp.problem_description}</p>
                   </div>
 
                   {/* QA Leader Disposition */}
                   {ncp.disposisi && (
-                    <div className="p-4 bg-blue-50/50 rounded-lg border border-blue-200/50">
-                      <div className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-blue-600" />
+                    <div className="p-4 glass-panel rounded-lg border border-blue-500/20">
+                      <div className="text-sm font-medium text-blue-200 mb-2 flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-cyan-400" />
                         QA Leader Disposition:
                       </div>
-                      <p className="text-gray-800 text-sm leading-relaxed mb-4">{ncp.disposisi}</p>
+                      <p className="text-blue-100 text-sm leading-relaxed mb-4">{ncp.disposisi}</p>
 
                       {/* Quantities Grid - More prominent display */}
                       <div className="grid grid-cols-3 gap-4">
-                        <div className="bg-white p-3 rounded-lg border border-blue-200 text-center">
-                          <div className="text-xs text-gray-500 mb-1">Sortir</div>
-                          <div className="text-lg font-bold text-orange-600">{ncp.jumlah_sortir || "0"}</div>
-                          <div className="text-xs text-gray-400">{ncp.hold_quantity_uom}</div>
+                        <div className="glass-panel p-3 rounded-lg text-center border border-cyan-500/20">
+                          <div className="text-xs text-blue-300 mb-1">Sortir</div>
+                          <div className="text-lg font-bold text-orange-400">{ncp.jumlah_sortir || "0"}</div>
+                          <div className="text-xs text-blue-400">{ncp.hold_quantity_uom}</div>
                         </div>
-                        <div className="bg-white p-3 rounded-lg border border-blue-200 text-center">
-                          <div className="text-xs text-gray-500 mb-1">Release</div>
-                          <div className="text-lg font-bold text-green-600">{ncp.jumlah_release || "0"}</div>
-                          <div className="text-xs text-gray-400">{ncp.hold_quantity_uom}</div>
+                        <div className="glass-panel p-3 rounded-lg text-center border border-cyan-500/20">
+                          <div className="text-xs text-blue-300 mb-1">Release</div>
+                          <div className="text-lg font-bold text-green-400">{ncp.jumlah_release || "0"}</div>
+                          <div className="text-xs text-blue-400">{ncp.hold_quantity_uom}</div>
                         </div>
-                        <div className="bg-white p-3 rounded-lg border border-blue-200 text-center">
-                          <div className="text-xs text-gray-500 mb-1">Reject</div>
-                          <div className="text-lg font-bold text-red-600">{ncp.jumlah_reject || "0"}</div>
-                          <div className="text-xs text-gray-400">{ncp.hold_quantity_uom}</div>
+                        <div className="glass-panel p-3 rounded-lg text-center border border-cyan-500/20">
+                          <div className="text-xs text-blue-300 mb-1">Reject</div>
+                          <div className="text-lg font-bold text-red-400">{ncp.jumlah_reject || "0"}</div>
+                          <div className="text-xs text-blue-400">{ncp.hold_quantity_uom}</div>
                         </div>
                       </div>
 
                       {/* Total Hold Quantity */}
-                      <div className="mt-3 p-2 bg-gray-100 rounded text-center">
-                        <div className="text-xs text-gray-500">Total Hold Quantity</div>
-                        <div className="font-semibold text-gray-800">
+                      <div className="mt-3 p-2 glass-panel rounded text-center border border-cyan-500/20">
+                        <div className="text-xs text-blue-300">Total Hold Quantity</div>
+                        <div className="font-semibold text-blue-100">
                           {ncp.hold_quantity} {ncp.hold_quantity_uom}
                         </div>
                       </div>
@@ -317,33 +317,33 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
                   )}
 
                   {/* Team Leader Analysis */}
-                  <div className="p-4 bg-green-50/50 rounded-lg border border-green-200/50">
-                    <div className="text-sm font-medium text-gray-700 mb-3">Team Leader Analysis:</div>
+                  <div className="p-4 glass-panel rounded-lg border border-green-500/20">
+                    <div className="text-sm font-medium text-blue-200 mb-3">Team Leader Analysis:</div>
                     <div className="space-y-3">
                       <div>
-                        <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+                        <div className="flex items-center gap-2 text-xs text-blue-300 mb-1">
                           <Target className="h-3 w-3" />
                           Root Cause Analysis
                         </div>
-                        <p className="text-gray-800 text-sm leading-relaxed bg-white p-2 rounded border">
+                        <p className="text-blue-100 text-sm leading-relaxed glass-panel p-2 rounded border border-cyan-500/20">
                           {ncp.root_cause_analysis}
                         </p>
                       </div>
                       <div>
-                        <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+                        <div className="flex items-center gap-2 text-xs text-blue-300 mb-1">
                           <Wrench className="h-3 w-3" />
                           Corrective Action
                         </div>
-                        <p className="text-gray-800 text-sm leading-relaxed bg-white p-2 rounded border">
+                        <p className="text-blue-100 text-sm leading-relaxed glass-panel p-2 rounded border border-cyan-500/20">
                           {ncp.corrective_action}
                         </p>
                       </div>
                       <div>
-                        <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+                        <div className="flex items-center gap-2 text-xs text-blue-300 mb-1">
                           <Shield className="h-3 w-3" />
                           Preventive Action
                         </div>
-                        <p className="text-gray-800 text-sm leading-relaxed bg-white p-2 rounded border">
+                        <p className="text-blue-100 text-sm leading-relaxed glass-panel p-2 rounded border border-cyan-500/20">
                           {ncp.preventive_action}
                         </p>
                       </div>
@@ -352,15 +352,15 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
 
                   {/* Photo Attachment */}
                   {ncp.photo_attachment && (
-                    <div className="p-4 bg-purple-50/50 rounded-lg border border-purple-200/50">
-                      <div className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <div className="p-4 glass-panel rounded-lg border border-purple-500/20">
+                      <div className="text-sm font-medium text-blue-200 mb-2 flex items-center gap-2">
                         <ImageIcon className="h-4 w-4" />
                         Photo Attachment:
                       </div>
                       <div className="space-y-2">
-                        <p className="text-gray-600 text-sm">{ncp.photo_attachment.split("/").pop()}</p>
+                        <p className="text-blue-200 text-sm">{ncp.photo_attachment.split("/").pop()}</p>
                         {/* Display actual image */}
-                        <div className="relative w-full max-w-md h-48 bg-gray-100 rounded-lg overflow-hidden border">
+                        <div className="relative w-full max-w-md h-48 glass-panel rounded-lg overflow-hidden border border-cyan-500/20">
                           <img
                             src={`/uploads/${encodeURIComponent(ncp.photo_attachment)}` || "/placeholder.svg"}
                             alt="NCP Photo Attachment"
@@ -371,21 +371,21 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
                             onClick={() => window.open(`/uploads/${encodeURIComponent(ncp.photo_attachment)}`, "_blank")}
                           />
                         </div>
-                        <p className="text-xs text-gray-500">Click image to view full size</p>
+                        <p className="text-xs text-blue-400">Click image to view full size</p>
                       </div>
                     </div>
                   )}
 
                   {/* Action Buttons */}
-                  <div className="flex gap-3 pt-4 border-t border-gray-200/50">
+                  <div className="flex gap-3 pt-4 border-t border-cyan-500/20">
                     <Button
                       onClick={() => handleApprove(ncp)}
-                      className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                      className="flex-1 bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-600 hover:to-emerald-600 text-white"
                     >
                       <ThumbsUp className="h-4 w-4 mr-2" />
                       Approve Process
                     </Button>
-                    <Button onClick={() => handleReject(ncp)} variant="destructive" className="flex-1">
+                    <Button onClick={() => handleReject(ncp)} variant="destructive" className="flex-1 bg-gradient-to-r from-red-700 to-rose-700 hover:from-red-600 hover:to-rose-600 text-white">
                       <ThumbsDown className="h-4 w-4 mr-2" />
                       Reject & Return
                     </Button>
@@ -399,19 +399,19 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
 
       {/* Approval Dialog */}
       <Dialog open={showApprovalDialog} onOpenChange={setShowApprovalDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl glass-card border-cyan-500/30">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-green-600">
+            <DialogTitle className="text-xl font-bold text-green-400 futuristic-heading">
               Approve Process: {selectedNCP?.ncp_id}
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-blue-200">
               Approve this NCP process analysis and forward to QA Manager for final approval.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="approvalComment" className="text-sm font-medium">
+              <Label htmlFor="approvalComment" className="text-sm font-medium text-blue-200">
                 Process Approval Comment *
               </Label>
               <Textarea
@@ -419,20 +419,20 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
                 placeholder="Enter your approval comment and any additional notes..."
                 value={approvalComment}
                 onChange={(e) => setApprovalComment(e.target.value)}
-                className="min-h-24"
+                className="min-h-24 glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 text-blue-100 placeholder:text-blue-300/50"
                 rows={4}
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-blue-400">
                 This comment will be visible to the QA Manager and will be part of the permanent record.
               </p>
             </div>
           </div>
 
-          <DialogFooter className="gap-3">
-            <Button variant="outline" onClick={() => setShowApprovalDialog(false)} disabled={isSubmitting}>
+          <DialogFooter className="gap-3 border-t border-cyan-500/20 pt-4">
+            <Button variant="outline" onClick={() => setShowApprovalDialog(false)} disabled={isSubmitting} className="glass-panel border-cyan-500/30 text-blue-200 hover:bg-cyan-500/20">
               Cancel
             </Button>
-            <Button onClick={submitApproval} disabled={isSubmitting} className="bg-green-600 hover:bg-green-700">
+            <Button onClick={submitApproval} disabled={isSubmitting} className="bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-600 hover:to-emerald-600 text-white">
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -451,17 +451,17 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
 
       {/* Rejection Dialog */}
       <Dialog open={showRejectionDialog} onOpenChange={setShowRejectionDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl glass-card border-cyan-500/30">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-red-600">Reject Process: {selectedNCP?.ncp_id}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl font-bold text-red-400 futuristic-heading">Reject Process: {selectedNCP?.ncp_id}</DialogTitle>
+            <DialogDescription className="text-blue-200">
               Reject this NCP process analysis and return to Team Leader for revision.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="rejectionReason" className="text-sm font-medium">
+              <Label htmlFor="rejectionReason" className="text-sm font-medium text-blue-200">
                 Rejection Reason *
               </Label>
               <Textarea
@@ -469,20 +469,20 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
                 placeholder="Explain why this process analysis is being rejected and what needs to be improved..."
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                className="min-h-24"
+                className="min-h-24 glass-panel border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400 text-blue-100 placeholder:text-blue-300/50"
                 rows={4}
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-blue-400">
                 Provide clear guidance on what needs to be corrected or improved in the analysis.
               </p>
             </div>
           </div>
 
-          <DialogFooter className="gap-3">
-            <Button variant="outline" onClick={() => setShowRejectionDialog(false)} disabled={isSubmitting}>
+          <DialogFooter className="gap-3 border-t border-cyan-500/20 pt-4">
+            <Button variant="outline" onClick={() => setShowRejectionDialog(false)} disabled={isSubmitting} className="glass-panel border-cyan-500/30 text-blue-200 hover:bg-cyan-500/20">
               Cancel
             </Button>
-            <Button onClick={submitRejection} disabled={isSubmitting} variant="destructive">
+            <Button onClick={submitRejection} disabled={isSubmitting} variant="destructive" className="bg-gradient-to-r from-red-700 to-rose-700 hover:from-red-600 hover:to-rose-600 text-white">
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -501,18 +501,18 @@ export function ProcessLeadApproval({ onBack }: ProcessLeadApprovalProps) {
 
       {/* Success Dialog */}
       <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md glass-card border-cyan-500/30">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-green-600 flex items-center gap-2">
+            <DialogTitle className="text-xl font-bold text-green-400 futuristic-heading flex items-center gap-2">
               <CheckCircle className="h-6 w-6" />
               Success!
             </DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <p className="text-gray-700">{successMessage}</p>
+            <p className="text-blue-200">{successMessage}</p>
           </div>
-          <DialogFooter>
-            <Button onClick={() => setShowSuccessDialog(false)} className="w-full bg-green-600 hover:bg-green-700">
+          <DialogFooter className="border-t border-cyan-500/20 pt-4">
+            <Button onClick={() => setShowSuccessDialog(false)} className="w-full bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-600 hover:to-emerald-600 text-white">
               Continue
             </Button>
           </DialogFooter>
