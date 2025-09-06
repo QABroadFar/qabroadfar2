@@ -12,7 +12,7 @@ import { TeamLeaderProcessing } from "./components/team-leader-processing"
 import { ProcessLeadApproval } from "./components/process-lead-approval"
 import { QAManagerApproval } from "./components/qa-manager-approval"
 import { DatabaseNCP } from "./components/database-ncp"
-import { NCPFlowTracker } from "./components/ncp-flow-tracker" // Import the new component
+import { NCPFlowTracker } from "./components/ncp-flow-tracker"
 import UserManagementPage from "./user-management/page"
 import AnalyticsPage from "./analytics/page"
 import AuditLogPage from "./audit-log/page"

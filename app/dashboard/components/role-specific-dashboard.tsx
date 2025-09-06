@@ -12,7 +12,7 @@ import {
   CheckCircle, Clock, XCircle, FileText, TrendingUp, Users, 
   Package, User, Calendar, BarChart3, PieChartIcon 
 } from "lucide-react"
-import { formatToWIBID, formatDateOnlyWIB, formatSubmissionDate } from "@/lib/date-utils"
+import { formatToWIB, formatDateOnlyWIB, formatSubmissionDate } from "@/lib/date-utils"
 import { SuperAdminDashboard } from "./super-admin-dashboard"
 
 interface DashboardStats {
@@ -77,21 +77,21 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
       // Fetch dashboard statistics
       const statsResponse = await fetch("/api/dashboard/stats")
       if (statsResponse.ok) {
-        const statsData = await statsResponse.json()
+        const data = await statsResponse.json()
         // Ensure we're setting the correct data structure
-        if (statsData && typeof statsData === 'object') {
+        if (data && typeof data === 'object') {
           setDashboardData(prev => {
             if (!prev) {
               return {
-                stats: statsData.stats || statsData,
-                charts: statsData.charts || { monthly: [], statusDistribution: [], topSubmitters: [] },
+                stats: data.stats || data,
+                charts: data.charts || { monthly: [], statusDistribution: [], topSubmitters: [] },
                 teamLeaders: []
               }
             }
             return {
               ...prev,
-              stats: statsData.stats || statsData,
-              charts: statsData.charts || { monthly: [], statusDistribution: [], topSubmitters: [] }
+              stats: data.stats || data,
+              charts: data.charts || { monthly: [], statusDistribution: [], topSubmitters: [] }
             }
           })
         }
@@ -100,17 +100,17 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
       // Fetch user's NCPs
       const ncpsResponse = await fetch("/api/dashboard/ncps")
       if (ncpsResponse.ok) {
-        const ncpsData = await ncpsResponse.json()
-        // Ensure ncpsData.data is an array
-        setUserNCPs(Array.isArray(ncpsData.data) ? ncpsData.data : [])
+        const data = await ncpsResponse.json()
+        // Ensure data.data is an array
+        setUserNCPs(Array.isArray(data.data) ? data.data : [])
       }
 
       // Fetch pending NCPs (for approvers)
       const pendingResponse = await fetch("/api/dashboard/ncps?type=pending")
       if (pendingResponse.ok) {
-        const pendingData = await pendingResponse.json()
-        // Ensure pendingData.data is an array
-        setPendingNCPs(Array.isArray(pendingData.data) ? pendingData.data : [])
+        const data = await pendingResponse.json()
+        // Ensure data.data is an array
+        setPendingNCPs(Array.isArray(data.data) ? data.data : [])
       }
     } catch (error) {
       console.error("Error fetching dashboard data:", error)
@@ -121,14 +121,14 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      pending: { label: "Pending", className: "bg-yellow-100 text-yellow-800" },
-      qa_approved: { label: "QA Approved", className: "bg-blue-100 text-blue-800" },
-      tl_processed: { label: "TL Processed", className: "bg-purple-100 text-purple-800" },
-      process_approved: { label: "Process Approved", className: "bg-indigo-100 text-indigo-800" },
-      manager_approved: { label: "Manager Approved", className: "bg-green-100 text-green-800" },
-      qa_rejected: { label: "QA Rejected", className: "bg-red-100 text-red-800" },
-      process_rejected: { label: "Process Rejected", className: "bg-red-100 text-red-800" },
-      manager_rejected: { label: "Manager Rejected", className: "bg-red-100 text-red-800" },
+      pending: { label: "Pending", className: "status-badge-pending" },
+      qa_approved: { label: "QA Approved", className: "status-badge-qa-approved" },
+      tl_processed: { label: "TL Processed", className: "status-badge-tl-processed" },
+      process_approved: { label: "Process Approved", className: "status-badge-process-approved" },
+      manager_approved: { label: "Completed", className: "status-badge-manager-approved" },
+      qa_rejected: { label: "QA Rejected", className: "status-badge-rejected" },
+      process_rejected: { label: "Process Rejected", className: "status-badge-rejected" },
+      manager_rejected: { label: "Manager Rejected", className: "status-badge-rejected" },
     }
 
     const config = statusConfig[status as keyof typeof statusConfig] || { label: status, className: "bg-gray-100 text-gray-800" }
@@ -152,7 +152,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-lg">Loading dashboard...</div>
+        <div className="text-lg text-blue-200">Loading dashboard...</div>
       </div>
     )
   }
@@ -192,45 +192,45 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Reports</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Total Reports</CardTitle>
+              <FileText className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats?.total || 0}</div>
-              <p className="text-xs text-muted-foreground">Reports you've submitted</p>
+              <div className="text-2xl font-bold futuristic-heading">{dashboardData?.stats?.total || 0}</div>
+              <p className="text-xs text-blue-300">Reports you've submitted</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Pending</CardTitle>
+              <Clock className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats?.pending || 0}</div>
-              <p className="text-xs text-muted-foreground">Awaiting approval</p>
+              <div className="text-2xl font-bold futuristic-heading">{dashboardData?.stats?.pending || 0}</div>
+              <p className="text-xs text-blue-300">Awaiting approval</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Approved</CardTitle>
-              <CheckCircle className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Approved</CardTitle>
+              <CheckCircle className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats?.approved || 0}</div>
-              <p className="text-xs text-muted-foreground">Fully approved</p>
+              <div className="text-2xl font-bold futuristic-heading">{dashboardData?.stats?.approved || 0}</div>
+              <p className="text-xs text-blue-300">Fully approved</p>
             </CardContent>
           </Card>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 futuristic-subheading">
+                <FileText className="h-5 w-5 text-blue-300" />
                 Recent Reports
               </CardTitle>
             </CardHeader>
@@ -238,29 +238,28 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               {userReports.length > 0 ? (
                 <div className="space-y-4">
                   {userReports.map((ncp) => (
-                    <div key={ncp.id} className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                    <div key={ncp.id} className="flex items-center justify-between p-3 glass-panel rounded-lg">
                       <div>
-                        <div className="font-medium">{ncp.ncp_id}</div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="font-medium text-blue-100">{ncp.ncp_id}</div>
+                        <div className="text-sm text-blue-300">
                           {ncp.sku_code} • {formatDateOnlyWIB(ncp.date)}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         {getStatusBadge(ncp.status)}
                       </div>
-                    </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-muted-foreground">No reports found</p>
+                <p className="text-blue-300">No reports found</p>
               )}
             </CardContent>
           </Card>
 
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <XCircle className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 futuristic-subheading">
+                <XCircle className="h-5 w-5 text-blue-300" />
                 Rejected Reports
               </CardTitle>
             </CardHeader>
@@ -268,10 +267,10 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               {rejectedReports.length > 0 ? (
                 <div className="space-y-4">
                   {rejectedReports.map((ncp) => (
-                    <div key={ncp.id} className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                    <div key={ncp.id} className="flex items-center justify-between p-3 glass-panel rounded-lg">
                       <div>
-                        <div className="font-medium">{ncp.ncp_id}</div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="font-medium text-blue-100">{ncp.ncp_id}</div>
+                        <div className="text-sm text-blue-300">
                           {ncp.sku_code} • {formatDateOnlyWIB(ncp.date)}
                         </div>
                       </div>
@@ -282,7 +281,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
                   ))}
                 </div>
               ) : (
-                <p className="text-muted-foreground">No rejected reports</p>
+                <p className="text-blue-300">No rejected reports</p>
               )}
             </CardContent>
           </Card>
@@ -299,55 +298,55 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending Approval</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Pending Approval</CardTitle>
+              <Clock className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats?.pending || 0}</div>
-              <p className="text-xs text-muted-foreground">Reports awaiting your approval</p>
+              <div className="text-2xl font-bold futuristic-heading">{dashboardData?.stats?.pending || 0}</div>
+              <p className="text-xs text-blue-300">Reports awaiting your approval</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Approved Today</CardTitle>
-              <CheckCircle className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Approved Today</CardTitle>
+              <CheckCircle className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">Approved in last 24 hours</p>
+              <div className="text-2xl font-bold futuristic-heading">0</div>
+              <p className="text-xs text-blue-300">Approved in last 24 hours</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Approved</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Total Approved</CardTitle>
+              <TrendingUp className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats?.qaApproved || 0}</div>
-              <p className="text-xs text-muted-foreground">Reports you've approved</p>
+              <div className="text-2xl font-bold futuristic-heading">{dashboardData?.stats?.qaApproved || 0}</div>
+              <p className="text-xs text-blue-300">Reports you've approved</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Average Time</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Avg. Processing Time</CardTitle>
+              <Clock className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">2.5h</div>
-              <p className="text-xs text-muted-foreground">Avg. approval time</p>
+              <div className="text-2xl font-bold futuristic-heading">2.5h</div>
+              <p className="text-xs text-blue-300">Avg. time to complete RCA</p>
             </CardContent>
           </Card>
         </div>
 
-        <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+        <Card className="glass-card">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 futuristic-subheading">
+              <User className="h-5 w-5 text-blue-300" />
               Pending Approvals
             </CardTitle>
           </CardHeader>
@@ -355,25 +354,25 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
             {pendingApprovals.length > 0 ? (
               <div className="space-y-4">
                 {pendingApprovals.map((ncp) => (
-                  <div key={ncp.id} className="flex items-center justify-between p-4 bg-white rounded-lg border hover:bg-gray-50">
+                  <div key={ncp.id} className="flex items-center justify-between p-4 glass-panel rounded-lg hover:bg-blue-500/10">
                     <div className="flex-1">
-                      <div className="font-medium">{ncp.ncp_id}</div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="font-medium text-blue-100">{ncp.ncp_id}</div>
+                      <div className="text-sm text-blue-300">
                         {ncp.sku_code} • Machine: {ncp.machine_code}
                       </div>
-                      <div className="text-xs text-muted-foreground mt-1">
+                      <div className="text-xs text-blue-400 mt-1">
                         Submitted: {formatSubmissionDate(ncp.submitted_at)}
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
                       {getStatusBadge(ncp.status)}
-                      <Button size="sm">Review</Button>
+                      <Button size="sm" className="glass-panel text-blue-200 hover:bg-blue-500/30">Review</Button>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-muted-foreground">No pending approvals</p>
+              <p className="text-blue-300">No pending approvals</p>
             )}
           </CardContent>
         </Card>
@@ -390,45 +389,45 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Assigned for RCA</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Assigned for RCA</CardTitle>
+              <Package className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{assignedNCPs.length}</div>
-              <p className="text-xs text-muted-foreground">Pending root cause analysis</p>
+              <div className="text-2xl font-bold futuristic-heading">{assignedNCPs.length}</div>
+              <p className="text-xs text-blue-300">Pending root cause analysis</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Processed</CardTitle>
-              <CheckCircle className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Processed</CardTitle>
+              <CheckCircle className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{processedNCPs.length}</div>
-              <p className="text-xs text-muted-foreground">Awaiting process lead review</p>
+              <div className="text-2xl font-bold futuristic-heading">{processedNCPs.length}</div>
+              <p className="text-xs text-blue-300">Awaiting process lead review</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Avg. Processing Time</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Avg. Processing Time</CardTitle>
+              <Clock className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">4.2h</div>
-              <p className="text-xs text-muted-foreground">Average time to complete RCA</p>
+              <div className="text-2xl font-bold futuristic-heading">4.2h</div>
+              <p className="text-xs text-blue-300">Average time to complete RCA</p>
             </CardContent>
           </Card>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Package className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 futuristic-subheading">
+                <Package className="h-5 w-5 text-blue-300" />
                 Awaiting RCA Analysis
               </CardTitle>
             </CardHeader>
@@ -436,29 +435,29 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               {assignedNCPs.length > 0 ? (
                 <div className="space-y-4">
                   {assignedNCPs.map((ncp) => (
-                    <div key={ncp.id} className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                    <div key={ncp.id} className="flex items-center justify-between p-3 glass-panel rounded-lg hover:bg-blue-500/10">
                       <div>
-                        <div className="font-medium">{ncp.ncp_id}</div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="font-medium text-blue-100">{ncp.ncp_id}</div>
+                        <div className="text-sm text-blue-300">
                           {ncp.sku_code} • {formatDateOnlyWIB(ncp.date)}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button size="sm">Process</Button>
+                        <Button size="sm" className="glass-panel text-blue-200 hover:bg-blue-500/30">Process</Button>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-muted-foreground">No NCPs assigned for RCA</p>
+                <p className="text-blue-300">No NCPs assigned for RCA</p>
               )}
             </CardContent>
           </Card>
 
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 futuristic-subheading">
+                <CheckCircle className="h-5 w-5 text-blue-300" />
                 Processed NCPs
               </CardTitle>
             </CardHeader>
@@ -466,10 +465,10 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               {processedNCPs.length > 0 ? (
                 <div className="space-y-4">
                   {processedNCPs.map((ncp) => (
-                    <div key={ncp.id} className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                    <div key={ncp.id} className="flex items-center justify-between p-3 glass-panel rounded-lg hover:bg-blue-500/10">
                       <div>
-                        <div className="font-medium">{ncp.ncp_id}</div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="font-medium text-blue-100">{ncp.ncp_id}</div>
+                        <div className="text-sm text-blue-300">
                           {ncp.sku_code} • Processed: {formatSubmissionDate(ncp.tl_processed_at || '')}
                         </div>
                       </div>
@@ -480,7 +479,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
                   ))}
                 </div>
               ) : (
-                <p className="text-muted-foreground">No processed NCPs</p>
+                <p className="text-blue-300">No processed NCPs</p>
               )}
             </CardContent>
           </Card>
@@ -497,44 +496,44 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending Review</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Pending Review</CardTitle>
+              <Clock className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{pendingReviews.length}</div>
-              <p className="text-xs text-muted-foreground">Reports awaiting your review</p>
+              <div className="text-2xl font-bold futuristic-heading">{pendingReviews.length}</div>
+              <p className="text-xs text-blue-300">Reports awaiting your review</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Approved</CardTitle>
-              <CheckCircle className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Approved</CardTitle>
+              <CheckCircle className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats?.process_approved || 0}</div>
-              <p className="text-xs text-muted-foreground">Reports you've approved</p>
+              <div className="text-2xl font-bold futuristic-heading">{dashboardData?.stats?.process_approved || 0}</div>
+              <p className="text-xs text-blue-300">Reports you've approved</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Avg. Review Time</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Avg. Review Time</CardTitle>
+              <Clock className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">1.8h</div>
-              <p className="text-xs text-muted-foreground">Average time to review</p>
+              <div className="text-2xl font-bold futuristic-heading">1.8h</div>
+              <p className="text-xs text-blue-300">Average time to review</p>
             </CardContent>
           </Card>
         </div>
 
-        <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+        <Card className="glass-card">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 futuristic-subheading">
+              <FileText className="h-5 w-5 text-blue-300" />
               Pending Process Reviews
             </CardTitle>
           </CardHeader>
@@ -542,25 +541,25 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
             {pendingReviews.length > 0 ? (
               <div className="space-y-4">
                 {pendingReviews.map((ncp) => (
-                  <div key={ncp.id} className="flex items-center justify-between p-4 bg-white rounded-lg border hover:bg-gray-50">
+                  <div key={ncp.id} className="flex items-center justify-between p-4 glass-panel rounded-lg hover:bg-blue-500/10">
                     <div className="flex-1">
-                      <div className="font-medium">{ncp.ncp_id}</div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="font-medium text-blue-100">{ncp.ncp_id}</div>
+                      <div className="text-sm text-blue-300">
                         {ncp.sku_code} • Machine: {ncp.machine_code}
                       </div>
-                      <div className="text-xs text-muted-foreground mt-1">
+                      <div className="text-xs text-blue-400 mt-1">
                         Processed: {formatSubmissionDate(ncp.tl_processed_at || '')}
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
                       {getStatusBadge(ncp.status)}
-                      <Button size="sm">Review</Button>
+                      <Button size="sm" className="glass-panel text-blue-200 hover:bg-blue-500/30">Review</Button>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-muted-foreground">No pending reviews</p>
+              <p className="text-blue-300">No pending reviews</p>
             )}
           </CardContent>
         </Card>
@@ -576,44 +575,44 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending Approval</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Pending Approval</CardTitle>
+              <Clock className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{pendingApprovals.length}</div>
-              <p className="text-xs text-muted-foreground">Reports awaiting final approval</p>
+              <div className="text-2xl font-bold futuristic-heading">{pendingApprovals.length}</div>
+              <p className="text-xs text-blue-300">Reports awaiting final approval</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Approved This Month</CardTitle>
-              <CheckCircle className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Approved</CardTitle>
+              <CheckCircle className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">Final approvals this month</p>
+              <div className="text-2xl font-bold futuristic-heading">{dashboardData?.stats?.manager_approved || 0}</div>
+              <p className="text-xs text-blue-300">Reports you've approved</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Approved</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Total Approved This Month</CardTitle>
+              <TrendingUp className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats?.manager_approved || 0}</div>
-              <p className="text-xs text-muted-foreground">Reports you've approved</p>
+              <div className="text-2xl font-bold futuristic-heading">0</div>
+              <p className="text-xs text-blue-300">Final approvals this month</p>
             </CardContent>
           </Card>
         </div>
 
-        <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+        <Card className="glass-card">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 futuristic-subheading">
+              <CheckCircle className="h-5 w-5 text-blue-300" />
               Pending Final Approvals
             </CardTitle>
           </CardHeader>
@@ -621,25 +620,25 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
             {pendingApprovals.length > 0 ? (
               <div className="space-y-4">
                 {pendingApprovals.map((ncp) => (
-                  <div key={ncp.id} className="flex items-center justify-between p-4 bg-white rounded-lg border hover:bg-gray-50">
+                  <div key={ncp.id} className="flex items-center justify-between p-4 glass-panel rounded-lg hover:bg-blue-500/10">
                     <div className="flex-1">
-                      <div className="font-medium">{ncp.ncp_id}</div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="font-medium text-blue-100">{ncp.ncp_id}</div>
+                      <div className="text-sm text-blue-300">
                         {ncp.sku_code} • Machine: {ncp.machine_code}
                       </div>
-                      <div className="text-xs text-muted-foreground mt-1">
+                      <div className="text-xs text-blue-400 mt-1">
                         Process Approved: {formatSubmissionDate(ncp.process_approved_at || '')}
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
                       {getStatusBadge(ncp.status)}
-                      <Button size="sm">Approve</Button>
+                      <Button size="sm" className="glass-panel text-blue-200 hover:bg-blue-500/30">Approve</Button>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-muted-foreground">No pending approvals</p>
+              <p className="text-blue-300">No pending approvals</p>
             )}
           </CardContent>
         </Card>
@@ -655,69 +654,69 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total NCPs</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Total NCPs</CardTitle>
+              <FileText className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats?.total || 0}</div>
-              <p className="text-xs text-muted-foreground">All non-conformance reports</p>
+              <div className="text-2xl font-bold futuristic-heading">{dashboardData?.stats?.total || 0}</div>
+              <p className="text-xs text-blue-300">All non-conformance reports</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Pending</CardTitle>
+              <Clock className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats?.pending || 0}</div>
-              <p className="text-xs text-muted-foreground">Awaiting approval</p>
+              <div className="text-2xl font-bold futuristic-heading">{dashboardData?.stats?.pending || 0}</div>
+              <p className="text-xs text-blue-300">Awaiting approval</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">In Progress</CardTitle>
+              <Package className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold futuristic-heading">
                 {((dashboardData?.stats?.qaApproved || 0) + (dashboardData?.stats?.tlProcessed || 0) + (dashboardData?.stats?.process_approved || 0))}
               </div>
-              <p className="text-xs text-muted-foreground">Being processed</p>
+              <p className="text-xs text-blue-300">Being processed</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Approved</CardTitle>
-              <CheckCircle className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Approved</CardTitle>
+              <CheckCircle className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats?.manager_approved || 0}</div>
-              <p className="text-xs text-muted-foreground">Fully approved reports</p>
+              <div className="text-2xl font-bold futuristic-heading">{dashboardData?.stats?.manager_approved || 0}</div>
+              <p className="text-xs text-blue-300">Fully approved reports</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Rejected</CardTitle>
-              <XCircle className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm futuristic-subheading">Rejected</CardTitle>
+              <XCircle className="h-4 w-4 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData?.stats?.rejected || 0}</div>
-              <p className="text-xs text-muted-foreground">Rejected reports</p>
+              <div className="text-2xl font-bold futuristic-heading">{dashboardData?.stats?.rejected || 0}</div>
+              <p className="text-xs text-blue-300">Rejected reports</p>
             </CardContent>
           </Card>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 futuristic-subheading">
+                <BarChart3 className="h-5 w-5 text-blue-300" />
                 NCPs by Month
               </CardTitle>
             </CardHeader>
@@ -726,25 +725,33 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={dashboardData.charts.monthly}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                      <XAxis dataKey="month" stroke="#94a3b8" />
+                      <YAxis stroke="#94a3b8" />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(30, 41, 59, 0.8)', 
+                          borderColor: 'rgba(56, 189, 248, 0.3)',
+                          backdropFilter: 'blur(10px)',
+                          borderRadius: '0.5rem'
+                        }} 
+                        itemStyle={{ color: '#e0f2fe' }}
+                      />
                       <Legend />
                       <Bar dataKey="count" name="NCP Count" fill="#3b82f6" />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               ) : (
-                <p className="text-muted-foreground">No data available</p>
+                <p className="text-blue-300">No data available</p>
               )}
             </CardContent>
           </Card>
 
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <PieChartIcon className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 futuristic-subheading">
+                <PieChartIcon className="h-5 w-5 text-blue-300" />
                 NCP Status Distribution
               </CardTitle>
             </CardHeader>
@@ -767,23 +774,34 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
-                      <Tooltip formatter={(value) => [value, "Count"]} />
-                      <Legend />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(30, 41, 59, 0.8)', 
+                          borderColor: 'rgba(56, 189, 248, 0.3)',
+                          backdropFilter: 'blur(10px)',
+                          borderRadius: '0.5rem'
+                        }} 
+                        itemStyle={{ color: '#e0f2fe' }}
+                        formatter={(value) => [value, "Count"]}
+                      />
+                      <Legend 
+                        formatter={(value) => <span className="text-blue-200">{value}</span>}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
               ) : (
-                <p className="text-muted-foreground">No data available</p>
+                <p className="text-blue-300">No data available</p>
               )}
             </CardContent>
           </Card>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 futuristic-subheading">
+                <Users className="h-5 w-5 text-blue-300" />
                 Top Submitters
               </CardTitle>
             </CardHeader>
@@ -791,27 +809,27 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
               {dashboardData?.charts?.topSubmitters && Array.isArray(dashboardData.charts.topSubmitters) && dashboardData.charts.topSubmitters.length > 0 ? (
                 <div className="space-y-4">
                   {dashboardData.charts.topSubmitters.map((submitter, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-white rounded-lg border">
-                      <div className="font-medium">{submitter.submitted_by}</div>
-                      <div className="text-lg font-bold text-blue-600">{submitter.count}</div>
+                    <div key={index} className="flex items-center justify-between p-3 glass-panel rounded-lg">
+                      <div className="font-medium text-blue-100">{submitter.submitted_by}</div>
+                      <div className="text-lg font-bold text-blue-300">{submitter.count}</div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-muted-foreground">No data available</p>
+                <p className="text-blue-300">No data available</p>
               )}
             </CardContent>
           </Card>
 
-          <Card className="bg-white/60 backdrop-blur-sm border-gray-200/50">
+          <Card className="glass-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 futuristic-subheading">
+                <Calendar className="h-5 w-5 text-blue-300" />
                 Recent Activity
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">Recent system activity will be shown here</p>
+              <p className="text-blue-300">Recent system activity will be shown here</p>
             </CardContent>
           </Card>
         </div>
@@ -823,8 +841,8 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
     return (
       <div className="space-y-6">
         <div className="text-center py-12">
-          <h2 className="text-2xl font-bold text-gray-800">Welcome to Quality Assurance Portal</h2>
-          <p className="text-gray-600 mt-2">Your dashboard will be customized based on your role.</p>
+          <h2 className="text-2xl font-bold futuristic-heading">Welcome to Quality Assurance Portal</h2>
+          <p className="text-blue-300 mt-2">Your dashboard will be customized based on your role.</p>
         </div>
       </div>
     )
@@ -834,11 +852,11 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
-          <p className="text-gray-600">Welcome back, {userInfo.fullName || userInfo.username}</p>
+          <h1 className="text-3xl font-bold futuristic-heading">Dashboard</h1>
+          <p className="text-blue-300">Welcome back, {userInfo.fullName || userInfo.username}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={fetchData}>
+          <Button variant="outline" onClick={fetchData} className="glass-panel text-blue-200 hover:bg-blue-500/30">
             Refresh Data
           </Button>
         </div>

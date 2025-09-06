@@ -208,17 +208,17 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <Badge className="bg-yellow-100 text-yellow-800">Pending QA Review</Badge>
+        return <Badge className="status-badge-pending">Pending QA Review</Badge>
       case "qa_approved":
-        return <Badge className="bg-blue-100 text-blue-800">Team Leader Assigned</Badge>
+        return <Badge className="status-badge-qa-approved">Team Leader Assigned</Badge>
       case "tl_processed":
-        return <Badge className="bg-purple-100 text-purple-800">Processing Complete</Badge>
+        return <Badge className="status-badge-tl-processed">Processing Complete</Badge>
       case "process_approved":
-        return <Badge className="bg-green-100 text-green-800">Process Approved</Badge>
+        return <Badge className="status-badge-process-approved">Process Approved</Badge>
       case "manager_approved":
-        return <Badge className="bg-emerald-100 text-emerald-800">Completed</Badge>
+        return <Badge className="status-badge-manager-approved">Completed</Badge>
       case "rejected":
-        return <Badge className="bg-red-100 text-red-800">Rejected</Badge>
+        return <Badge className="status-badge-rejected">Rejected</Badge>
       default:
         return <Badge variant="secondary">{status}</Badge>
     }
@@ -262,7 +262,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
         `"${ncp.root_cause_analysis?.replace(/"/g, '""') || ''}"`,
         `"${ncp.corrective_action?.replace(/"/g, '""') || ''}"`,
         `"${ncp.preventive_action?.replace(/"/g, '""') || ''}"`
-      ].join(","))
+      ].join(",")) as string[]
     ].join("\n")
 
     const blob = new Blob([csvContent], { type: "text/csv" })
@@ -363,31 +363,31 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
 
   if (isLoading) {
     return (
-      <div className="p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen">
+      <div className="p-6 gradient-bg min-h-screen">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-          <span className="ml-2 text-gray-600">Loading NCP database...</span>
+          <Loader2 className="h-8 w-8 animate-spin text-blue-400" />
+          <span className="ml-2 text-blue-200">Loading NCP database...</span>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen">
+    <div className="p-6 gradient-bg min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">NCP Database</h1>
-              <p className="text-gray-600 mt-1">Complete database of all Non-Conformance Product reports</p>
+              <h1 className="text-3xl font-bold futuristic-heading">NCP Database</h1>
+              <p className="text-blue-200 mt-1">Minimal database interface</p>
             </div>
             <div className="flex items-center gap-3">
-              <Button onClick={exportToExcel} variant="outline" className="text-green-600 border-green-300 hover:bg-green-50">
+              <Button onClick={exportToExcel} variant="outline" className="glass-panel text-blue-200 hover:bg-blue-500/30">
                 <Download className="h-4 w-4 mr-2" />
                 Export Excel
               </Button>
-              <Badge variant="secondary" className="text-lg px-4 py-2">
+              <Badge variant="secondary" className="text-lg px-4 py-2 glass-panel">
                 {filteredNCPs.length} NCPs
               </Badge>
             </div>
@@ -395,22 +395,22 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
         </div>
 
         {/* Filters and Search */}
-        <Card className="bg-white/90 backdrop-blur-md border-0 shadow-lg mb-6">
+        <Card className="glass-card">
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-300" />
                 <Input
                   placeholder="Search by NCP ID, SKU, Machine, or Submitter..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 glass-panel text-white placeholder-blue-300 focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="px-3 py-2 glass-panel text-white focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Status</option>
                 <option value="pending">Pending QA Review</option>
@@ -427,7 +427,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                   setSortBy(field)
                   setSortOrder(order)
                 }}
-                className="px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="px-3 py-2 glass-panel text-white focus:ring-2 focus:ring-blue-500"
               >
                 <option value="submitted_at-desc">Newest First</option>
                 <option value="submitted_at-asc">Oldest First</option>
@@ -441,49 +441,49 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
         </Card>
 
         {/* NCP Table */}
-        <Card className="bg-white/90 backdrop-blur-md border-0 shadow-xl">
+        <Card className="glass-card">
           <CardContent className="p-0">
             {filteredNCPs.length === 0 ? (
               <div className="p-12 text-center">
-                <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">No Records Found</h3>
-                <p className="text-gray-600">No NCP records match your current filters.</p>
+                <FileText className="h-16 w-16 text-blue-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold futuristic-heading mb-2">No Records Found</h3>
+                <p className="text-blue-200">No NCP records match your current filters.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead>NCP ID</TableHead>
-                      <TableHead>SKU Code</TableHead>
-                      <TableHead>Machine</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Hold Qty</TableHead>
-                      <TableHead>Submitted By</TableHead>
-                      <TableHead>Submitted At</TableHead>
-                      <TableHead>Actions</TableHead>
+                    <TableRow className="glass-header">
+                      <TableHead className="text-blue-200">NCP ID</TableHead>
+                      <TableHead className="text-blue-200">SKU Code</TableHead>
+                      <TableHead className="text-blue-200">Machine</TableHead>
+                      <TableHead className="text-blue-200">Date</TableHead>
+                      <TableHead className="text-blue-200">Status</TableHead>
+                      <TableHead className="text-blue-200">Hold Qty</TableHead>
+                      <TableHead className="text-blue-200">Submitted By</TableHead>
+                      <TableHead className="text-blue-200">Submitted At</TableHead>
+                      <TableHead className="text-blue-200">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredNCPs.map((ncp: any) => (
-                      <TableRow key={ncp.id} className="hover:bg-gray-50/50">
-                        <TableCell className="font-mono font-medium">{ncp.ncp_id}</TableCell>
-                        <TableCell>{ncp.sku_code}</TableCell>
-                        <TableCell>{ncp.machine_code}</TableCell>
-                        <TableCell>{formatDateOnlyWIB(ncp.date)}</TableCell>
+                      <TableRow key={ncp.id} className="glass-panel hover:bg-blue-500/10">
+                        <TableCell className="font-mono font-medium text-white">{ncp.ncp_id}</TableCell>
+                        <TableCell className="text-blue-100">{ncp.sku_code}</TableCell>
+                        <TableCell className="text-blue-100">{ncp.machine_code}</TableCell>
+                        <TableCell className="text-blue-100">{formatDateOnlyWIB(ncp.date)}</TableCell>
                         <TableCell>{getStatusBadge(ncp.status)}</TableCell>
-                        <TableCell>
+                        <TableCell className="text-blue-100">
                           {ncp.hold_quantity} {ncp.hold_quantity_uom}
                         </TableCell>
-                        <TableCell>{ncp.submitted_by}</TableCell>
-                        <TableCell>{formatSubmissionDate(ncp.submitted_at)}</TableCell>
+                        <TableCell className="text-blue-100">{ncp.submitted_by}</TableCell>
+                        <TableCell className="text-blue-100">{formatSubmissionDate(ncp.submitted_at)}</TableCell>
                         <TableCell>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleViewDetails(ncp)}
-                            className="flex items-center gap-1"
+                            className="flex items-center gap-1 glass-panel text-blue-200 hover:bg-blue-500/30"
                           >
                             <Eye className="h-3 w-3" />
                             View
@@ -501,23 +501,23 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
 
       {/* Detail Dialog */}
       <Dialog open={showDetailDialog} onOpenChange={setShowDetailDialog}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto glass-card">
           <DialogHeader>
             <div className="flex justify-between items-center">
                 <div>
-                  <DialogTitle className="text-2xl font-bold text-gray-800">
+                  <DialogTitle className="text-2xl font-bold futuristic-heading">
                     NCP Details: {selectedNCP?.ncp_id}
                   </DialogTitle>
-                  <DialogDescription>
+                  <DialogDescription className="text-blue-200">
                     Complete information for Non-Conformance Product report
                   </DialogDescription>
                 </div>
                 <div className="flex gap-2">
                   {userInfo.role === 'super_admin' && !isEditing && (
                     <>
-                      <Button onClick={() => setShowRevertDialog(true)} variant="outline">Revert Status</Button>
-                      <Button onClick={() => setShowReassignDialog(true)} variant="outline">Reassign</Button>
-                      <Button onClick={() => setIsEditing(true)}>Edit</Button>
+                      <Button onClick={() => setShowRevertDialog(true)} variant="outline" className="glass-panel text-blue-200 hover:bg-blue-500/30">Revert Status</Button>
+                      <Button onClick={() => setShowReassignDialog(true)} variant="outline" className="glass-panel text-blue-200 hover:bg-blue-500/30">Reassign</Button>
+                      <Button onClick={() => setIsEditing(true)} className="glass-panel">Edit</Button>
                       <Button 
                         onClick={() => {
                           if (confirm("Are you sure you want to permanently delete this NCP report? This action cannot be undone.")) {
@@ -525,6 +525,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                           }
                         }} 
                         variant="destructive"
+                        className="glass-panel"
                       >
                         Delete
                       </Button>
@@ -532,8 +533,8 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                   )}
                   {isEditing && userInfo.role !== 'public' && (
                     <div className="flex gap-2">
-                      <Button onClick={handleSaveChanges}>Save</Button>
-                      <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+                      <Button onClick={handleSaveChanges} className="glass-panel">Save</Button>
+                      <Button variant="outline" onClick={() => setIsEditing(false)} className="glass-panel text-blue-200 hover:bg-blue-500/30">Cancel</Button>
                     </div>
                   )}
                 </div>
@@ -543,52 +544,55 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
           {selectedNCP && (
             <div className="space-y-6 py-4">
               {/* Basic Information */}
-              <div className="bg-blue-50/50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Basic Information</h3>
+              <div className="glass-panel p-6 rounded-lg">
+                <h3 className="text-lg font-semibold futuristic-heading mb-4">Basic Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-600">NCP ID</label>
-                    <p className="text-gray-800 font-mono font-bold">{selectedNCP.ncp_id}</p>
+                    <label className="text-sm font-medium text-blue-300">NCP ID</label>
+                    <p className="text-white font-mono font-bold">{selectedNCP.ncp_id}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Status</label>
+                    <label className="text-sm font-medium text-blue-300">Status</label>
                     <div className="mt-1">{getStatusBadge(selectedNCP.status)}</div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">SKU Code</label>
+                    <label className="text-sm font-medium text-blue-300">SKU Code</label>
                     {isEditing ? (
                       <Input
                         name="sku_code"
                         value={editableNCP?.sku_code || ""}
                         onChange={handleInputChange}
+                        className="glass-panel text-white"
                       />
                     ) : (
-                      <p className="text-gray-800 font-medium">{selectedNCP.sku_code}</p>
+                      <p className="text-white font-medium">{selectedNCP.sku_code}</p>
                     )}
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Machine Code</label>
+                    <label className="text-sm font-medium text-blue-300">Machine Code</label>
                     {isEditing ? (
                       <Input
                         name="machine_code"
                         value={editableNCP?.machine_code || ""}
                         onChange={handleInputChange}
+                        className="glass-panel text-white"
                       />
                     ) : (
-                      <p className="text-gray-800 font-medium">{selectedNCP.machine_code}</p>
+                      <p className="text-white font-medium">{selectedNCP.machine_code}</p>
                     )}
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Incident Date</label>
+                    <label className="text-sm font-medium text-blue-300">Incident Date</label>
                     {isEditing ? (
                       <Input
                         type="date"
                         name="date"
                         value={editableNCP?.date ? new Date(editableNCP.date).toISOString().split('T')[0] : ''}
                         onChange={handleInputChange}
+                        className="glass-panel text-white"
                       />
                     ) : (
-                      <p className="text-gray-800 font-medium">
+                      <p className="text-white font-medium">
                         {new Date(selectedNCP.date).toLocaleDateString("en-US", {
                           weekday: "long",
                           year: "numeric",
@@ -599,20 +603,21 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     )}
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Incident Time</label>
+                    <label className="text-sm font-medium text-blue-300">Incident Time</label>
                     {isEditing ? (
                       <Input
                         type="time"
                         name="time_incident"
                         value={editableNCP?.time_incident || ""}
                         onChange={handleInputChange}
+                        className="glass-panel text-white"
                       />
                     ) : (
-                      <p className="text-gray-800 font-medium">{selectedNCP.time_incident}</p>
+                      <p className="text-white font-medium">{selectedNCP.time_incident}</p>
                     )}
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Hold Quantity</label>
+                    <label className="text-sm font-medium text-blue-300">Hold Quantity</label>
                     {isEditing ? (
                       <div className="flex gap-2">
                         <Input
@@ -620,53 +625,56 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                           name="hold_quantity"
                           value={editableNCP?.hold_quantity || ""}
                           onChange={handleInputChange}
+                          className="glass-panel text-white"
                         />
                         <Input
                           name="hold_quantity_uom"
                           value={editableNCP?.hold_quantity_uom || ""}
                           onChange={handleInputChange}
+                          className="glass-panel text-white"
                         />
                       </div>
                     ) : (
-                      <p className="text-gray-800 font-medium">
+                      <p className="text-white font-medium">
                         {selectedNCP.hold_quantity} {selectedNCP.hold_quantity_uom}
                       </p>
                     )}
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Submitted By</label>
-                    <p className="text-gray-800 font-medium">{selectedNCP.submitted_by}</p>
+                    <label className="text-sm font-medium text-blue-300">Submitted By</label>
+                    <p className="text-white font-medium">{selectedNCP.submitted_by}</p>
                   </div>
                 </div>
               </div>
 
               {/* Problem Description */}
-              <div className="bg-orange-50/50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Problem Description</h3>
-                <div className="bg-white p-4 rounded border">
+              <div className="glass-panel p-6 rounded-lg">
+                <h3 className="text-lg font-semibold futuristic-heading mb-4">Problem Description</h3>
+                <div className="glass-card p-4 rounded border">
                   {isEditing ? (
                     <Textarea
                       name="problem_description"
                       value={editableNCP?.problem_description || ""}
                       onChange={handleInputChange}
                       rows={5}
+                      className="glass-panel text-white"
                     />
                   ) : (
-                    <p className="text-gray-800 whitespace-pre-wrap">{selectedNCP.problem_description}</p>
+                    <p className="text-white whitespace-pre-wrap">{selectedNCP.problem_description}</p>
                   )}
                 </div>
               </div>
 
               {/* Photo Attachment - Simplified for database view */}
               {selectedNCP.photo_attachment && (
-                <div className="bg-purple-50/50 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <div className="glass-panel p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold futuristic-heading mb-4 flex items-center gap-2">
                     <ImageIcon className="h-5 w-5" />
                     Photo Attachment
                   </h3>
                   <div className="space-y-3">
-                    <p className="text-gray-600 text-sm">{selectedNCP.photo_attachment}</p>
-                    <div className="relative w-full max-w-md h-64 bg-gray-100 rounded-lg overflow-hidden border">
+                    <p className="text-blue-200 text-sm">{selectedNCP.photo_attachment}</p>
+                    <div className="relative w-full max-w-md h-64 glass-card rounded-lg overflow-hidden border">
                       <img
                         src={`/api/ncp/image?filename=${selectedNCP.photo_attachment}`}
                         alt="NCP Photo Attachment"
@@ -679,7 +687,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                     <a 
                       href={`/api/ncp/image?filename=${selectedNCP.photo_attachment}`} 
                       download={selectedNCP.photo_attachment}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 glass-panel text-white rounded-md hover:bg-blue-500/30 transition-colors"
                     >
                       <Download className="h-4 w-4" />
                       Download Image
@@ -690,43 +698,43 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
 
               {/* QA Information */}
               {selectedNCP.qa_approved_by && (
-                <div className="bg-green-50/50 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">QA Leader Approval</h3>
+                <div className="glass-panel p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold futuristic-heading mb-4">QA Leader Approval</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Approved By</label>
-                      <p className="text-gray-800 font-medium">{selectedNCP.qa_approved_by}</p>
+                      <label className="text-sm font-medium text-blue-300">Approved By</label>
+                      <p className="text-white font-medium">{selectedNCP.qa_approved_by}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Approved At</label>
-                      <p className="text-gray-800 font-medium">{selectedNCP.qa_approved_at ? formatToWIB(selectedNCP.qa_approved_at) : ""}</p>
+                      <label className="text-sm font-medium text-blue-300">Approved At</label>
+                      <p className="text-white font-medium">{selectedNCP.qa_approved_at ? formatSubmissionDate(selectedNCP.qa_approved_at) : ""}</p>
                     </div>
                     {selectedNCP.assigned_team_leader && (
                       <div>
-                        <label className="text-sm font-medium text-gray-600">Assigned Team Leader</label>
-                        <p className="text-gray-800 font-medium">{selectedNCP.assigned_team_leader}</p>
+                        <label className="text-sm font-medium text-blue-300">Assigned Team Leader</label>
+                        <p className="text-white font-medium">{selectedNCP.assigned_team_leader}</p>
                       </div>
                     )}
                   </div>
                   {selectedNCP.disposisi && (
                     <div className="mt-4">
-                      <label className="text-sm font-medium text-gray-600">Disposition</label>
-                      <div className="bg-white p-4 rounded border mt-2">
-                        <p className="text-gray-800">{selectedNCP.disposisi}</p>
+                      <label className="text-sm font-medium text-blue-300">Disposition</label>
+                      <div className="glass-card p-4 rounded border mt-2">
+                        <p className="text-white">{selectedNCP.disposisi}</p>
                       </div>
                       {(selectedNCP.jumlah_sortir || selectedNCP.jumlah_release || selectedNCP.jumlah_reject) && (
                         <div className="grid grid-cols-3 gap-4 mt-4">
-                          <div className="bg-white p-3 rounded border text-center">
-                            <div className="text-xs text-gray-500">Sortir</div>
-                            <div className="text-lg font-bold text-orange-600">{selectedNCP.jumlah_sortir || "0"}</div>
+                          <div className="glass-card p-3 rounded border text-center">
+                            <div className="text-xs text-blue-300">Sortir</div>
+                            <div className="text-lg font-bold text-orange-400">{selectedNCP.jumlah_sortir || "0"}</div>
                           </div>
-                          <div className="bg-white p-3 rounded border text-center">
-                            <div className="text-xs text-gray-500">Release</div>
-                            <div className="text-lg font-bold text-green-600">{selectedNCP.jumlah_release || "0"}</div>
+                          <div className="glass-card p-3 rounded border text-center">
+                            <div className="text-xs text-blue-300">Release</div>
+                            <div className="text-lg font-bold text-green-400">{selectedNCP.jumlah_release || "0"}</div>
                           </div>
-                          <div className="bg-white p-3 rounded border text-center">
-                            <div className="text-xs text-gray-500">Reject</div>
-                            <div className="text-lg font-bold text-red-600">{selectedNCP.jumlah_reject || "0"}</div>
+                          <div className="glass-card p-3 rounded border text-center">
+                            <div className="text-xs text-blue-300">Reject</div>
+                            <div className="text-lg font-bold text-red-400">{selectedNCP.jumlah_reject || "0"}</div>
                           </div>
                         </div>
                       )}
@@ -737,62 +745,65 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
 
               {/* Processing Information */}
               {selectedNCP.tl_processed_at && (
-                <div className="bg-purple-50/50 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Team Leader Processing</h3>
+                <div className="glass-panel p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold futuristic-heading mb-4">Team Leader Processing</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Processed By</label>
-                      <p className="text-gray-800 font-medium">{selectedNCP.assigned_team_leader}</p>
+                      <label className="text-sm font-medium text-blue-300">Processed By</label>
+                      <p className="text-white font-medium">{selectedNCP.assigned_team_leader}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Processed At</label>
-                      <p className="text-gray-800 font-medium">{selectedNCP.tl_processed_at ? formatToWIB(selectedNCP.tl_processed_at) : ""}</p>
+                      <label className="text-sm font-medium text-blue-300">Processed At</label>
+                      <p className="text-white font-medium">{selectedNCP.tl_processed_at ? formatSubmissionDate(selectedNCP.tl_processed_at) : ""}</p>
                     </div>
                   </div>
                   {(isEditing || selectedNCP.root_cause_analysis) && (
                     <div className="space-y-4">
                       <div>
-                        <label className="text-sm font-medium text-gray-600">Root Cause Analysis</label>
-                        <div className="bg-white p-4 rounded border mt-2">
+                        <label className="text-sm font-medium text-blue-300">Root Cause Analysis</label>
+                        <div className="glass-card p-4 rounded border mt-2">
                           {isEditing ? (
                             <Textarea
                               name="root_cause_analysis"
                               value={editableNCP?.root_cause_analysis || ""}
                               onChange={handleInputChange}
                               rows={3}
+                              className="glass-panel text-white"
                             />
                           ) : (
-                            <p className="text-gray-800 whitespace-pre-wrap">{selectedNCP.root_cause_analysis}</p>
+                            <p className="text-white whitespace-pre-wrap">{selectedNCP.root_cause_analysis}</p>
                           )}
                         </div>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-600">Corrective Action</label>
-                        <div className="bg-white p-4 rounded border mt-2">
+                        <label className="text-sm font-medium text-blue-300">Corrective Action</label>
+                        <div className="glass-card p-4 rounded border mt-2">
                           {isEditing ? (
                             <Textarea
                               name="corrective_action"
                               value={editableNCP?.corrective_action || ""}
                               onChange={handleInputChange}
                               rows={3}
+                              className="glass-panel text-white"
                             />
                           ) : (
-                            <p className="text-gray-800 whitespace-pre-wrap">{selectedNCP.corrective_action}</p>
+                            <p className="text-white whitespace-pre-wrap">{selectedNCP.corrective_action}</p>
                           )}
                         </div>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-600">Preventive Action</label>
-                        <div className="bg-white p-4 rounded border mt-2">
+                        <label className="text-sm font-medium text-blue-300">Preventive Action</label>
+                        <div className="glass-card p-4 rounded border mt-2">
                           {isEditing ? (
                             <Textarea
                               name="preventive_action"
                               value={editableNCP?.preventive_action || ""}
                               onChange={handleInputChange}
                               rows={3}
+                              className="glass-panel text-white"
                             />
                           ) : (
-                            <p className="text-gray-800 whitespace-pre-wrap">{selectedNCP.preventive_action}</p>
+                            <p className="text-white whitespace-pre-wrap">{selectedNCP.preventive_action}</p>
                           )}
                         </div>
                       </div>
@@ -803,23 +814,23 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
 
               {/* Final Approvals */}
               {selectedNCP.process_approved_by && (
-                <div className="bg-green-50/50 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Process Lead Approval</h3>
+                <div className="glass-panel p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold futuristic-heading mb-4">Process Lead Approval</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Approved By</label>
-                      <p className="text-gray-800 font-medium">{selectedNCP.process_approved_by}</p>
+                      <label className="text-sm font-medium text-blue-300">Approved By</label>
+                      <p className="text-white font-medium">{selectedNCP.process_approved_by}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Approved At</label>
-                      <p className="text-gray-800 font-medium">{selectedNCP.process_approved_at ? formatToWIB(selectedNCP.process_approved_at) : ""}</p>
+                      <label className="text-sm font-medium text-blue-300">Approved At</label>
+                      <p className="text-white font-medium">{selectedNCP.process_approved_at ? formatSubmissionDate(selectedNCP.process_approved_at) : ""}</p>
                     </div>
                   </div>
                   {selectedNCP.process_comment && (
                     <div className="mt-4">
-                      <label className="text-sm font-medium text-gray-600">Comment</label>
-                      <div className="bg-white p-4 rounded border mt-2">
-                        <p className="text-gray-800">{selectedNCP.process_comment}</p>
+                      <label className="text-sm font-medium text-blue-300">Comment</label>
+                      <div className="glass-card p-4 rounded border mt-2">
+                        <p className="text-white">{selectedNCP.process_comment}</p>
                       </div>
                     </div>
                   )}
@@ -827,23 +838,23 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
               )}
 
               {selectedNCP.manager_approved_by && (
-                <div className="bg-emerald-50/50 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Manager Final Approval</h3>
+                <div className="glass-panel p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold futuristic-heading mb-4">Manager Final Approval</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Approved By</label>
-                      <p className="text-gray-800 font-medium">{selectedNCP.manager_approved_by}</p>
+                      <label className="text-sm font-medium text-blue-300">Approved By</label>
+                      <p className="text-white font-medium">{selectedNCP.manager_approved_by}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Approved At</label>
-                      <p className="text-gray-800 font-medium">{selectedNCP.manager_approved_at ? formatToWIB(selectedNCP.manager_approved_at) : ""}</p>
+                      <label className="text-sm font-medium text-blue-300">Approved At</label>
+                      <p className="text-white font-medium">{selectedNCP.manager_approved_at ? formatSubmissionDate(selectedNCP.manager_approved_at) : ""}</p>
                     </div>
                   </div>
                   {selectedNCP.manager_comment && (
                     <div className="mt-4">
-                      <label className="text-sm font-medium text-gray-600">Final Comment</label>
-                      <div className="bg-white p-4 rounded border mt-2">
-                        <p className="text-gray-800">{selectedNCP.manager_comment}</p>
+                      <label className="text-sm font-medium text-blue-300">Final Comment</label>
+                      <div className="glass-card p-4 rounded border mt-2">
+                        <p className="text-white">{selectedNCP.manager_comment}</p>
                       </div>
                     </div>
                   )}
@@ -856,10 +867,10 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
 
       {/* Revert Status Dialog */}
       <Dialog open={showRevertDialog} onOpenChange={setShowRevertDialog}>
-        <DialogContent>
+        <DialogContent className="glass-card">
           <DialogHeader>
-            <DialogTitle>Revert NCP Status</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="futuristic-heading">Revert NCP Status</DialogTitle>
+            <DialogDescription className="text-blue-200">
               Select a new status to revert the NCP report to. This action will be logged.
             </DialogDescription>
           </DialogHeader>
@@ -867,7 +878,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
             <select
               value={revertStatus}
               onChange={(e) => setRevertStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-200 rounded-md"
+              className="w-full px-3 py-2 glass-panel text-white"
             >
               <option value="">Select a status</option>
               <option value="pending">Pending QA Review</option>
@@ -876,16 +887,16 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
               <option value="process_approved">Process Approved</option>
             </select>
           </div>
-          <Button onClick={handleRevertStatus}>Confirm Revert</Button>
+          <Button onClick={handleRevertStatus} className="glass-panel">Confirm Revert</Button>
         </DialogContent>
       </Dialog>
 
       {/* Reassign Dialog */}
       <Dialog open={showReassignDialog} onOpenChange={setShowReassignDialog}>
-        <DialogContent>
+        <DialogContent className="glass-card">
           <DialogHeader>
-            <DialogTitle>Reassign NCP</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="futuristic-heading">Reassign NCP</DialogTitle>
+            <DialogDescription className="text-blue-200">
               Select a new assignee for this NCP report. This action will be logged.
             </DialogDescription>
           </DialogHeader>
@@ -893,7 +904,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
             <select
               value={reassignRole}
               onChange={(e) => setReassignRole(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-200 rounded-md"
+              className="w-full px-3 py-2 glass-panel text-white"
             >
               <option value="team_leader">Team Leader</option>
               <option value="qa_leader">QA Leader</option>
@@ -901,7 +912,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
             <select
               value={reassignAssignee}
               onChange={(e) => setReassignAssignee(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-200 rounded-md"
+              className="w-full px-3 py-2 glass-panel text-white"
             >
               <option value="">Select an assignee</option>
               {(reassignRole === 'team_leader' ? allTeamLeaders : allQALeaders).map(user => (
@@ -909,7 +920,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
               ))}
             </select>
           </div>
-          <Button onClick={handleReassign}>Confirm Reassignment</Button>
+          <Button onClick={handleReassign} className="glass-panel">Confirm Reassignment</Button>
         </DialogContent>
       </Dialog>
     </div>

@@ -37,28 +37,10 @@ interface NCPReport {
   status: string
   submitted_by: string
   submitted_at: string
-  qa_approved_by: string | null
   qa_approved_at: string | null
-  disposisi: string | null
-  jumlah_sortir: string
-  jumlah_release: string
-  jumlah_reject: string
-  assigned_team_leader: string | null
-  qa_rejection_reason: string | null
-  tl_processed_by: string | null
   tl_processed_at: string | null
-  root_cause_analysis: string | null
-  corrective_action: string | null
-  preventive_action: string | null
-  process_approved_by: string | null
   process_approved_at: string | null
-  process_rejection_reason: string | null
-  process_comment: string | null
-  manager_approved_by: string | null
   manager_approved_at: string | null
-  manager_rejection_reason: string | null
-  manager_comment: string | null
-  archived_at: string | null
 }
 
 export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
@@ -122,43 +104,43 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
       case "pending":
         return {
           label: "Pending",
-          color: "bg-yellow-500",
+          color: "status-badge-pending",
           icon: Clock,
         }
       case "qa_approved":
         return {
           label: "QA Approved",
-          color: "bg-blue-500",
+          color: "status-badge-qa-approved",
           icon: User,
         }
       case "tl_processed":
         return {
           label: "TL Processed",
-          color: "bg-purple-500",
-          icon: CheckCircle,
+          color: "status-badge-tl-processed",
+          icon: Package,
         }
       case "process_approved":
         return {
           label: "Process Approved",
-          color: "bg-green-500",
+          color: "status-badge-process-approved",
           icon: CheckCircle,
         }
       case "manager_approved":
         return {
           label: "Completed",
-          color: "bg-emerald-500",
+          color: "status-badge-manager-approved",
           icon: CheckCircle,
         }
       case "rejected":
         return {
           label: "Rejected",
-          color: "bg-red-500",
+          color: "status-badge-rejected",
           icon: AlertCircle,
         }
       default:
         return {
           label: status,
-          color: "bg-gray-500",
+          color: "bg-gray-500/20 text-gray-300 border border-gray-500/30",
           icon: Clock,
         }
     }
@@ -193,7 +175,7 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
 
   if (isLoading) {
     return (
-      <div className="p-6 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 min-h-screen">
+      <div className="p-6 gradient-bg min-h-screen">
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-blue-400" />
           <span className="ml-2 text-blue-200">Loading NCP flow tracker...</span>
@@ -203,16 +185,16 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
   }
 
   return (
-    <div className="p-6 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 min-h-screen">
+    <div className="p-6 gradient-bg min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-white">NCP Flow Tracker</h1>
+              <h1 className="text-3xl font-bold futuristic-heading">NCP Flow Tracker</h1>
               <p className="text-blue-200 mt-1">Minimal tracking interface</p>
             </div>
-            <Badge variant="secondary" className="text-lg px-4 py-2 bg-blue-800 text-white">
+            <Badge variant="secondary" className="text-lg px-4 py-2 glass-panel">
               {filteredNCPs.length} NCPs
             </Badge>
           </div>
@@ -226,17 +208,17 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
               placeholder="Search by NCP ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-slate-800/50 border border-blue-700/50 rounded-xl text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
+              className="w-full pl-10 pr-4 py-3 glass-panel text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-xl"
             />
           </div>
         </div>
 
         {/* NCP Flow Cards */}
         {filteredNCPs.length === 0 ? (
-          <Card className="bg-slate-800/50 border border-blue-700/30 backdrop-blur-sm">
+          <Card className="glass-card">
             <CardContent className="p-12 text-center">
               <Package className="h-16 w-16 text-blue-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">No NCPs Found</h3>
+              <h3 className="text-xl font-semibold futuristic-heading mb-2">No NCPs Found</h3>
               <p className="text-blue-200">Adjust your search to find NCP reports.</p>
             </CardContent>
           </Card>
@@ -248,13 +230,13 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
               const flowSteps = getFlowSteps(ncp)
 
               return (
-                <Card key={ncp.id} className="bg-slate-800/50 border border-blue-700/30 backdrop-blur-sm hover:border-blue-500/50 transition-all duration-300">
+                <Card key={ncp.id} className="glass-card hover:border-blue-500/50 transition-all duration-300">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       {/* NCP ID and Status */}
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-3">
-                          <Badge variant="outline" className="font-mono text-xl px-4 py-2 bg-slate-700/50 border-blue-600 text-white">
+                          <Badge variant="outline" className="font-mono text-xl px-4 py-2 glass-panel text-white">
                             {ncp.ncp_id}
                           </Badge>
                           <Badge className={`${statusInfo.color} flex items-center gap-1 px-3 py-1`}>
@@ -277,11 +259,11 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
                         <div className="absolute top-4 left-0 right-0 h-0.5 bg-blue-900/50 z-0"></div>
                         
                         {flowSteps.map((step, index) => {
-                          let statusClass = "bg-blue-900/50";
+                          let statusClass = "bg-blue-900/50"
                           if (step.status === "completed") {
-                            statusClass = "bg-green-500";
+                            statusClass = "bg-green-500"
                           } else if (step.status === "current") {
-                            statusClass = "bg-blue-500";
+                            statusClass = "bg-blue-500"
                           }
                           
                           return (

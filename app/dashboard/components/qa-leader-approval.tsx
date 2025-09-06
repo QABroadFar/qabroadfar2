@@ -236,7 +236,7 @@ export function QALeaderApproval({ onBack }: QALeaderApprovalProps) {
                     <div className="text-sm text-gray-500">
                       <Clock className="h-4 w-4 inline mr-1" />
                       {formatSubmissionDate(ncp.submitted_at)}
-                    </div>
+qwen                    </div>
                   </div>
                 </CardHeader>
 

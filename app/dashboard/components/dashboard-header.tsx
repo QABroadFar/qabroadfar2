@@ -107,7 +107,7 @@ export function DashboardHeader({ userInfo, onLogout }: DashboardHeaderProps) {
                 <User className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-56 glass-card">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               {userInfo && (
                 <>
@@ -131,16 +131,25 @@ export function DashboardHeader({ userInfo, onLogout }: DashboardHeaderProps) {
       </header>
 
       <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="glass-card">
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="futuristic-heading">Confirm Logout</AlertDialogTitle>
+            <AlertDialogDescription className="text-blue-200">
               Are you sure you want to log out? You will need to sign in again to access the Quality Assurance Portal.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isLoggingOut}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleLogout} disabled={isLoggingOut} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogCancel 
+              disabled={isLoggingOut} 
+              className="glass-panel text-blue-200 hover:bg-blue-500/20"
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleLogout} 
+              disabled={isLoggingOut} 
+              className="bg-red-600/80 hover:bg-red-700/80 text-white"
+            >
               {isLoggingOut ? "Logging out..." : "Log out"}
             </AlertDialogAction>
           </AlertDialogFooter>

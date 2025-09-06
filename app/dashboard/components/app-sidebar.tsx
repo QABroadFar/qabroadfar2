@@ -152,26 +152,26 @@ export function AppSidebar({ userInfo: userInfoProp, currentPage, setCurrentPage
   }
 
   return (
-    <Sidebar className="border-r-0" {...props}>
-      <SidebarHeader className="border-b border-gray-200/20 bg-white/95 backdrop-blur-sm">
+    <Sidebar className="border-r-0 glass-panel" {...props}>
+      <SidebarHeader className="border-b border-gray-700/30 glass-header">
         <div className="px-6 py-8">
-          <h1 className="text-2xl font-black text-gray-900 tracking-tight font-sans">QUALITY ASSURANCE</h1>
-          <h2 className="text-xl font-bold text-gray-700 -mt-1 tracking-wide font-sans">DEPARTMENT</h2>
+          <h1 className="text-2xl font-black futuristic-heading">QUALITY ASSURANCE</h1>
+          <h2 className="text-xl font-bold futuristic-subheading -mt-1">DEPARTMENT</h2>
 
           {/* User Info */}
-          <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <div className="text-sm font-medium text-blue-800">
+          <div className="mt-4 p-3 glass-card rounded-lg">
+            <div className="text-sm font-medium text-blue-100">
               {userInfo.fullName || userInfo.username || "Loading..."}
             </div>
-            <div className="text-xs text-blue-600">{getRoleDisplayName(userInfo.role)}</div>
+            <div className="text-xs text-blue-300">{getRoleDisplayName(userInfo.role)}</div>
           </div>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="bg-gray-900/95 backdrop-blur-sm">
+      <SidebarContent className="glass-panel">
         {/* Non Conformance Product Group */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-300 text-xs font-medium uppercase tracking-wider">
+          <SidebarGroupLabel className="text-blue-300 text-xs font-medium uppercase tracking-wider">
             Non Conformance Product
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -181,7 +181,7 @@ export function AppSidebar({ userInfo: userInfoProp, currentPage, setCurrentPage
                   <SidebarMenuButton
                     isActive={currentPage === item.page}
                     onClick={() => setCurrentPage(item.page)}
-                    className="text-gray-300 hover:text-white hover:bg-gray-800 data-[active=true]:bg-blue-600 data-[active=true]:text-white cursor-pointer"
+                    className="text-blue-200 hover:text-blue-50 hover:bg-blue-500/20 data-[active=true]:bg-blue-600/30 data-[active=true]:text-blue-50 cursor-pointer"
                   >
                     <item.icon className="h-4 w-4" />
                     <span>{item.title}</span>
@@ -194,7 +194,7 @@ export function AppSidebar({ userInfo: userInfoProp, currentPage, setCurrentPage
 
         {/* Others Group */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-300 text-xs font-medium uppercase tracking-wider">
+          <SidebarGroupLabel className="text-blue-300 text-xs font-medium uppercase tracking-wider">
             Others
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -205,7 +205,7 @@ export function AppSidebar({ userInfo: userInfoProp, currentPage, setCurrentPage
                     isActive={currentPage === item.page}
                     onClick={() => !item.disabled && setCurrentPage(item.page)}
                     disabled={item.disabled} 
-                    className={`text-gray-300 hover:text-white hover:bg-gray-800 data-[active=true]:bg-blue-600 data-[active=true]:text-white cursor-pointer ${item.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`text-blue-200 hover:text-blue-50 hover:bg-blue-500/20 data-[active=true]:bg-blue-600/30 data-[active=true]:text-blue-50 cursor-pointer ${item.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <item.icon className="h-4 w-4" />
                     <span>{item.title}</span>
@@ -217,6 +217,15 @@ export function AppSidebar({ userInfo: userInfoProp, currentPage, setCurrentPage
         </SidebarGroup>
       </SidebarContent>
       <SidebarRail />
+      
+      <style jsx global>{`
+        .glass-header {
+          background: rgba(30, 41, 59, 0.6);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(56, 189, 248, 0.1);
+        }
+      `}</style>
     </Sidebar>
   )
 }
