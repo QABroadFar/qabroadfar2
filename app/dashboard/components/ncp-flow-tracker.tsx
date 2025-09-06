@@ -151,22 +151,27 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
       {
         title: "Submitted",
         status: "completed",
+        assignee: ncp.submitted_by,
       },
       {
         title: "QA Review",
         status: ncp.qa_approved_at ? "completed" : ncp.status === "pending" ? "current" : "pending",
+        assignee: ncp.qa_leader || "Not assigned",
       },
       {
         title: "Team Leader",
         status: ncp.tl_processed_at ? "completed" : ncp.status === "qa_approved" ? "current" : "pending",
+        assignee: ncp.assigned_team_leader || "Not assigned",
       },
       {
         title: "Process Lead",
         status: ncp.process_approved_at ? "completed" : ncp.status === "tl_processed" ? "current" : "pending",
+        assignee: "Process Lead",
       },
       {
         title: "Manager",
         status: ncp.manager_approved_at ? "completed" : ncp.status === "process_approved" ? "current" : "pending",
+        assignee: "Manager",
       },
     ]
 
@@ -277,10 +282,15 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
                                   <div className="w-2 h-2 rounded-full bg-blue-300"></div>
                                 )}
                               </div>
-                              <div className="text-xs mt-2 text-center max-w-16">
+                              <div className="text-xs mt-2 text-center max-w-24">
                                 <div className={`font-medium ${step.status === "current" ? "text-white" : "text-blue-300"}`}>
                                   {step.title}
                                 </div>
+                                {step.assignee && (
+                                  <div className="text-blue-400 truncate text-xs">
+                                    {step.assignee}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           )
