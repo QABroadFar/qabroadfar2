@@ -151,32 +151,22 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
       {
         title: "Submitted",
         status: "completed",
-        assignee: ncp.submitted_by,
-        date: ncp.submitted_at,
       },
       {
         title: "QA Review",
         status: ncp.qa_approved_at ? "completed" : ncp.status === "pending" ? "current" : "pending",
-        assignee: ncp.qa_leader || "Not assigned",
-        date: ncp.qa_approved_at,
       },
       {
         title: "Team Leader",
         status: ncp.tl_processed_at ? "completed" : ncp.status === "qa_approved" ? "current" : "pending",
-        assignee: ncp.assigned_team_leader || "Not assigned",
-        date: ncp.tl_processed_at,
       },
       {
         title: "Process Lead",
         status: ncp.process_approved_at ? "completed" : ncp.status === "tl_processed" ? "current" : "pending",
-        assignee: "Process Lead",
-        date: ncp.process_approved_at,
       },
       {
         title: "Manager",
         status: ncp.manager_approved_at ? "completed" : ncp.status === "process_approved" ? "current" : "pending",
-        assignee: "Manager",
-        date: ncp.manager_approved_at,
       },
     ]
 
@@ -202,7 +192,7 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold futuristic-heading">NCP Flow Tracker</h1>
-              <p className="text-blue-200 mt-1">Track NCP progress and assignments</p>
+              <p className="text-blue-200 mt-1">Track NCP progress through workflow stages</p>
             </div>
             <Badge variant="secondary" className="text-lg px-4 py-2 glass-panel">
               {filteredNCPs.length} NCPs
@@ -262,32 +252,6 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
                       </div>
                     </div>
 
-                    {/* NCP Details */}
-                    <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="glass-panel p-3 rounded-lg">
-                        <div className="text-xs text-blue-300">Submitted By</div>
-                        <div className="font-medium text-white flex items-center gap-2">
-                          <User className="h-4 w-4" />
-                          {ncp.submitted_by}
-                        </div>
-                      </div>
-                      
-                      <div className="glass-panel p-3 rounded-lg">
-                        <div className="text-xs text-blue-300">Assigned To</div>
-                        <div className="font-medium text-white flex items-center gap-2">
-                          <User className="h-4 w-4" />
-                          {ncp.qa_leader || "Not assigned"}
-                        </div>
-                      </div>
-                      
-                      <div className="glass-panel p-3 rounded-lg">
-                        <div className="text-xs text-blue-300">Product Details</div>
-                        <div className="font-medium text-white">
-                          {ncp.sku_code} • {ncp.machine_code}
-                        </div>
-                      </div>
-                    </div>
-
                     {/* Minimal Flow Tracker */}
                     <div className="mt-6">
                       <div className="flex items-center justify-between relative">
@@ -313,20 +277,10 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
                                   <div className="w-2 h-2 rounded-full bg-blue-300"></div>
                                 )}
                               </div>
-                              <div className="text-xs mt-2 text-center max-w-24">
+                              <div className="text-xs mt-2 text-center max-w-16">
                                 <div className={`font-medium ${step.status === "current" ? "text-white" : "text-blue-300"}`}>
                                   {step.title}
                                 </div>
-                                {step.assignee && (
-                                  <div className="text-blue-400 truncate">
-                                    {step.assignee}
-                                  </div>
-                                )}
-                                {step.date && (
-                                  <div className="text-blue-500">
-                                    {formatSubmissionDate(step.date)}
-                                  </div>
-                                )}
                               </div>
                             </div>
                           )
