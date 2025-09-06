@@ -12,7 +12,7 @@ import {
   CheckCircle, Clock, XCircle, FileText, TrendingUp, Users, 
   Package, User, Calendar, BarChart3, PieChartIcon 
 } from "lucide-react"
-import { formatToWIBID, formatDateOnlyWIB } from "@/lib/date-utils"
+import { formatToWIBID, formatDateOnlyWIB, formatSubmissionDate } from "@/lib/date-utils"
 import { SuperAdminDashboard } from "./super-admin-dashboard"
 
 interface DashboardStats {
@@ -362,7 +362,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
                         {ncp.sku_code} • Machine: {ncp.machine_code}
                       </div>
                       <div className="text-xs text-muted-foreground mt-1">
-                        Submitted: {formatToWIBID(ncp.submitted_at)}
+                        Submitted: {formatSubmissionDate(ncp.submitted_at)}
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -470,7 +470,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
                       <div>
                         <div className="font-medium">{ncp.ncp_id}</div>
                         <div className="text-sm text-muted-foreground">
-                          {ncp.sku_code} • Processed: {formatToWIBID(ncp.tl_processed_at || '')}
+                          {ncp.sku_code} • Processed: {formatSubmissionDate(ncp.tl_processed_at || '')}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -549,7 +549,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
                         {ncp.sku_code} • Machine: {ncp.machine_code}
                       </div>
                       <div className="text-xs text-muted-foreground mt-1">
-                        Processed: {formatToWIBID(ncp.tl_processed_at || '')}
+                        Processed: {formatSubmissionDate(ncp.tl_processed_at || '')}
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -628,7 +628,7 @@ export function RoleSpecificDashboard({ userInfo }: { userInfo: UserInfo }) {
                         {ncp.sku_code} • Machine: {ncp.machine_code}
                       </div>
                       <div className="text-xs text-muted-foreground mt-1">
-                        Process Approved: {formatToWIBID(ncp.process_approved_at || '')}
+                        Process Approved: {formatSubmissionDate(ncp.process_approved_at || '')}
                       </div>
                     </div>
                     <div className="flex items-center gap-3">

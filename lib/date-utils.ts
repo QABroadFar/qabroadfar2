@@ -59,3 +59,14 @@ export const formatTimeOnlyWIB = (date: string | Date): string => {
     return 'Invalid Time';
   }
 };
+
+// Format date only without time for submission timestamps
+export const formatSubmissionDate = (date: string | Date): string => {
+  if (!date) return 'N/A';
+  try {
+    return formatDateOnlyWIB(date);
+  } catch (error) {
+    console.error("Error formatting submission date:", error);
+    return 'Invalid Date';
+  }
+};

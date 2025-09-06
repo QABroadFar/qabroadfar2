@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/hooks/use-toast"
-import { formatToWIB } from "@/lib/date-utils"
+import { formatToWIB, formatSubmissionDate } from "@/lib/date-utils"
 
 export default function NCPManagementPage() {
   const [ncpReports, setNcpReports] = useState<any[]>([])
@@ -477,7 +477,7 @@ export default function NCPManagementPage() {
                       <TableCell>{report.submitted_by}</TableCell>
                       <TableCell>{report.qa_leader || "-"}</TableCell>
                       <TableCell>{getStatusBadge(report.status)}</TableCell>
-                      <TableCell>{formatToWIB(report.submitted_at)}</TableCell>
+                      <TableCell>{formatSubmissionDate(report.submitted_at)}</TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-2">
                           <Dialog open={isEditDialogOpen && editingReport?.id === report.id} onOpenChange={setIsEditDialogOpen}>

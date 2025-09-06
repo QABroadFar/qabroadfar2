@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { formatToWIB } from "@/lib/date-utils"
+import { formatToWIB, formatSubmissionDate } from "@/lib/date-utils"
 import {
   ArrowLeft,
   Search,
@@ -224,7 +224,7 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
 
   const formatDate = (dateString: string) => {
     if (!dateString) return ""
-    return formatToWIB(dateString)
+    return formatSubmissionDate(dateString)
   }
 
   if (isLoading) {
@@ -310,7 +310,7 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
                         </Badge>
                       </div>
                       <div className="text-sm text-gray-500">
-                        Submitted: {formatDate(ncp.submitted_at)}
+                        Submitted: {formatSubmissionDate(ncp.submitted_at)}
                       </div>
                     </div>
                   </CardHeader>

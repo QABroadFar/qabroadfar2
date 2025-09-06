@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { formatToWIB, formatDateOnlyWIB } from "@/lib/date-utils"
+import { formatToWIB, formatDateOnlyWIB, formatSubmissionDate } from "@/lib/date-utils"
 import { Eye } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -477,7 +477,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
                           {ncp.hold_quantity} {ncp.hold_quantity_uom}
                         </TableCell>
                         <TableCell>{ncp.submitted_by}</TableCell>
-                        <TableCell>{formatToWIB(ncp.submitted_at)}</TableCell>
+                        <TableCell>{formatSubmissionDate(ncp.submitted_at)}</TableCell>
                         <TableCell>
                           <Button
                             variant="outline"
