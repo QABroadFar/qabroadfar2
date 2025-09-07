@@ -134,7 +134,7 @@ export function NCPFlowTracker({ userInfo }: NCPFlowTrackerProps) {
       case "rejected":
         return {
           label: "Rejected",
-          color: "status-badge-rejected",
+          color: "status-badge-rejected animate-pulse",
           icon: AlertCircle,
         }
       default:

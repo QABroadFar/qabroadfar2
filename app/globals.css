@@ -68,7 +68,7 @@
   }
   
   .status-badge-rejected {
-    @apply bg-red-500/20 text-red-300 border border-red-500/30;
+    @apply bg-red-500/20 text-red-300 border border-red-500/30 font-bold shadow-[0_0_8px_rgba(239,68,68,0.5)];
   }
 }
 

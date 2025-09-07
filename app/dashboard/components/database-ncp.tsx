@@ -218,7 +218,7 @@ export function DatabaseNCP({ userInfo }: DatabaseNCPProps) {
       case "manager_approved":
         return <Badge className="status-badge-manager-approved">Completed</Badge>
       case "rejected":
-        return <Badge className="status-badge-rejected">Rejected</Badge>
+        return <Badge className="status-badge-rejected animate-pulse">Rejected</Badge>
       default:
         return <Badge variant="secondary">{status}</Badge>
     }

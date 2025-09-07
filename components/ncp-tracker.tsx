@@ -59,7 +59,7 @@ export function NCPTracker({ ncpReports }: { ncpReports: any[] }) {
         return { 
           icon: XCircle, 
           label: "Rejected", 
-          color: "bg-red-100 text-red-800" 
+          color: "status-badge-rejected" 
         }
       default:
         return { 
