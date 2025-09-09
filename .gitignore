@@ -17,10 +17,6 @@ out/
 # vercel
 .vercel/
 
-# sqlite
-*.db
-*.db-journal
-
 # misc
 .DS_Store
 npm-debug.log*
@@ -28,14 +24,11 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Ignore local databases
-*.db
-qa_portal.db
-
 # Ignore uploaded files
 public/uploads/*
 !public/uploads/.gitkeep
 dist/
+
 # Migration temporary files
 execute-supabase-schema.js
 sqlite-export.sql
