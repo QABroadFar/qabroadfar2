@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { getSystemLogs } from "@/lib/database"
+import { getSystemLogs } from "@/lib/supabaseDatabase"
 
 // Get system logs
 export async function GET(request: NextRequest) {
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const logs = getSystemLogs()
+    const logs = await getSystemLogs()
     return NextResponse.json(logs)
   } catch (error) {
     console.error("Error fetching system logs:", error)

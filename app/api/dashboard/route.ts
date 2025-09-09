@@ -6,7 +6,7 @@ import {
   getNCPsByMonth,
   getNCPStatusDistribution,
   getNCPsByTopSubmitters
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Get dashboard data
 export async function GET(request: NextRequest) {
@@ -17,18 +17,18 @@ export async function GET(request: NextRequest) {
 
   try {
     // Get all dashboard data
-    const ncpStats = getNCPStatistics()
+    const ncpStats = await getNCPStatistics()
     
     // Get user count (only for super_admin)
     let totalUsers = 0;
     if (auth.role === "super_admin") {
-      const users = getAllUsers()
+      const users = await getAllUsers()
       totalUsers = users.length
     }
     
-    const monthlyReports = getNCPsByMonth()
-    const statusDistribution = getNCPStatusDistribution()
-    const topSubmitters = getNCPsByTopSubmitters()
+    const monthlyReports = await getNCPsByMonth()
+    const statusDistribution = await getNCPStatusDistribution()
+    const topSubmitters = await getNCPsByTopSubmitters()
     
     const data = {
       stats: {

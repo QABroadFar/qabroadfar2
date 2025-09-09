@@ -3,7 +3,7 @@ import { verifyAuth } from "@/lib/auth"
 import { 
   getAuditLog, 
   getSystemLogs 
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Get audit logs
 export async function GET(request: NextRequest) {
@@ -22,9 +22,9 @@ export async function GET(request: NextRequest) {
     
     let logs
     if (logType === "system") {
-      logs = getSystemLogs()
+      logs = await getSystemLogs()
     } else {
-      logs = getAuditLog()
+      logs = await getAuditLog()
     }
 
     return NextResponse.json(logs)

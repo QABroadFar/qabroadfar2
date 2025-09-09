@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { getAllUsers, createUser, logSystemEvent } from "@/lib/database"
+import { getAllUsers, createUser, logSystemEvent } from "@/lib/supabaseDatabase"
 
 // Get all users
 export async function GET(request: NextRequest) {
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const users = getAllUsers()
+    const users = await getAllUsers()
     return NextResponse.json(users)
   } catch (error) {
     console.error("Error fetching users:", error)
@@ -41,11 +41,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Create user in database
-    const result = createUser(username, password, role, fullName)
+    const result = await createUser(username, password, role, fullName)
     
     if (result.changes > 0) {
       // Log the event
-      logSystemEvent("info", "User Created", {
+      await logSystemEvent("info", "User Created", {
         created_by: auth.username,
         new_user: username,
         role: role

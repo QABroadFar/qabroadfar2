@@ -5,7 +5,7 @@ import {
   createApiKey, 
   deleteApiKey,
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Get all API keys
 export async function GET(request: NextRequest) {
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const apiKeys = getApiKeys()
+    const apiKeys = await getApiKeys()
     return NextResponse.json(apiKeys)
   } catch (error) {
     console.error("Error fetching API keys:", error)
@@ -45,10 +45,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Service name and permissions are required" }, { status: 400 })
     }
 
-    const result = createApiKey(serviceName, permissions)
+    const result = await createApiKey(serviceName, permissions)
     
     // Log the event
-    logSystemEvent("info", "API Key Created", {
+    await logSystemEvent("info", "API Key Created", {
       service_name: serviceName,
       permissions: permissions,
       created_by: auth.username
@@ -82,10 +82,10 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 })
     }
 
-    deleteApiKey(id)
+    await deleteApiKey(id)
     
     // Log the event
-    logSystemEvent("info", "API Key Deleted", {
+    await logSystemEvent("info", "API Key Deleted", {
       id: id,
       deleted_by: auth.username
     })

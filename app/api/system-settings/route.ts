@@ -7,7 +7,7 @@ import {
   createApiKey, 
   deleteApiKey,
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Get audit logs
 export async function GET(request: NextRequest) {
@@ -26,13 +26,13 @@ export async function GET(request: NextRequest) {
   try {
     switch (type) {
       case "audit":
-        const auditLogs = getAuditLog()
+        const auditLogs = await getAuditLog()
         return NextResponse.json(auditLogs)
       case "system":
-        const systemLogs = getSystemLogs()
+        const systemLogs = await getSystemLogs()
         return NextResponse.json(systemLogs)
       case "api-keys":
-        const apiKeys = getApiKeys()
+        const apiKeys = await getApiKeys()
         return NextResponse.json(apiKeys)
       default:
         return NextResponse.json({ error: "Invalid log type" }, { status: 400 })
@@ -61,10 +61,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
     
-    const result = createApiKey(serviceName, permissions)
+    const result = await createApiKey(serviceName, permissions)
     
     // Log the event
-    logSystemEvent("info", "API Key Created", {
+    await logSystemEvent("info", "API Key Created", {
       service_name: serviceName,
       permissions,
       created_by: auth.username

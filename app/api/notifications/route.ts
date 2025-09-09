@@ -4,7 +4,7 @@ import {
   getUnreadNotificationCount,
   markNotificationAsRead,
   markAllNotificationsAsRead,
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 import { verifyAuth } from "@/lib/auth"
 
 export async function GET(request: NextRequest) {
@@ -18,11 +18,11 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get("type")
 
     if (type === "count") {
-      const count = getUnreadNotificationCount(user.id)
+      const count = await getUnreadNotificationCount(user.id)
       return NextResponse.json({ success: true, count })
     }
 
-    const notifications = getNotificationsForUser(user.id)
+    const notifications = await getNotificationsForUser(user.id)
     return NextResponse.json({ success: true, data: notifications })
   } catch (error) {
     console.error("Error fetching notifications:", error)
@@ -41,9 +41,9 @@ export async function POST(request: NextRequest) {
 
     if (action === "mark_read") {
       if (notificationId) {
-        markNotificationAsRead(notificationId)
+        await markNotificationAsRead(notificationId)
       } else {
-        markAllNotificationsAsRead(user.id)
+        await markAllNotificationsAsRead(user.id)
       }
       return NextResponse.json({ success: true })
     }

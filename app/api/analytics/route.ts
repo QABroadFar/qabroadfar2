@@ -6,7 +6,7 @@ import {
   getNCPStatusDistribution,
   getNCPsByTopSubmitters,
   getNCPStatistics
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Get analytics data
 export async function GET(request: NextRequest) {
@@ -21,11 +21,11 @@ export async function GET(request: NextRequest) {
 
   try {
     // Get all analytics data
-    const monthlyData = getNCPsByMonth()
-    const averageApprovalTime = getAverageApprovalTime()
-    const statusDistribution = getNCPStatusDistribution()
-    const topSubmitters = getNCPsByTopSubmitters()
-    const ncpStats = getNCPStatistics()
+    const monthlyData = await getNCPsByMonth()
+    const averageApprovalTime = await getAverageApprovalTime()
+    const statusDistribution = await getNCPStatusDistribution()
+    const topSubmitters = await getNCPsByTopSubmitters()
+    const ncpStats = await getNCPStatistics()
     
     return NextResponse.json({
       monthlyData,
