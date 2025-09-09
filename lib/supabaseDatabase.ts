@@ -901,19 +901,27 @@ export async function logSystemEvent(
   message: string,
   details: any
 ) {
-  const { data, error } = await supabase.from('system_logs').insert([
-    {
-      level: level,
-      message: message,
-      details: JSON.stringify(details),
-    },
-  ])
+  try {
+    const { data, error } = await supabase.from('system_logs').insert([
+      {
+        level: level,
+        message: message,
+        details: JSON.stringify(details),
+      },
+    ]);
 
-  if (error) throw new Error(error.message)
-  return data
-}
-
-export async function getSystemLogs() {
+    if (error) {
+      // Handle RLS errors gracefully - just log and continue
+      console.warn('Warning: Could not log system event due to RLS policy:', error.message);
+      return null;
+    }
+    return data;
+  } catch (error) {
+    // Handle RLS errors gracefully - just log and continue
+    console.warn('Warning: Could not log system event due to RLS policy:', error.message);
+    return null;
+  }
+}export async function getSystemLogs() {
   const { data, error } = await supabase
     .from('system_logs')
     .select('*')
