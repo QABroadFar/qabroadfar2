@@ -3,7 +3,7 @@ import { verifyAuth } from "@/lib/auth"
 import { 
   updateUserRole,
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Update user role
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
@@ -28,11 +28,11 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Role is required" }, { status: 400 })
     }
 
-    const result = updateUserRole(userId, role)
+    const result = await updateUserRole(userId, role)
     
     if (result.changes > 0) {
       // Log the event
-      logSystemEvent("info", "User Role Updated", {
+      await logSystemEvent("info", "User Role Updated", {
         user_id: userId,
         new_role: role,
         updated_by: auth.username

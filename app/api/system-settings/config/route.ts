@@ -4,7 +4,7 @@ import {
   getSystemSetting, 
   setSystemSetting,
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Get system setting
 export async function GET(request: NextRequest) {
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Setting key is required" }, { status: 400 })
     }
 
-    const value = getSystemSetting(key)
+    const value = await getSystemSetting(key)
     return NextResponse.json({ key, value })
   } catch (error) {
     console.error("Error fetching system setting:", error)
@@ -51,10 +51,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Key and value are required" }, { status: 400 })
     }
 
-    setSystemSetting(key, value, description || "")
+    await setSystemSetting(key, value, description || "")
     
     // Log the event
-    logSystemEvent("info", "System Setting Updated", {
+    await logSystemEvent("info", "System Setting Updated", {
       key: key,
       value: value,
       description: description || "",

@@ -14,7 +14,7 @@ import {
   updateUOM,
   deleteUOM,
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Get all system settings
 export async function GET(request: NextRequest) {
@@ -34,13 +34,13 @@ export async function GET(request: NextRequest) {
     let data
     switch (settingType) {
       case "sku-codes":
-        data = getAllSKUCodes()
+        data = await getAllSKUCodes()
         break
       case "machines":
-        data = getAllMachines()
+        data = await getAllMachines()
         break
       case "uoms":
-        data = getAllUOMs()
+        data = await getAllUOMs()
         break
       default:
         return NextResponse.json({ error: "Invalid setting type" }, { status: 400 })
@@ -72,24 +72,24 @@ export async function POST(request: NextRequest) {
     let result
     switch (settingType) {
       case "sku-codes":
-        result = createSKUCode(data.code, data.description)
-        logSystemEvent("info", "SKU Code Created", {
+        result = await createSKUCode(data.code, data.description)
+        await logSystemEvent("info", "SKU Code Created", {
           code: data.code,
           description: data.description,
           created_by: auth.username
         })
         break
       case "machines":
-        result = createMachine(data.code, data.name)
-        logSystemEvent("info", "Machine Created", {
+        result = await createMachine(data.code, data.name)
+        await logSystemEvent("info", "Machine Created", {
           code: data.code,
           name: data.name,
           created_by: auth.username
         })
         break
       case "uoms":
-        result = createUOM(data.code, data.name)
-        logSystemEvent("info", "UOM Created", {
+        result = await createUOM(data.code, data.name)
+        await logSystemEvent("info", "UOM Created", {
           code: data.code,
           name: data.name,
           created_by: auth.username
@@ -129,8 +129,8 @@ export async function PUT(request: NextRequest) {
     let result
     switch (settingType) {
       case "sku-codes":
-        result = updateSKUCode(data.id, data.code, data.description)
-        logSystemEvent("info", "SKU Code Updated", {
+        result = await updateSKUCode(data.id, data.code, data.description)
+        await logSystemEvent("info", "SKU Code Updated", {
           id: data.id,
           code: data.code,
           description: data.description,
@@ -138,8 +138,8 @@ export async function PUT(request: NextRequest) {
         })
         break
       case "machines":
-        result = updateMachine(data.id, data.code, data.name)
-        logSystemEvent("info", "Machine Updated", {
+        result = await updateMachine(data.id, data.code, data.name)
+        await logSystemEvent("info", "Machine Updated", {
           id: data.id,
           code: data.code,
           name: data.name,
@@ -147,8 +147,8 @@ export async function PUT(request: NextRequest) {
         })
         break
       case "uoms":
-        result = updateUOM(data.id, data.code, data.name)
-        logSystemEvent("info", "UOM Updated", {
+        result = await updateUOM(data.id, data.code, data.name)
+        await logSystemEvent("info", "UOM Updated", {
           id: data.id,
           code: data.code,
           name: data.name,
@@ -193,22 +193,22 @@ export async function DELETE(request: NextRequest) {
     let result
     switch (settingType) {
       case "sku-codes":
-        result = deleteSKUCode(id)
-        logSystemEvent("info", "SKU Code Deleted", {
+        result = await deleteSKUCode(id)
+        await logSystemEvent("info", "SKU Code Deleted", {
           id: id,
           deleted_by: auth.username
         })
         break
       case "machines":
-        result = deleteMachine(id)
-        logSystemEvent("info", "Machine Deleted", {
+        result = await deleteMachine(id)
+        await logSystemEvent("info", "Machine Deleted", {
           id: id,
           deleted_by: auth.username
         })
         break
       case "uoms":
-        result = deleteUOM(id)
-        logSystemEvent("info", "UOM Deleted", {
+        result = await deleteUOM(id)
+        await logSystemEvent("info", "UOM Deleted", {
           id: id,
           deleted_by: auth.username
         })

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
 import { 
   getUsersByRole
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Get users by role
 export async function GET(request: NextRequest) {
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Cannot fetch users for this role" }, { status: 403 })
     }
     
-    const users = getUsersByRole(role)
+    const users = await getUsersByRole(role)
     return NextResponse.json(users)
   } catch (error) {
     console.error("Error fetching users by role:", error)

@@ -6,7 +6,7 @@ import {
   updateMachine, 
   deleteMachine,
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Get all machines
 export async function GET(request: NextRequest) {
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const machines = getAllMachines()
+    const machines = await getAllMachines()
     return NextResponse.json(machines)
   } catch (error) {
     console.error("Error fetching machines:", error)
@@ -46,11 +46,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Code and name are required" }, { status: 400 })
     }
 
-    const result = createMachine(code, name)
+    const result = await createMachine(code, name)
     
     if (result.changes > 0) {
       // Log the event
-      logSystemEvent("info", "Machine Created", {
+      await logSystemEvent("info", "Machine Created", {
         code: code,
         name: name,
         created_by: auth.username
@@ -90,11 +90,11 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "ID, code, and name are required" }, { status: 400 })
     }
 
-    const result = updateMachine(id, code, name)
+    const result = await updateMachine(id, code, name)
     
     if (result.changes > 0) {
       // Log the event
-      logSystemEvent("info", "Machine Updated", {
+      await logSystemEvent("info", "Machine Updated", {
         id: id,
         code: code,
         name: name,
@@ -136,11 +136,11 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 })
     }
 
-    const result = deleteMachine(id)
+    const result = await deleteMachine(id)
     
     if (result.changes > 0) {
       // Log the event
-      logSystemEvent("info", "Machine Deleted", {
+      await logSystemEvent("info", "Machine Deleted", {
         id: id,
         deleted_by: auth.username
       })

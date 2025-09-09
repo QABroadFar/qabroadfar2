@@ -4,7 +4,7 @@ import {
   reassignNCP,
   getNCPById,
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Reassign NCP report
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
@@ -30,13 +30,13 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
     
     // Reassign NCP report
-    const result = reassignNCP(id, newAssignee, role, auth.username)
+    const result = await reassignNCP(id, newAssignee, role, auth.username)
     
     if (result.changes > 0) {
       // Get NCP details for logging
-      const ncp: any = getNCPById(id)
+      const ncp: any = await getNCPById(id)
       
-      logSystemEvent("info", "NCP Report Reassigned by Super Admin", {
+      await logSystemEvent("info", "NCP Report Reassigned by Super Admin", {
         ncp_id: ncp?.ncp_id || id,
         new_assignee: newAssignee,
         role: role,

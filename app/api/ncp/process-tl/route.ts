@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { processNCPByTeamLeader } from "@/lib/database"
+import { processNCPByTeamLeader } from "@/lib/supabaseDatabase"
 import { verifyAuth } from "@/lib/auth"
 
 export async function POST(request: NextRequest) {
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "ID and process data are required" }, { status: 400 })
     }
 
-    const result = processNCPByTeamLeader(id, processData, user.username)
+    const result = await processNCPByTeamLeader(id, processData, user.username)
 
     if (result.changes === 0) {
       return NextResponse.json({ error: "NCP report not found" }, { status: 404 })

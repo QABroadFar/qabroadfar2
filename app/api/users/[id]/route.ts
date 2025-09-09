@@ -3,7 +3,7 @@ import { verifyAuth } from "@/lib/auth"
 import { 
   deleteUser,
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Delete user
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
@@ -28,11 +28,11 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return NextResponse.json({ error: "Cannot delete yourself" }, { status: 400 })
     }
 
-    const result = deleteUser(userId)
+    const result = await deleteUser(userId)
     
     if (result.changes > 0) {
       // Log the event
-      logSystemEvent("info", "User Deleted", {
+      await logSystemEvent("info", "User Deleted", {
         user_id: userId,
         deleted_by: auth.username
       })

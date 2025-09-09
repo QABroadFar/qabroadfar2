@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { getNCPStatistics, getAllUsers } from "@/lib/database"
+import { getNCPStatistics, getAllUsers } from "@/lib/supabaseDatabase"
 
 // Get dashboard statistics
 export async function GET(request: NextRequest) {
@@ -11,12 +11,12 @@ export async function GET(request: NextRequest) {
 
   try {
     // Get NCP statistics
-    const ncpStats = getNCPStatistics()
+    const ncpStats = await getNCPStatistics()
     
     // Get user count (only for super_admin)
     let totalUsers = 0;
     if (auth.role === "super_admin") {
-      const users = getAllUsers()
+      const users = await getAllUsers()
       totalUsers = users.length
     }
     

@@ -6,7 +6,7 @@ import {
   updateSKUCode, 
   deleteSKUCode,
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Get all SKU codes
 export async function GET(request: NextRequest) {
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const skuCodes = getAllSKUCodes()
+    const skuCodes = await getAllSKUCodes()
     return NextResponse.json(skuCodes)
   } catch (error) {
     console.error("Error fetching SKU codes:", error)
@@ -46,11 +46,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Code and description are required" }, { status: 400 })
     }
 
-    const result = createSKUCode(code, description)
+    const result = await createSKUCode(code, description)
     
     if (result.changes > 0) {
       // Log the event
-      logSystemEvent("info", "SKU Code Created", {
+      await logSystemEvent("info", "SKU Code Created", {
         code: code,
         description: description,
         created_by: auth.username
@@ -90,11 +90,11 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "ID, code, and description are required" }, { status: 400 })
     }
 
-    const result = updateSKUCode(id, code, description)
+    const result = await updateSKUCode(id, code, description)
     
     if (result.changes > 0) {
       // Log the event
-      logSystemEvent("info", "SKU Code Updated", {
+      await logSystemEvent("info", "SKU Code Updated", {
         id: id,
         code: code,
         description: description,
@@ -136,11 +136,11 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 })
     }
 
-    const result = deleteSKUCode(id)
+    const result = await deleteSKUCode(id)
     
     if (result.changes > 0) {
       // Log the event
-      logSystemEvent("info", "SKU Code Deleted", {
+      await logSystemEvent("info", "SKU Code Deleted", {
         id: id,
         deleted_by: auth.username
       })

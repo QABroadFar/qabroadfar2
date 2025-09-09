@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { approveNCPByProcessLead, rejectNCPByProcessLead } from "@/lib/database"
+import { approveNCPByProcessLead, rejectNCPByProcessLead } from "@/lib/supabaseDatabase"
 import { verifyAuth } from "@/lib/auth"
 
 export async function POST(request: NextRequest) {
@@ -24,12 +24,12 @@ export async function POST(request: NextRequest) {
       if (!comment || !comment.trim()) {
         return NextResponse.json({ error: "Approval comment is required" }, { status: 400 })
       }
-      result = approveNCPByProcessLead(id, comment, user.username)
+      result = await approveNCPByProcessLead(id, comment, user.username)
     } else if (action === "reject") {
       if (!rejectionReason || !rejectionReason.trim()) {
         return NextResponse.json({ error: "Rejection reason is required" }, { status: 400 })
       }
-      result = rejectNCPByProcessLead(id, rejectionReason, user.username)
+      result = await rejectNCPByProcessLead(id, rejectionReason, user.username)
     } else {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 })
     }

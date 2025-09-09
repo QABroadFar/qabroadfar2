@@ -3,7 +3,7 @@ import { verifyAuth } from "@/lib/auth"
 import { 
   updateUserPassword,
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 import { hashSync } from "bcryptjs"
 
 // Update user password
@@ -31,11 +31,11 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     // Hash the new password
     const hashedPassword = hashSync(password, 10)
-    const result = updateUserPassword(userId, hashedPassword)
+    const result = await updateUserPassword(userId, hashedPassword)
     
     if (result.changes > 0) {
       // Log the event
-      logSystemEvent("info", "User Password Updated", {
+      await logSystemEvent("info", "User Password Updated", {
         user_id: userId,
         updated_by: auth.username
       })

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { getNCPsByMonth, getNCPStatusDistribution, getNCPsByTopSubmitters } from "@/lib/database"
+import { getNCPsByMonth, getNCPStatusDistribution, getNCPsByTopSubmitters } from "@/lib/supabaseDatabase"
 
 // Get analytics data
 export async function GET(request: NextRequest, { params }: { params: { type: string } }) {
@@ -19,13 +19,13 @@ export async function GET(request: NextRequest, { params }: { params: { type: st
     let data
     switch (type) {
       case "monthly-reports":
-        data = getNCPsByMonth()
+        data = await getNCPsByMonth()
         break
       case "status-distribution":
-        data = getNCPStatusDistribution()
+        data = await getNCPStatusDistribution()
         break
       case "top-submitters":
-        data = getNCPsByTopSubmitters()
+        data = await getNCPsByTopSubmitters()
         break
       default:
         return NextResponse.json({ error: "Invalid analytics type" }, { status: 400 })

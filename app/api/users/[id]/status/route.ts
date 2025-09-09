@@ -3,7 +3,7 @@ import { verifyAuth } from "@/lib/auth"
 import { 
   updateUserStatus,
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Update user status (active/inactive)
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
@@ -28,11 +28,11 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Status is required" }, { status: 400 })
     }
 
-    const result = updateUserStatus(userId, is_active)
+    const result = await updateUserStatus(userId, is_active)
     
     if (result.changes > 0) {
       // Log the event
-      logSystemEvent("info", "User Status Updated", {
+      await logSystemEvent("info", "User Status Updated", {
         user_id: userId,
         is_active,
         updated_by: auth.username

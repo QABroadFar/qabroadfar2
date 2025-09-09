@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { getUserByUsername } from "@/lib/database"
+import { getUserByUsername } from "@/lib/supabaseDatabase"
 
 export async function GET(request: NextRequest) {
   try {

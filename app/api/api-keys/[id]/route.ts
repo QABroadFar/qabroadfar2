@@ -4,7 +4,7 @@ import {
   getApiKeys, 
   deleteApiKey,
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Get specific API key
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 })
     }
 
-    const apiKeys = getApiKeys()
+    const apiKeys = await getApiKeys()
     const apiKey = apiKeys.find((key: any) => key.id === id)
     
     if (!apiKey) {
@@ -59,7 +59,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     // In a real implementation, you would update the API key here
     // For now, we'll just return a success message
     // Log the event
-    logSystemEvent("info", "API Key Updated", {
+    await logSystemEvent("info", "API Key Updated", {
       id: id,
       updated_by: auth.username
     })
@@ -89,10 +89,10 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 })
     }
 
-    deleteApiKey(id)
+    await deleteApiKey(id)
     
     // Log the event
-    logSystemEvent("info", "API Key Deleted", {
+    await logSystemEvent("info", "API Key Deleted", {
       id: id,
       deleted_by: auth.username
     })

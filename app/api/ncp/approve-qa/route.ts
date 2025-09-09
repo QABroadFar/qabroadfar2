@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { approveNCPByQALeader, rejectNCPByQALeader } from "@/lib/database"
+import { approveNCPByQALeader, rejectNCPByQALeader } from "@/lib/supabaseDatabase"
 import { verifyAuth } from "@/lib/auth"
 
 export async function POST(request: NextRequest) {
@@ -24,12 +24,12 @@ export async function POST(request: NextRequest) {
       if (!approvalData) {
         return NextResponse.json({ error: "Approval data is required" }, { status: 400 })
       }
-      result = approveNCPByQALeader(id, approvalData, user.username)
+      result = await approveNCPByQALeader(id, approvalData, user.username)
     } else if (action === "reject") {
       if (!rejectionReason) {
         return NextResponse.json({ error: "Rejection reason is required" }, { status: 400 })
       }
-      result = rejectNCPByQALeader(id, rejectionReason, user.username)
+      result = await rejectNCPByQALeader(id, rejectionReason, user.username)
     } else {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 })
     }

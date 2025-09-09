@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { getNCPById, superEditNCP, deleteNCPReport, logSystemEvent } from "@/lib/database"
+import { getNCPById, superEditNCP, deleteNCPReport, logSystemEvent } from "@/lib/supabaseDatabase"
 
 // Get NCP report by ID
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Invalid NCP ID" }, { status: 400 })
     }
 
-    const report = getNCPById(id)
+    const report = await getNCPById(id)
     if (!report) {
       return NextResponse.json({ error: "NCP report not found" }, { status: 404 })
     }
@@ -52,7 +52,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const data = await request.json()
     
     // Update NCP report
-    const result = superEditNCP(id, data, auth.username)
+    const result = await superEditNCP(id, data, auth.username)
     
     if (result.changes > 0) {
       return NextResponse.json({ message: "NCP report updated successfully" })
@@ -83,14 +83,14 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     }
 
     // Get NCP details before deletion for logging
-    const ncp: any = getNCPById(id)
+    const ncp: any = await getNCPById(id)
     
     // Delete NCP report
-    const result = deleteNCPReport(id)
+    const result = await deleteNCPReport(id)
     
     if (result.changes > 0) {
       // Log the event
-      logSystemEvent("info", "NCP Report Deleted by Super Admin", {
+      await logSystemEvent("info", "NCP Report Deleted by Super Admin", {
         ncp_id: ncp?.ncp_id || id,
         deleted_by: auth.username
       })

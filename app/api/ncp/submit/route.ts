@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { createNCPReport, logSystemEvent } from "@/lib/database"
+import { createNCPReport, logSystemEvent } from "@/lib/supabaseDatabase"
 import fs from "fs"
 import path from "path"
 
@@ -60,11 +60,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Create NCP report
-    const result = createNCPReport(data, auth.username)
+    const result = await createNCPReport(data, auth.username)
     
     if (result.id) {
       // Log the event
-      logSystemEvent("info", "NCP Report Submitted", {
+      await logSystemEvent("info", "NCP Report Submitted", {
         ncp_id: result.ncpId,
         submitted_by: auth.username,
         role: auth.role

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
 import { 
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 import { promises as fs } from "fs"
 import { join } from "path"
 
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const backupFilename = `backup_${timestamp}.db`
     
     // Log the event
-    logSystemEvent("info", "Database Backup Created", {
+    await logSystemEvent("info", "Database Backup Created", {
       filename: backupFilename,
       created_by: auth.username
     })
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     console.error("Error creating database backup:", error)
     
     // Log the error
-    logSystemEvent("error", "Database Backup Failed", {
+    await logSystemEvent("error", "Database Backup Failed", {
       error: error instanceof Error ? error.message : "Unknown error",
       created_by: auth.username
     })

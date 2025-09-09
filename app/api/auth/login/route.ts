@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { authenticateUser, logSystemEvent, getUserByUsername } from "@/lib/database"
+import { authenticateUser, logSystemEvent, getUserByUsername } from "@/lib/supabaseDatabase"
 import { SignJWT } from "jose"
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET || "your-secret-key")
@@ -13,22 +13,22 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user exists first
-    const existingUser: any = getUserByUsername(username)
+    const existingUser: any = await getUserByUsername(username)
     if (!existingUser) {
-      logSystemEvent("warn", "Failed login attempt - user not found", { username })
+      await logSystemEvent("warn", "Failed login attempt - user not found", { username })
       return NextResponse.json({ error: "Username not found" }, { status: 401 })
     }
 
     // Check if user is active
     if (!existingUser.is_active) {
-      logSystemEvent("warn", "Failed login attempt - user inactive", { username })
+      await logSystemEvent("warn", "Failed login attempt - user inactive", { username })
       return NextResponse.json({ error: "Account is deactivated. Please contact administrator." }, { status: 401 })
     }
 
     const user = await authenticateUser(username, password)
 
     if (!user) {
-      logSystemEvent("warn", "Failed login attempt - invalid password", { username })
+      await logSystemEvent("warn", "Failed login attempt - invalid password", { username })
       return NextResponse.json({ error: "Invalid password" }, { status: 401 })
     }
 

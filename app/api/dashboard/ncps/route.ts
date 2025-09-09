@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { getNCPReportsForUser, getPendingNCPsForRole } from "@/lib/database"
+import { getNCPReportsForUser, getPendingNCPsForRole } from "@/lib/supabaseDatabase"
 
 export async function GET(request: NextRequest) {
   const auth = await verifyAuth(request)
@@ -22,9 +22,9 @@ export async function GET(request: NextRequest) {
     
     let reports;
     if (pendingOnly) {
-      reports = getPendingNCPsForRole(auth.role, auth.username)
+      reports = await getPendingNCPsForRole(auth.role, auth.username)
     } else {
-      reports = getNCPReportsForUser(auth.id, auth.role, auth.username)
+      reports = await getNCPReportsForUser(auth.id, auth.role, auth.username)
     }
     
     console.log("Reports fetched successfully, count:", reports.length);

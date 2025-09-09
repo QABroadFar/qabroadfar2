@@ -6,7 +6,7 @@ import {
   updateUOM, 
   deleteUOM,
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Get all UOMs
 export async function GET(request: NextRequest) {
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const uoms = getAllUOMs()
+    const uoms = await getAllUOMs()
     return NextResponse.json(uoms)
   } catch (error) {
     console.error("Error fetching UOMs:", error)
@@ -46,11 +46,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Code and name are required" }, { status: 400 })
     }
 
-    const result = createUOM(code, name)
+    const result = await createUOM(code, name)
     
     if (result.changes > 0) {
       // Log the event
-      logSystemEvent("info", "UOM Created", {
+      await logSystemEvent("info", "UOM Created", {
         code: code,
         name: name,
         created_by: auth.username
@@ -90,11 +90,11 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "ID, code, and name are required" }, { status: 400 })
     }
 
-    const result = updateUOM(id, code, name)
+    const result = await updateUOM(id, code, name)
     
     if (result.changes > 0) {
       // Log the event
-      logSystemEvent("info", "UOM Updated", {
+      await logSystemEvent("info", "UOM Updated", {
         id: id,
         code: code,
         name: name,
@@ -136,11 +136,11 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 })
     }
 
-    const result = deleteUOM(id)
+    const result = await deleteUOM(id)
     
     if (result.changes > 0) {
       // Log the event
-      logSystemEvent("info", "UOM Deleted", {
+      await logSystemEvent("info", "UOM Deleted", {
         id: id,
         deleted_by: auth.username
       })

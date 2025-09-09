@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
 import { 
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Restore database from backup
 export async function POST(request: NextRequest) {
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     // For now, we'll simulate the process
     
     // Log the event
-    logSystemEvent("info", "Database Restore Initiated", {
+    await logSystemEvent("info", "Database Restore Initiated", {
       filename: filename,
       initiated_by: auth.username
     })
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     console.error("Error restoring database:", error)
     
     // Log the error
-    logSystemEvent("error", "Database Restore Failed", {
+    await logSystemEvent("error", "Database Restore Failed", {
       error: error instanceof Error ? error.message : "Unknown error",
       initiated_by: auth.username
     })

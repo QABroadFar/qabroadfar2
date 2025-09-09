@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { getAllNCPReports } from "@/lib/database"
+import { getAllNCPReports } from "@/lib/supabaseDatabase"
 
 // Get all NCP reports
 export async function GET(request: NextRequest) {
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const reports = getAllNCPReports()
+    const reports = await getAllNCPReports()
     return NextResponse.json(reports)
   } catch (error) {
     console.error("Error fetching NCP reports:", error)

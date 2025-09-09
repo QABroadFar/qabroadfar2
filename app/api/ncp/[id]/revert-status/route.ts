@@ -4,7 +4,7 @@ import {
   revertNCPStatus, 
   getNCPById,
   logSystemEvent
-} from "@/lib/database"
+} from "@/lib/supabaseDatabase"
 
 // Revert NCP status
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
@@ -30,13 +30,13 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
     
     // Revert NCP status
-    const result = revertNCPStatus(id, newStatus, auth.username)
+    const result = await revertNCPStatus(id, newStatus, auth.username)
     
     if (result.changes > 0) {
       // Get NCP details for logging
-      const ncp: any = getNCPById(id)
+      const ncp: any = await getNCPById(id)
       
-      logSystemEvent("info", "NCP Status Reverted by Super Admin", {
+      await logSystemEvent("info", "NCP Status Reverted by Super Admin", {
         ncp_id: ncp?.ncp_id || id,
         new_status: newStatus,
         reverted_by: auth.username
