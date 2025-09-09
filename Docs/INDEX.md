@@ -36,6 +36,10 @@ Welcome to the Quality Assurance Portal documentation. This folder contains all 
 - [CLEANUP_SUMMARY.md](CLEANUP_SUMMARY.md) - Cleanup summary
 - [FIXES_SUMMARY.md](FIXES_SUMMARY.md) - Fixes summary
 
+## Component Documentation
+
+- [QA_MANAGER_APPROVAL_REDESIGN.md](QA_MANAGER_APPROVAL_REDESIGN.md) - QA Manager Approval component redesign
+
 ---
 
 This documentation covers all aspects of the Quality Assurance Portal, from user guides to technical implementation details.
