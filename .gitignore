@@ -36,3 +36,14 @@ qa_portal.db
 public/uploads/*
 !public/uploads/.gitkeep
 dist/
+# Migration temporary files
+execute-supabase-schema.js
+sqlite-export.sql
+supabase-functions.sql
+supabase-import.sql
+supabase-schema-full.sql
+supabase-schema.sql
+test-authentication.ts
+test-env-variables.ts
+test-supabase-connection.ts
+test-supabase-integration.ts
