@@ -563,21 +563,29 @@ export async function createNotification(
   message: string,
   type = 'info'
 ) {
-  const { data, error } = await supabase.from('notifications').insert([
-    {
-      user_id: userId,
-      ncp_id: ncpId,
-      title: title,
-      message: message,
-      type: type,
-    },
-  ])
+  try {
+    const { data, error } = await supabase.from('notifications').insert([
+      {
+        user_id: userId,
+        ncp_id: ncpId,
+        title: title,
+        message: message,
+        type: type,
+      },
+    ]);
 
-  if (error) throw new Error(error.message)
-  return data
-}
-
-export async function createNotificationForRole(
+    if (error) {
+      // Handle RLS errors gracefully - just log and continue
+      console.warn('Warning: Could not create notification due to RLS policy:', error.message);
+      return null;
+    }
+    return data;
+  } catch (error) {
+    // Handle RLS errors gracefully - just log and continue
+    console.warn('Warning: Could not create notification due to RLS policy:', error.message);
+    return null;
+  }
+}export async function createNotificationForRole(
   role: string,
   ncpId: string,
   title: string,
