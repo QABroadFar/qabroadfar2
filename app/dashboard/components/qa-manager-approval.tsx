@@ -1,9 +1,12 @@
+// Improved QA Manager Approval Component
+// app/dashboard/components/qa-manager-approval.tsx
+
 "use client"
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { formatToWIB } from "@/lib/date-utils"
@@ -15,6 +18,28 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import {
   ArrowLeft,
   Loader2,
@@ -31,8 +56,23 @@ import {
   ThumbsDown,
   ImageIcon,
   Award,
+  ChevronRight,
+  ChevronDown,
+  Eye,
+  Download,
+  Calendar,
+  Hash,
+  Tag,
+  AlertCircle,
+  Layers,
+  Zap,
+  TrendingUp,
+  ClipboardCheck,
+  Archive,
+  RotateCcw,
 } from "lucide-react"
-import * as XLSX from 'xlsx'; // Import XLSX for Excel export
+import * as XLSX from 'xlsx'
+import Image from "next/image"
 
 interface QAManagerApprovalProps {
   onBack: () => void
@@ -43,10 +83,12 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
   const [selectedNCP, setSelectedNCP] = useState<any>(null)
   const [showApprovalDialog, setShowApprovalDialog] = useState(false)
   const [showRejectionDialog, setShowRejectionDialog] = useState(false)
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false) // State for the success dialog
-  const [successMessage, setSuccessMessage] = useState("") // State for the success message
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false)
+  const [successMessage, setSuccessMessage] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({})
+  const [previewImage, setPreviewImage] = useState<string | null>(null)
 
   const [finalComment, setFinalComment] = useState("")
   const [rejectionReason, setRejectionReason] = useState("")
@@ -61,9 +103,7 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
       const response = await fetch("/api/dashboard/ncps?pending=true")
       if (response.ok) {
         const data = await response.json()
-        // Handle both API response formats
         const ncpData = data.data || data
-        // Filter for NCPs that have been approved by Process Lead
         const managerReady = Array.isArray(ncpData) ? ncpData.filter((ncp: any) => ncp.status === "process_approved") : []
         setPendingNCPs(managerReady)
       } else {
@@ -76,6 +116,18 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
     }
   }
 
+  const toggleSection = (ncpId: string, section: string) => {
+    const key = `${ncpId}-${section}`
+    setExpandedSections(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }))
+  }
+
+  const isSectionExpanded = (ncpId: string, section: string) => {
+    return expandedSections[`${ncpId}-${section}`] || false
+  }
+
   const handleApprove = (ncp: any) => {
     setSelectedNCP(ncp)
     setFinalComment("")
@@ -86,6 +138,10 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
     setSelectedNCP(ncp)
     setRejectionReason("")
     setShowRejectionDialog(true)
+  }
+
+  const handleImagePreview = (imageUrl: string) => {
+    setPreviewImage(imageUrl)
   }
 
   const submitFinalApproval = async () => {
@@ -143,7 +199,6 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
 
       if (response.ok) {
         setShowRejectionDialog(false)
-        // Show success message for rejection as well
         setSuccessMessage(`NCP ${selectedNCP.ncp_id} rejected and returned to Team Leader.`)
         setShowSuccessDialog(true)
         fetchPendingNCPs()
@@ -161,11 +216,10 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
 
   const exportToExcel = () => {
     if (pendingNCPs.length === 0) {
-      alert("No data to export.");
-      return;
+      alert("No data to export.")
+      return
     }
 
-    // Prepare data for Excel
     const worksheetData = pendingNCPs.map((ncp: any) => ({
       "NCP ID": ncp.ncp_id,
       "SKU Code": ncp.sku_code,
@@ -173,7 +227,7 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
       "Incident Date": new Date(ncp.date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
       "Incident Time": ncp.time_incident,
       "Process Lead": ncp.process_approved_by,
-      "Status": "Ready for Final Approval", // Assuming status for this view
+      "Status": "Ready for Final Approval",
       "Problem Description": ncp.problem_description,
       "QA Leader Disposition": ncp.disposisi,
       "Sortir": ncp.jumlah_sortir || "0",
@@ -186,33 +240,35 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
       "Process Lead Comment": ncp.process_comment,
       "Process Approved At": new Date(ncp.process_approved_at).toLocaleString(),
       "Photo Attachment Path": ncp.photo_attachment,
-    }));
+    }))
 
-    // Create a new workbook
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-
-    // Append the worksheet to the workbook
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Pending NCPs");
-
-    // Export the workbook to an Excel file
-    XLSX.writeFile(workbook, "pending_ncps_for_approval.xlsx");
-  };
+    const workbook = XLSX.utils.book_new()
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData)
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Pending NCPs")
+    XLSX.writeFile(workbook, "pending_ncps_for_approval.xlsx")
+  }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "process_approved":
-        return <Badge className="bg-purple-100 text-purple-800">Ready for Final Approval</Badge>
+        return <Badge className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white hover:from-purple-600 hover:to-indigo-700 transition-all">Ready for Final Approval</Badge>
       case "manager_approved":
-        return <Badge className="bg-green-100 text-green-800">Completed & Archived</Badge>
+        return <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white">Completed & Archived</Badge>
       default:
         return <Badge variant="secondary">{status}</Badge>
     }
   }
 
+  const getPriorityColor = (quantity: number) => {
+    if (quantity > 1000) return "text-red-600"
+    if (quantity > 500) return "text-orange-600"
+    if (quantity > 100) return "text-yellow-600"
+    return "text-green-600"
+  }
+
   if (isLoading) {
     return (
-      <div className="p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
           <span className="ml-2 text-gray-600">Loading NCPs for final approval...</span>
@@ -222,233 +278,437 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
   }
 
   return (
-    <div className="p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
-          <Button variant="ghost" onClick={onBack} className="text-gray-600 hover:text-gray-900 p-0 h-auto mb-4">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+        <div className="mb-8">
+          <Button 
+            variant="ghost" 
+            onClick={onBack} 
+            className="text-gray-600 hover:text-gray-900 hover:bg-white/50 p-0 h-auto mb-6 transition-all duration-300"
+          >
+            <ArrowLeft className="h-5 w-5 mr-2" />
             Back to Dashboard
           </Button>
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-800">QA Manager Final Approval</h1>
-              <p className="text-gray-600 mt-1">Final review and approval of completed NCP workflows</p>
+          
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex-1">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
+                QA Manager Final Approval
+              </h1>
+              <p className="text-gray-600 mt-2 text-lg">
+                Final review and approval of completed NCP workflows
+              </p>
             </div>
+            
             <div className="flex items-center gap-4">
-              <Badge variant="secondary" className="text-lg px-4 py-2">
-                {pendingNCPs.length} Pending Final Approval
+              <Badge className="text-lg px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg">
+                <Layers className="h-5 w-5 mr-2" />
+                {pendingNCPs.length} Pending
               </Badge>
-              <Button onClick={exportToExcel} variant="outline" className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
+              
+              <Button 
+                onClick={exportToExcel} 
+                variant="outline" 
+                className="flex items-center gap-2 bg-white/80 hover:bg-white shadow-md border-0 backdrop-blur-sm"
+              >
+                <Download className="h-4 w-4" />
                 Export to Excel
               </Button>
             </div>
           </div>
         </div>
 
+        {/* Stats Cards */}
+        {pendingNCPs.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <Card className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white border-0 shadow-xl">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-blue-100 text-sm">Total NCPs</p>
+                    <p className="text-2xl font-bold">{pendingNCPs.length}</p>
+                  </div>
+                  <Layers className="h-8 w-8 text-blue-200" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-gradient-to-br from-purple-500 to-pink-600 text-white border-0 shadow-xl">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-purple-100 text-sm">Avg. Hold Qty</p>
+                    <p className="text-2xl font-bold">
+                      {Math.round(pendingNCPs.reduce((sum, ncp) => sum + (ncp.hold_quantity || 0), 0) / pendingNCPs.length) || 0}
+                    </p>
+                  </div>
+                  <Tag className="h-8 w-8 text-purple-200" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-gradient-to-br from-green-500 to-teal-600 text-white border-0 shadow-xl">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-green-100 text-sm">Avg. Sortir</p>
+                    <p className="text-2xl font-bold">
+                      {Math.round(pendingNCPs.reduce((sum, ncp) => sum + (parseInt(ncp.jumlah_sortir || 0)), 0) / pendingNCPs.length) || 0}
+                    </p>
+                  </div>
+                  <TrendingUp className="h-8 w-8 text-green-200" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-gradient-to-br from-orange-500 to-red-600 text-white border-0 shadow-xl">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-orange-100 text-sm">Avg. Reject</p>
+                    <p className="text-2xl font-bold">
+                      {Math.round(pendingNCPs.reduce((sum, ncp) => sum + (parseInt(ncp.jumlah_reject || 0)), 0) / pendingNCPs.length) || 0}
+                    </p>
+                  </div>
+                  <AlertCircle className="h-8 w-8 text-orange-200" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* NCP Cards */}
         {pendingNCPs.length === 0 ? (
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-12 text-center">
-              <Award className="h-16 w-16 text-green-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">No NCPs for Final Approval</h3>
-              <p className="text-gray-600">All NCPs have been processed through the complete workflow.</p>
+          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+            <CardContent className="p-16 text-center">
+              <div className="mx-auto max-w-md">
+                <Award className="h-20 w-20 text-green-500 mx-auto mb-6" />
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">No NCPs for Final Approval</h3>
+                <p className="text-gray-600 mb-6">
+                  All NCPs have been processed through the complete workflow. Great job maintaining quality standards!
+                </p>
+                <Button 
+                  onClick={onBack} 
+                  className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
+                >
+                  Return to Dashboard
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-6">
+          <div className="space-y-6">
             {pendingNCPs.map((ncp: any) => (
-              <Card key={ncp.id} className="bg-white/90 backdrop-blur-md border-0 shadow-xl ring-1 ring-gray-200/50">
+              <Card 
+                key={ncp.id} 
+                className="bg-white/90 backdrop-blur-md border-0 shadow-xl ring-1 ring-gray-200/50 hover:shadow-2xl transition-all duration-300"
+              >
                 <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Badge variant="outline" className="font-mono text-lg px-3 py-1">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <Badge 
+                        variant="outline" 
+                        className="font-mono text-xl px-4 py-2 bg-gradient-to-r from-gray-800 to-gray-900 text-white"
+                      >
+                        <Hash className="h-4 w-4 mr-2" />
                         {ncp.ncp_id}
                       </Badge>
                       {getStatusBadge(ncp.status)}
+                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white">
+                        <User className="h-4 w-4 mr-1" />
+                        {ncp.process_approved_by}
+                      </Badge>
                     </div>
-                    <div className="text-sm text-gray-500">
-                      <Clock className="h-4 w-4 inline mr-1" />
-                      Process Approved: {formatToWIB(ncp.process_approved_at)}
+                    
+                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-4 w-4" />
+                        <span>{new Date(ncp.date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-4 w-4" />
+                        <span>{formatToWIB(ncp.process_approved_at)}</span>
+                      </div>
                     </div>
                   </div>
                 </CardHeader>
 
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-6">
                   {/* NCP Details Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4 bg-gray-50/50 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <Package className="h-4 w-4 text-gray-500" />
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4 bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl border border-gray-200/50">
+                    <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
+                      <div className="p-2 rounded-lg bg-blue-100">
+                        <Package className="h-5 w-5 text-blue-600" />
+                      </div>
                       <div>
-                        <div className="text-xs text-gray-500">SKU Code</div>
-                        <div className="font-medium">{ncp.sku_code}</div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wide">SKU Code</div>
+                        <div className="font-semibold text-gray-800">{ncp.sku_code}</div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-gray-500" />
+                    
+                    <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
+                      <div className="p-2 rounded-lg bg-green-100">
+                        <FileText className="h-5 w-5 text-green-600" />
+                      </div>
                       <div>
-                        <div className="text-xs text-gray-500">Machine</div>
-                        <div className="font-medium">{ncp.machine_code}</div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wide">Machine</div>
+                        <div className="font-semibold text-gray-800">{ncp.machine_code}</div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-gray-500" />
+                    
+                    <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
+                      <div className="p-2 rounded-lg bg-amber-100">
+                        <Clock className="h-5 w-5 text-amber-600" />
+                      </div>
                       <div>
-                        <div className="text-xs text-gray-500">Incident Date</div>
-                        <div className="font-medium">
+                        <div className="text-xs text-gray-500 uppercase tracking-wide">Incident Date</div>
+                        <div className="font-semibold text-gray-800">
                           {new Date(ncp.date).toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",
-                            year: "numeric",
                           })}
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-gray-500" />
+                    
+                    <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
+                      <div className="p-2 rounded-lg bg-purple-100">
+                        <Clock className="h-5 w-5 text-purple-600" />
+                      </div>
                       <div>
-                        <div className="text-xs text-gray-500">Incident Time</div>
-                        <div className="font-medium">{ncp.time_incident}</div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wide">Incident Time</div>
+                        <div className="font-semibold text-gray-800">{ncp.time_incident}</div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-gray-500" />
+                    
+                    <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
+                      <div className="p-2 rounded-lg bg-indigo-100">
+                        <User className="h-5 w-5 text-indigo-600" />
+                      </div>
                       <div>
-                        <div className="text-xs text-gray-500">Process Lead</div>
-                        <div className="font-medium">{ncp.process_approved_by}</div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wide">Process Lead</div>
+                        <div className="font-semibold text-gray-800 truncate">{ncp.process_approved_by}</div>
                       </div>
                     </div>
                   </div>
 
                   {/* Problem Description */}
-                  <div className="p-4 bg-orange-50/50 rounded-lg border border-orange-200/50">
-                    <div className="text-sm font-medium text-gray-700 mb-2">Problem Description:</div>
-                    <p className="text-gray-800 text-sm leading-relaxed">{ncp.problem_description}</p>
+                  <div className="p-5 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-200/50">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-2 rounded-lg bg-orange-100">
+                        <AlertCircle className="h-5 w-5 text-orange-600" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800">Problem Description</h3>
+                    </div>
+                    <p className="text-gray-800 leading-relaxed bg-white/80 p-4 rounded-lg border border-orange-200">
+                      {ncp.problem_description}
+                    </p>
                   </div>
 
                   {/* QA Leader Disposition */}
                   {ncp.disposisi && (
-                    <div className="p-4 bg-blue-50/50 rounded-lg border border-blue-200/50">
-                      <div className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-blue-600" />
-                        QA Leader Disposition:
+                    <div className="p-5 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-200/50">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="p-2 rounded-lg bg-blue-100">
+                          <ClipboardCheck className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-800">QA Leader Disposition</h3>
                       </div>
-                      <p className="text-gray-800 text-sm leading-relaxed mb-4">{ncp.disposisi}</p>
+                      
+                      <p className="text-gray-800 leading-relaxed bg-white/80 p-4 rounded-lg border border-blue-200 mb-4">
+                        {ncp.disposisi}
+                      </p>
 
                       {/* Quantities Grid */}
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="bg-white p-3 rounded-lg border border-blue-200 text-center">
-                          <div className="text-xs text-gray-500 mb-1">Sortir</div>
-                          <div className="text-lg font-bold text-orange-600">{ncp.jumlah_sortir || "0"}</div>
-                          <div className="text-xs text-gray-400">{ncp.hold_quantity_uom}</div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="bg-gradient-to-br from-white to-orange-50 p-4 rounded-lg border border-orange-200 text-center shadow-sm">
+                          <div className="text-sm text-gray-500 mb-2">Sortir Quantity</div>
+                          <div className={`text-3xl font-bold ${getPriorityColor(parseInt(ncp.jumlah_sortir || 0))}`}>
+                            {ncp.jumlah_sortir || "0"}
+                          </div>
+                          <div className="text-sm text-gray-500">{ncp.hold_quantity_uom}</div>
                         </div>
-                        <div className="bg-white p-3 rounded-lg border border-blue-200 text-center">
-                          <div className="text-xs text-gray-500 mb-1">Release</div>
-                          <div className="text-lg font-bold text-green-600">{ncp.jumlah_release || "0"}</div>
-                          <div className="text-xs text-gray-400">{ncp.hold_quantity_uom}</div>
+                        
+                        <div className="bg-gradient-to-br from-white to-green-50 p-4 rounded-lg border border-green-200 text-center shadow-sm">
+                          <div className="text-sm text-gray-500 mb-2">Release Quantity</div>
+                          <div className={`text-3xl font-bold ${getPriorityColor(parseInt(ncp.jumlah_release || 0))}`}>
+                            {ncp.jumlah_release || "0"}
+                          </div>
+                          <div className="text-sm text-gray-500">{ncp.hold_quantity_uom}</div>
                         </div>
-                        <div className="bg-white p-3 rounded-lg border border-blue-200 text-center">
-                          <div className="text-xs text-gray-500 mb-1">Reject</div>
-                          <div className="text-lg font-bold text-red-600">{ncp.jumlah_reject || "0"}</div>
-                          <div className="text-xs text-gray-400">{ncp.hold_quantity_uom}</div>
+                        
+                        <div className="bg-gradient-to-br from-white to-red-50 p-4 rounded-lg border border-red-200 text-center shadow-sm">
+                          <div className="text-sm text-gray-500 mb-2">Reject Quantity</div>
+                          <div className={`text-3xl font-bold ${getPriorityColor(parseInt(ncp.jumlah_reject || 0))}`}>
+                            {ncp.jumlah_reject || "0"}
+                          </div>
+                          <div className="text-sm text-gray-500">{ncp.hold_quantity_uom}</div>
                         </div>
                       </div>
-                      {/* Total Hold Quantity - Add this after the grid */}
-                      <div className="mt-3 p-2 bg-gray-100 rounded text-center">
-                        <div className="text-xs text-gray-500">Total Hold Quantity</div>
-                        <div className="font-semibold text-gray-800">
-                          {ncp.hold_quantity} {ncp.hold_quantity_uom}
+                      
+                      {/* Total Hold Quantity */}
+                      <div className="mt-4 p-4 bg-white/80 rounded-lg border border-gray-200 text-center">
+                        <div className="text-sm text-gray-500 mb-1">Total Hold Quantity</div>
+                        <div className="text-2xl font-bold text-gray-800">
+                          {ncp.hold_quantity} <span className="text-lg">{ncp.hold_quantity_uom}</span>
                         </div>
                       </div>
                     </div>
                   )}
 
                   {/* Team Leader Analysis */}
-                  <div className="p-4 bg-green-50/50 rounded-lg border border-green-200/50">
-                    <div className="text-sm font-medium text-gray-700 mb-3">Team Leader Analysis:</div>
-                    <div className="space-y-3">
-                      <div>
-                        <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                          <Target className="h-3 w-3" />
-                          Root Cause Analysis
-                        </div>
-                        <p className="text-gray-800 text-sm leading-relaxed bg-white p-2 rounded border">
-                          {ncp.root_cause_analysis}
-                        </p>
+                  <div className="p-5 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200/50">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="p-2 rounded-lg bg-green-100">
+                        <Zap className="h-5 w-5 text-green-600" />
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                          <Wrench className="h-3 w-3" />
-                          Corrective Action
-                        </div>
-                        <p className="text-gray-800 text-sm leading-relaxed bg-white p-2 rounded border">
-                          {ncp.corrective_action}
-                        </p>
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                          <Shield className="h-3 w-3" />
-                          Preventive Action
-                        </div>
-                        <p className="text-gray-800 text-sm leading-relaxed bg-white p-2 rounded border">
-                          {ncp.preventive_action}
-                        </p>
-                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800">Team Leader Analysis</h3>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="root-cause">
+                          <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-2">
+                              <Target className="h-4 w-4 text-green-600" />
+                              <span className="font-medium">Root Cause Analysis</span>
+                            </div>
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className="p-4 bg-white/80 rounded-lg border border-green-200">
+                              <p className="text-gray-800">{ncp.root_cause_analysis}</p>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                        
+                        <AccordionItem value="corrective">
+                          <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-2">
+                              <Wrench className="h-4 w-4 text-blue-600" />
+                              <span className="font-medium">Corrective Action</span>
+                            </div>
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className="p-4 bg-white/80 rounded-lg border border-blue-200">
+                              <p className="text-gray-800">{ncp.corrective_action}</p>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                        
+                        <AccordionItem value="preventive">
+                          <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-2">
+                              <Shield className="h-4 w-4 text-purple-600" />
+                              <span className="font-medium">Preventive Action</span>
+                            </div>
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className="p-4 bg-white/80 rounded-lg border border-purple-200">
+                              <p className="text-gray-800">{ncp.preventive_action}</p>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
                     </div>
                   </div>
 
                   {/* Process Lead Comment */}
                   {ncp.process_comment && (
-                    <div className="p-4 bg-purple-50/50 rounded-lg border border-purple-200/50">
-                      <div className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                        <Award className="h-4 w-4 text-purple-600" />
-                        Process Lead Approval Comment:
+                    <div className="p-5 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border border-purple-200/50">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="p-2 rounded-lg bg-purple-100">
+                          <Award className="h-5 w-5 text-purple-600" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-800">Process Lead Approval Comment</h3>
                       </div>
-                      <p className="text-gray-800 text-sm leading-relaxed bg-white p-2 rounded border">
-                        {ncp.process_comment}
-                      </p>
+                      <div className="p-4 bg-white/80 rounded-lg border border-purple-200">
+                        <p className="text-gray-800">{ncp.process_comment}</p>
+                      </div>
                     </div>
                   )}
 
-                  {/* FIXED: Photo Attachment */}
+                  {/* Photo Attachment */}
                   {ncp.photo_attachment && (
-                    <div className="p-4 bg-gray-50/50 rounded-lg border border-gray-200/50">
-                      <div className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                        <ImageIcon className="h-4 w-4" />
-                        Photo Attachment:
+                    <div className="p-5 bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl border border-gray-200/50">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="p-2 rounded-lg bg-gray-100">
+                          <ImageIcon className="h-5 w-5 text-gray-600" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-800">Photo Attachment</h3>
                       </div>
-                      <div className="space-y-2">
-                        <p className="text-gray-600 text-sm">{ncp.photo_attachment.split("/").pop()}</p>
-                        {/* Display actual image */}
-                        <div className="relative w-full max-w-md h-48 bg-gray-100 rounded-lg overflow-hidden border">
-                          <img
-                            src={`/uploads/${encodeURIComponent(ncp.photo_attachment)}` || "/placeholder.svg"}
+                      
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="relative w-full sm:w-64 h-48 bg-gray-100 rounded-lg overflow-hidden border">
+                          <Image
+                            src={`/uploads/${encodeURIComponent(ncp.photo_attachment)}`}
                             alt="NCP Photo Attachment"
-                            className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
+                            fill
+                            className="object-cover cursor-pointer hover:scale-105 transition-transform"
                             onError={(e) => {
-                              e.currentTarget.src = "/placeholder.svg?height=200&width=300&text=Image+Not+Found"
+                              const target = e.target as HTMLImageElement;
+                              target.src = "/placeholder.svg?height=200&width=300&text=Image+Not+Found";
                             }}
-                            onClick={() => window.open(`/uploads/${encodeURIComponent(ncp.photo_attachment)}`, "_blank")}
+                            onClick={() => handleImagePreview(`/uploads/${encodeURIComponent(ncp.photo_attachment)}`)}
                           />
                         </div>
-                        <p className="text-xs text-gray-500">Click image to view full size</p>
+                        
+                        <div className="flex-1">
+                          <div className="p-3 bg-white/80 rounded-lg border">
+                            <p className="text-sm text-gray-600 mb-2">File Name:</p>
+                            <p className="font-medium text-gray-800 break-all">
+                              {ncp.photo_attachment.split("/").pop()}
+                            </p>
+                          </div>
+                          
+                          <div className="mt-3 flex gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleImagePreview(`/uploads/${encodeURIComponent(ncp.photo_attachment)}`)}
+                              className="flex items-center gap-2"
+                            >
+                              <Eye className="h-4 w-4" />
+                              Preview
+                            </Button>
+                            
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => window.open(`/uploads/${encodeURIComponent(ncp.photo_attachment)}`, "_blank")}
+                              className="flex items-center gap-2"
+                            >
+                              <Download className="h-4 w-4" />
+                              Download
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
 
                   {/* Action Buttons */}
-                  <div className="flex gap-3 pt-4 border-t border-gray-200/50">
+                  <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200/50">
                     <Button
                       onClick={() => handleApprove(ncp)}
-                      className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                      className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg transition-all duration-300 py-6"
                     >
-                      <ThumbsUp className="h-4 w-4 mr-2" />
-                      Final Approval & Archive
+                      <ThumbsUp className="h-5 w-5 mr-2" />
+                      <span className="font-semibold">Final Approval & Archive</span>
+                      <Archive className="h-5 w-5 ml-2" />
                     </Button>
-                    <Button onClick={() => handleReject(ncp)} variant="destructive" className="flex-1">
-                      <ThumbsDown className="h-4 w-4 mr-2" />
-                      Reject & Return
+                    
+                    <Button 
+                      onClick={() => handleReject(ncp)} 
+                      variant="destructive" 
+                      className="flex-1 py-6"
+                    >
+                      <ThumbsDown className="h-5 w-5 mr-2" />
+                      <span className="font-semibold">Reject & Return</span>
+                      <RotateCcw className="h-5 w-5 ml-2" />
                     </Button>
                   </div>
                 </CardContent>
@@ -460,19 +720,20 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
 
       {/* Final Approval Dialog */}
       <Dialog open={showApprovalDialog} onOpenChange={setShowApprovalDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-green-600">
+            <DialogTitle className="text-2xl font-bold text-green-600 flex items-center gap-2">
+              <CheckCircle className="h-6 w-6" />
               Final Approval: {selectedNCP?.ncp_id}
             </DialogTitle>
-            <DialogDescription>
-              Complete the NCP workflow with final QA Manager approval. This will archive the NCP.
+            <DialogDescription className="text-gray-600">
+              Complete the NCP workflow with final QA Manager approval. This will archive the NCP permanently.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="finalComment" className="text-sm font-medium">
+              <Label htmlFor="finalComment" className="text-sm font-medium text-gray-700">
                 Final Approval Comment *
               </Label>
               <Textarea
@@ -480,8 +741,8 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                 placeholder="Enter your final approval comment and any closing remarks..."
                 value={finalComment}
                 onChange={(e) => setFinalComment(e.target.value)}
-                className="min-h-24"
-                rows={4}
+                className="min-h-32 border-gray-300 focus:border-green-500 focus:ring-green-500"
+                rows={5}
               />
               <p className="text-xs text-gray-500">
                 This comment will complete the NCP workflow and archive the record permanently.
@@ -490,10 +751,19 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
           </div>
 
           <DialogFooter className="gap-3">
-            <Button variant="outline" onClick={() => setShowApprovalDialog(false)} disabled={isSubmitting}>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowApprovalDialog(false)} 
+              disabled={isSubmitting}
+              className="border-gray-300"
+            >
               Cancel
             </Button>
-            <Button onClick={submitFinalApproval} disabled={isSubmitting} className="bg-green-600 hover:bg-green-700">
+            <Button 
+              onClick={submitFinalApproval} 
+              disabled={isSubmitting} 
+              className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
+            >
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -512,19 +782,20 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
 
       {/* Rejection Dialog */}
       <Dialog open={showRejectionDialog} onOpenChange={setShowRejectionDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-red-600">
+            <DialogTitle className="text-2xl font-bold text-red-600 flex items-center gap-2">
+              <XCircle className="h-6 w-6" />
               Reject Final Approval: {selectedNCP?.ncp_id}
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-gray-600">
               Reject this NCP and return to Team Leader for revision of the analysis.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="rejectionReason" className="text-sm font-medium">
+              <Label htmlFor="rejectionReason" className="text-sm font-medium text-gray-700">
                 Rejection Reason *
               </Label>
               <Textarea
@@ -532,8 +803,8 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                 placeholder="Explain why this NCP is being rejected and what needs to be improved..."
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                className="min-h-24"
-                rows={4}
+                className="min-h-32 border-gray-300 focus:border-red-500 focus:ring-red-500"
+                rows={5}
               />
               <p className="text-xs text-gray-500">
                 Provide clear guidance on what needs to be corrected in the analysis or process.
@@ -542,10 +813,20 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
           </div>
 
           <DialogFooter className="gap-3">
-            <Button variant="outline" onClick={() => setShowRejectionDialog(false)} disabled={isSubmitting}>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowRejectionDialog(false)} 
+              disabled={isSubmitting}
+              className="border-gray-300"
+            >
               Cancel
             </Button>
-            <Button onClick={submitRejection} disabled={isSubmitting} variant="destructive">
+            <Button 
+              onClick={submitRejection} 
+              disabled={isSubmitting} 
+              variant="destructive"
+              className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800"
+            >
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -563,22 +844,45 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
       </Dialog>
 
       {/* Success Dialog */}
-      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
-        <DialogContent className="max-w-xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl font-bold text-green-600">
-              <CheckCircle className="h-6 w-6" />
+      <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <AlertDialogContent className="max-w-xl bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-3 text-2xl font-bold text-green-600">
+              <CheckCircle className="h-8 w-8" />
               Operation Successful
-            </DialogTitle>
-          </DialogHeader>
-          <DialogDescription className="text-base text-gray-700 pt-4">
-            {successMessage}
-          </DialogDescription>
-          <DialogFooter className="mt-6">
-            <Button onClick={() => setShowSuccessDialog(false)}>
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-700 pt-4 text-lg">
+              {successMessage}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-6">
+            <AlertDialogAction 
+              onClick={() => setShowSuccessDialog(false)}
+              className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
+            >
               OK
-            </Button>
-          </DialogFooter>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Image Preview Dialog */}
+      <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
+        <DialogContent className="max-w-4xl bg-black/90 border-0 p-0">
+          <div className="relative w-full h-[80vh] flex items-center justify-center">
+            {previewImage && (
+              <Image
+                src={previewImage}
+                alt="NCP Photo Preview"
+                fill
+                className="object-contain"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = "/placeholder.svg?height=400&width=600&text=Image+Not+Available";
+                }}
+              />
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>

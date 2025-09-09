@@ -1,72 +1,82 @@
-import { formatInTimeZone } from 'date-fns-tz';
-import { enUS } from 'date-fns/locale';
+// lib/date-utils.ts
+// Utility functions for date formatting and manipulation
 
-export const formatToWIB = (date: string | Date, formatString: string = 'dd MMM yyyy, HH:mm:ss'): string => {
-  if (!date) return 'N/A';
+export const formatToWIB = (dateString: string) => {
+  if (!dateString) return 'N/A'
+  
   try {
-    // Handle different input formats
-    let dateObj: Date;
-    
-    if (typeof date === 'string') {
-      // If it's already an ISO string, it might be in UTC
-      if (date.endsWith('Z') || date.includes('+') || date.includes('T')) {
-        // Parse as UTC and directly format to WIB
-        dateObj = new Date(date);
-      } else {
-        // Assume it's already in local time
-        dateObj = new Date(date);
-      }
-    } else {
-      dateObj = date;
-    }
-    
-    return formatInTimeZone(dateObj, 'Asia/Jakarta', formatString, { locale: enUS });
+    const date = new Date(dateString)
+    return date.toLocaleString('en-US', {
+      timeZone: 'Asia/Jakarta',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    })
   } catch (error) {
-    console.error("Error formatting date:", error);
-    return 'Invalid Date';
+    console.error('Error formatting date:', error)
+    return 'Invalid Date'
   }
-};
+}
 
-// Format date to WIB with Indonesian format
-export const formatToWIBID = (date: string | Date): string => {
-  if (!date) return 'N/A';
-  try {
-    return formatToWIB(date, 'dd MMM yyyy, HH:mm:ss');
-  } catch (error) {
-    console.error("Error formatting date:", error);
-    return 'Invalid Date';
-  }
-};
+export const getPriorityColor = (quantity: number) => {
+  if (quantity > 1000) return 'text-red-600'
+  if (quantity > 500) return 'text-orange-600'
+  if (quantity > 100) return 'text-yellow-600'
+  return 'text-green-600'
+}
 
-// Format date only (without time) in WIB
-export const formatDateOnlyWIB = (date: string | Date): string => {
-  if (!date) return 'N/A';
+// Additional date utility functions
+export const formatDate = (dateString: string) => {
+  if (!dateString) return 'N/A'
+  
   try {
-    return formatToWIB(date, 'dd MMM yyyy');
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
   } catch (error) {
-    console.error("Error formatting date:", error);
-    return 'Invalid Date';
+    console.error('Error formatting date:', error)
+    return 'Invalid Date'
   }
-};
+}
 
-// Format time only in WIB
-export const formatTimeOnlyWIB = (date: string | Date): string => {
-  if (!date) return 'N/A';
+export const formatDateTime = (dateString: string) => {
+  if (!dateString) return 'N/A'
+  
   try {
-    return formatToWIB(date, 'HH:mm:ss');
+    const date = new Date(dateString)
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    })
   } catch (error) {
-    console.error("Error formatting time:", error);
-    return 'Invalid Time';
+    console.error('Error formatting datetime:', error)
+    return 'Invalid Date'
   }
-};
+}
 
-// Format date only without time for submission timestamps
-export const formatSubmissionDate = (date: string | Date): string => {
-  if (!date) return 'N/A';
+export const formatTime = (dateString: string) => {
+  if (!dateString) return 'N/A'
+  
   try {
-    return formatDateOnlyWIB(date);
+    const date = new Date(dateString)
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    })
   } catch (error) {
-    console.error("Error formatting submission date:", error);
-    return 'Invalid Date';
+    console.error('Error formatting time:', error)
+    return 'Invalid Time'
   }
-};
+}
