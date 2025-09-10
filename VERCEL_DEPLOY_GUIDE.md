@@ -1,4 +1,4 @@
-qwem// vercel-deploy-guide.md
+// vercel-deploy-guide.md
 // Complete guide for deploying to Vercel
 
 # 🚀 Vercel Deployment Guide
