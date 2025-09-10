@@ -771,7 +771,12 @@ export async function createSKUCode(code: string, description: string) {
     .select()
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 export async function updateSKUCode(id: number, code: string, description: string) {
@@ -781,14 +786,24 @@ export async function updateSKUCode(id: number, code: string, description: strin
     .eq('id', id)
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 export async function deleteSKUCode(id: number) {
   const { data, error } = await supabase.from('sku_codes').delete().eq('id', id)
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 // Machines Functions
