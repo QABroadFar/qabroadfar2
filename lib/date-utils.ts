@@ -22,6 +22,25 @@ export const formatToWIB = (dateString: string) => {
   }
 }
 
+export const formatSubmissionDate = (dateString: string) => {
+  if (!dateString) return 'N/A'
+  
+  try {
+    const date = new Date(dateString)
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    })
+  } catch (error) {
+    console.error('Error formatting submission date:', error)
+    return 'Invalid Date'
+  }
+}
+
 export const getPriorityColor = (quantity: number) => {
   if (quantity > 1000) return 'text-red-600'
   if (quantity > 500) return 'text-orange-600'
