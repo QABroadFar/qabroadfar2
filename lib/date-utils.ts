@@ -41,6 +41,23 @@ export const formatSubmissionDate = (dateString: string) => {
   }
 }
 
+export const formatDateOnlyWIB = (dateString: string) => {
+  if (!dateString) return 'N/A'
+  
+  try {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', {
+      timeZone: 'Asia/Jakarta',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
+  } catch (error) {
+    console.error('Error formatting date only in WIB:', error)
+    return 'Invalid Date'
+  }
+}
+
 export const getPriorityColor = (quantity: number) => {
   if (quantity > 1000) return 'text-red-600'
   if (quantity > 500) return 'text-orange-600'
