@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/hooks/use-toast"
 import { formatToWIB, formatSubmissionDate } from "@/lib/date-utils"
+import { Edit, User, RotateCcw, FileText } from "lucide-react"
 
 export default function WorkflowInterventionPage() {
   const [ncpReports, setNcpReports] = useState<any[]>([])
@@ -184,334 +185,372 @@ export default function WorkflowInterventionPage() {
   }
 
   const getStatusBadge = (status: string) => {
-    const statusMap: Record<string, string> = {
-      pending: "bg-yellow-100 text-yellow-800",
-      qa_approved: "bg-blue-100 text-blue-800",
-      tl_processed: "bg-indigo-100 text-indigo-800",
-      process_approved: "bg-purple-100 text-purple-800",
-      manager_approved: "bg-green-100 text-green-800",
-      qa_rejected: "bg-red-100 text-red-800",
-      process_rejected: "bg-red-100 text-red-800"
+    const statusConfig = {
+      pending: { label: "Pending", className: "status-badge-pending" },
+      qa_approved: { label: "QA Approved", className: "status-badge-qa-approved" },
+      tl_processed: { label: "TL Processed", className: "status-badge-tl-processed" },
+      process_approved: { label: "Process Approved", className: "status-badge-process-approved" },
+      manager_approved: { label: "Completed", className: "status-badge-manager-approved" },
+      qa_rejected: { label: "QA Rejected", className: "status-badge-rejected" },
+      process_rejected: { label: "Process Rejected", className: "status-badge-rejected" },
+      manager_rejected: { label: "Manager Rejected", className: "status-badge-rejected" },
     }
-    
-    const statusLabels: Record<string, string> = {
-      pending: "Pending",
-      qa_approved: "QA Approved",
-      tl_processed: "TL Processed",
-      process_approved: "Process Approved",
-      manager_approved: "Manager Approved",
-      qa_rejected: "QA Rejected",
-      process_rejected: "Process Rejected"
-    }
-    
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs ${statusMap[status] || "bg-gray-100 text-gray-800"}`}>
-        {statusLabels[status] || status}
-      </span>
-    )
+
+    const config = statusConfig[status as keyof typeof statusConfig] || { label: status, className: "bg-gray-100 text-gray-800" }
+    return <span className={`px-2 py-1 rounded-full text-xs ${config.className}`}>{config.label}</span>
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-3xl font-bold text-gray-800">Workflow Intervention</CardTitle>
-            <div className="w-20 h-1 bg-blue-600 rounded-full"></div>
-          </CardHeader>
-          <CardContent>
-            {/* NCP Reports Table */}
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>NCP ID</TableHead>
-                    <TableHead>SKU Code</TableHead>
-                    <TableHead>Machine</TableHead>
-                    <TableHead>Submitted By</TableHead>
-                    <TableHead>QA Leader</TableHead>
-                    <TableHead>Team Leader</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Submitted At</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {ncpReports.map((report) => (
-                    <TableRow key={report.id}>
-                      <TableCell className="font-medium">{report.ncp_id}</TableCell>
-                      <TableCell>{report.sku_code}</TableCell>
-                      <TableCell>{report.machine_code}</TableCell>
-                      <TableCell>{report.submitted_by}</TableCell>
-                      <TableCell>{report.qa_leader || "-"}</TableCell>
-                      <TableCell>{report.assigned_team_leader || "-"}</TableCell>
-                      <TableCell>{getStatusBadge(report.status)}</TableCell>
-                      <TableCell>{formatSubmissionDate(report.submitted_at)}</TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-2">
-                          <Dialog open={isEditDialogOpen && editingReport?.id === report.id} onOpenChange={setIsEditDialogOpen}>
-                            <DialogTrigger asChild>
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={() => setEditingReport(report)}
-                              >
-                                Edit
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-3xl">
-                              <DialogHeader>
-                                <DialogTitle>Edit NCP Report</DialogTitle>
-                              </DialogHeader>
-                              <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                  <div>
-                                    <Label htmlFor="ncpId">NCP ID</Label>
-                                    <Input id="ncpId" value={editingReport?.ncp_id || ""} disabled />
-                                  </div>
-                                  <div>
-                                    <Label htmlFor="skuCode">SKU Code</Label>
-                                    <Input 
-                                      id="skuCode" 
-                                      value={editingReport?.sku_code || ""} 
-                                      onChange={(e) => setEditingReport({...editingReport, sku_code: e.target.value})}
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label htmlFor="machineCode">Machine Code</Label>
-                                    <Input 
-                                      id="machineCode" 
-                                      value={editingReport?.machine_code || ""} 
-                                      onChange={(e) => setEditingReport({...editingReport, machine_code: e.target.value})}
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label htmlFor="date">Date</Label>
-                                    <Input 
-                                      id="date" 
-                                      type="date"
-                                      value={editingReport?.date || ""} 
-                                      onChange={(e) => setEditingReport({...editingReport, date: e.target.value})}
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label htmlFor="timeIncident">Time Incident</Label>
-                                    <Input 
-                                      id="timeIncident" 
-                                      type="time"
-                                      value={editingReport?.time_incident || ""} 
-                                      onChange={(e) => setEditingReport({...editingReport, time_incident: e.target.value})}
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label htmlFor="holdQuantity">Hold Quantity</Label>
-                                    <Input 
-                                      id="holdQuantity" 
-                                      type="number"
-                                      value={editingReport?.hold_quantity || ""} 
-                                      onChange={(e) => setEditingReport({...editingReport, hold_quantity: parseInt(e.target.value) || 0})}
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label htmlFor="holdQuantityUOM">Hold Quantity UOM</Label>
-                                    <Input 
-                                      id="holdQuantityUOM" 
-                                      value={editingReport?.hold_quantity_uom || ""} 
-                                      onChange={(e) => setEditingReport({...editingReport, hold_quantity_uom: e.target.value})}
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label htmlFor="qaLeader">QA Leader</Label>
-                                    <Select 
-                                      value={editingReport?.qa_leader || ""} 
-                                      onValueChange={(value) => setEditingReport({...editingReport, qa_leader: value})}
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Select QA Leader" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        {users.filter(user => user.role === "qa_leader").map(user => (
-                                          <SelectItem key={user.id} value={user.username}>
-                                            {user.full_name || user.username}
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                  <div>
-                                    <Label htmlFor="assignedTeamLeader">Assigned Team Leader</Label>
-                                    <Select 
-                                      value={editingReport?.assigned_team_leader || ""} 
-                                      onValueChange={(value) => setEditingReport({...editingReport, assigned_team_leader: value})}
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Select Team Leader" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        {users.filter(user => user.role === "team_leader").map(user => (
-                                          <SelectItem key={user.id} value={user.username}>
-                                            {user.full_name || user.username}
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                </div>
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold futuristic-heading">Workflow Intervention</h1>
+          <p className="text-blue-300">Manage and intervene in NCP workflow processes</p>
+        </div>
+      </div>
+
+      <Card className="glass-card">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 futuristic-subheading">
+            <FileText className="h-5 w-5 text-blue-300" />
+            NCP Reports Requiring Intervention
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {/* NCP Reports Table */}
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-blue-200">NCP ID</TableHead>
+                  <TableHead className="text-blue-200">SKU Code</TableHead>
+                  <TableHead className="text-blue-200">Machine</TableHead>
+                  <TableHead className="text-blue-200">Submitted By</TableHead>
+                  <TableHead className="text-blue-200">QA Leader</TableHead>
+                  <TableHead className="text-blue-200">Team Leader</TableHead>
+                  <TableHead className="text-blue-200">Status</TableHead>
+                  <TableHead className="text-blue-200">Submitted At</TableHead>
+                  <TableHead className="text-blue-200">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {ncpReports.map((report) => (
+                  <TableRow key={report.id} className="glass-panel">
+                    <TableCell className="font-medium text-blue-100">{report.ncp_id}</TableCell>
+                    <TableCell className="text-blue-200">{report.sku_code}</TableCell>
+                    <TableCell className="text-blue-200">{report.machine_code}</TableCell>
+                    <TableCell className="text-blue-200">{report.submitted_by}</TableCell>
+                    <TableCell className="text-blue-200">{report.qa_leader || "-"}</TableCell>
+                    <TableCell className="text-blue-200">{report.assigned_team_leader || "-"}</TableCell>
+                    <TableCell>{getStatusBadge(report.status)}</TableCell>
+                    <TableCell className="text-blue-200">{formatSubmissionDate(report.submitted_at)}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-2">
+                        <Dialog open={isEditDialogOpen && editingReport?.id === report.id} onOpenChange={setIsEditDialogOpen}>
+                          <DialogTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setEditingReport(report)}
+                              className="glass-panel text-blue-200 hover:bg-blue-500/30"
+                            >
+                              <Edit className="h-4 w-4 mr-1" />
+                              Edit
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="glass-card max-w-3xl">
+                            <DialogHeader>
+                              <DialogTitle className="futuristic-heading">Edit NCP Report</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                  <Label htmlFor="problemDescription">Problem Description</Label>
-                                  <Textarea 
-                                    id="problemDescription" 
-                                    value={editingReport?.problem_description || ""} 
-                                    onChange={(e) => setEditingReport({...editingReport, problem_description: e.target.value})}
-                                    rows={4}
+                                  <Label htmlFor="ncpId" className="text-blue-200">NCP ID</Label>
+                                  <Input 
+                                    id="ncpId" 
+                                    value={editingReport?.ncp_id || ""} 
+                                    disabled 
+                                    className="glass-panel"
                                   />
                                 </div>
-                                <div className="flex justify-end space-x-2">
-                                  <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-                                    Cancel
-                                  </Button>
-                                  <Button 
-                                    onClick={() => handleEditReport(editingReport.id, editingReport)}
-                                  >
-                                    Update Report
-                                  </Button>
-                                </div>
-                              </div>
-                            </DialogContent>
-                          </Dialog>
-                          
-                          <Dialog open={isReassignDialogOpen && reassignData.ncpId === report.id} onOpenChange={setIsReassignDialogOpen}>
-                            <DialogTrigger asChild>
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={() => setReassignData({ ncpId: report.id, newAssignee: "", role: "qa_leader" })}
-                              >
-                                Reassign
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Reassign NCP Report</DialogTitle>
-                              </DialogHeader>
-                              <div className="space-y-4">
                                 <div>
-                                  <Label htmlFor="ncpId">NCP ID</Label>
-                                  <Input id="ncpId" value={report.ncp_id} disabled />
+                                  <Label htmlFor="skuCode" className="text-blue-200">SKU Code</Label>
+                                  <Input 
+                                    id="skuCode" 
+                                    value={editingReport?.sku_code || ""} 
+                                    onChange={(e) => setEditingReport({...editingReport, sku_code: e.target.value})}
+                                    className="glass-panel"
+                                  />
                                 </div>
                                 <div>
-                                  <Label htmlFor="role">Role to Reassign</Label>
+                                  <Label htmlFor="machineCode" className="text-blue-200">Machine Code</Label>
+                                  <Input 
+                                    id="machineCode" 
+                                    value={editingReport?.machine_code || ""} 
+                                    onChange={(e) => setEditingReport({...editingReport, machine_code: e.target.value})}
+                                    className="glass-panel"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor="date" className="text-blue-200">Date</Label>
+                                  <Input 
+                                    id="date" 
+                                    type="date"
+                                    value={editingReport?.date || ""} 
+                                    onChange={(e) => setEditingReport({...editingReport, date: e.target.value})}
+                                    className="glass-panel"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor="timeIncident" className="text-blue-200">Time Incident</Label>
+                                  <Input 
+                                    id="timeIncident" 
+                                    type="time"
+                                    value={editingReport?.time_incident || ""} 
+                                    onChange={(e) => setEditingReport({...editingReport, time_incident: e.target.value})}
+                                    className="glass-panel"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor="holdQuantity" className="text-blue-200">Hold Quantity</Label>
+                                  <Input 
+                                    id="holdQuantity" 
+                                    type="number"
+                                    value={editingReport?.hold_quantity || ""} 
+                                    onChange={(e) => setEditingReport({...editingReport, hold_quantity: parseInt(e.target.value) || 0})}
+                                    className="glass-panel"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor="holdQuantityUOM" className="text-blue-200">Hold Quantity UOM</Label>
+                                  <Input 
+                                    id="holdQuantityUOM" 
+                                    value={editingReport?.hold_quantity_uom || ""} 
+                                    onChange={(e) => setEditingReport({...editingReport, hold_quantity_uom: e.target.value})}
+                                    className="glass-panel"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor="qaLeader" className="text-blue-200">QA Leader</Label>
                                   <Select 
-                                    value={reassignData.role} 
-                                    onValueChange={(value) => setReassignData({...reassignData, role: value})}
+                                    value={editingReport?.qa_leader || ""} 
+                                    onValueChange={(value) => setEditingReport({...editingReport, qa_leader: value})}
                                   >
-                                    <SelectTrigger>
-                                      <SelectValue />
+                                    <SelectTrigger className="glass-panel">
+                                      <SelectValue placeholder="Select QA Leader" />
                                     </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="qa_leader">QA Leader</SelectItem>
-                                      <SelectItem value="team_leader">Team Leader</SelectItem>
+                                    <SelectContent className="glass-card">
+                                      {users.filter(user => user.role === "qa_leader").map(user => (
+                                        <SelectItem key={user.id} value={user.username} className="text-blue-200">
+                                          {user.full_name || user.username}
+                                        </SelectItem>
+                                      ))}
                                     </SelectContent>
                                   </Select>
                                 </div>
                                 <div>
-                                  <Label htmlFor="newAssignee">New Assignee</Label>
+                                  <Label htmlFor="assignedTeamLeader" className="text-blue-200">Assigned Team Leader</Label>
                                   <Select 
-                                    value={reassignData.newAssignee} 
-                                    onValueChange={(value) => setReassignData({...reassignData, newAssignee: value})}
+                                    value={editingReport?.assigned_team_leader || ""} 
+                                    onValueChange={(value) => setEditingReport({...editingReport, assigned_team_leader: value})}
                                   >
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select assignee" />
+                                    <SelectTrigger className="glass-panel">
+                                      <SelectValue placeholder="Select Team Leader" />
                                     </SelectTrigger>
-                                    <SelectContent>
-                                      {users
-                                        .filter(user => 
-                                          reassignData.role === "qa_leader" ? user.role === "qa_leader" : user.role === "team_leader"
-                                        )
-                                        .map(user => (
-                                          <SelectItem key={user.id} value={user.username}>
-                                            {user.full_name || user.username}
-                                          </SelectItem>
-                                        ))}
+                                    <SelectContent className="glass-card">
+                                      {users.filter(user => user.role === "team_leader").map(user => (
+                                        <SelectItem key={user.id} value={user.username} className="text-blue-200">
+                                          {user.full_name || user.username}
+                                        </SelectItem>
+                                      ))}
                                     </SelectContent>
                                   </Select>
                                 </div>
-                                <div className="flex justify-end space-x-2">
-                                  <Button variant="outline" onClick={() => setIsReassignDialogOpen(false)}>
-                                    Cancel
-                                  </Button>
-                                  <Button 
-                                    onClick={handleReassignReport}
-                                    disabled={!reassignData.newAssignee}
-                                  >
-                                    Reassign Report
-                                  </Button>
-                                </div>
                               </div>
-                            </DialogContent>
-                          </Dialog>
-                          
-                          <Dialog open={isRevertDialogOpen && revertData.ncpId === report.id} onOpenChange={setIsRevertDialogOpen}>
-                            <DialogTrigger asChild>
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={() => setRevertData({ ncpId: report.id, newStatus: "" })}
-                              >
-                                Revert Status
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Revert NCP Report Status</DialogTitle>
-                              </DialogHeader>
-                              <div className="space-y-4">
-                                <div>
-                                  <Label htmlFor="ncpId">NCP ID</Label>
-                                  <Input id="ncpId" value={report.ncp_id} disabled />
-                                </div>
-                                <div>
-                                  <Label htmlFor="newStatus">New Status</Label>
-                                  <Select 
-                                    value={revertData.newStatus} 
-                                    onValueChange={(value) => setRevertData({...revertData, newStatus: value})}
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select new status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="pending">Pending</SelectItem>
-                                      <SelectItem value="qa_approved">QA Approved</SelectItem>
-                                      <SelectItem value="tl_processed">TL Processed</SelectItem>
-                                      <SelectItem value="process_approved">Process Approved</SelectItem>
-                                      <SelectItem value="manager_approved">Manager Approved</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                                <div className="flex justify-end space-x-2">
-                                  <Button variant="outline" onClick={() => setIsRevertDialogOpen(false)}>
-                                    Cancel
-                                  </Button>
-                                  <Button 
-                                    onClick={handleRevertStatus}
-                                    disabled={!revertData.newStatus}
-                                  >
-                                    Revert Status
-                                  </Button>
-                                </div>
+                              <div>
+                                <Label htmlFor="problemDescription" className="text-blue-200">Problem Description</Label>
+                                <Textarea 
+                                  id="problemDescription" 
+                                  value={editingReport?.problem_description || ""} 
+                                  onChange={(e) => setEditingReport({...editingReport, problem_description: e.target.value})}
+                                  rows={4}
+                                  className="glass-panel"
+                                />
                               </div>
-                            </DialogContent>
-                          </Dialog>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                              <div className="flex justify-end space-x-2">
+                                <Button 
+                                  variant="outline" 
+                                  onClick={() => setIsEditDialogOpen(false)}
+                                  className="glass-panel text-blue-200 hover:bg-blue-500/30"
+                                >
+                                  Cancel
+                                </Button>
+                                <Button 
+                                  onClick={() => handleEditReport(editingReport.id, editingReport)}
+                                  className="glass-panel bg-blue-600/80 hover:bg-blue-700/80"
+                                >
+                                  Update Report
+                                </Button>
+                              </div>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                        
+                        <Dialog open={isReassignDialogOpen && reassignData.ncpId === report.id} onOpenChange={setIsReassignDialogOpen}>
+                          <DialogTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setReassignData({ ncpId: report.id, newAssignee: "", role: "qa_leader" })}
+                              className="glass-panel text-blue-200 hover:bg-blue-500/30"
+                            >
+                              <User className="h-4 w-4 mr-1" />
+                              Reassign
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="glass-card">
+                            <DialogHeader>
+                              <DialogTitle className="futuristic-heading">Reassign NCP Report</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                              <div>
+                                <Label htmlFor="ncpId" className="text-blue-200">NCP ID</Label>
+                                <Input 
+                                  id="ncpId" 
+                                  value={report.ncp_id} 
+                                  disabled 
+                                  className="glass-panel"
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="role" className="text-blue-200">Role to Reassign</Label>
+                                <Select 
+                                  value={reassignData.role} 
+                                  onValueChange={(value) => setReassignData({...reassignData, role: value})}
+                                >
+                                  <SelectTrigger className="glass-panel">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent className="glass-card">
+                                    <SelectItem value="qa_leader" className="text-blue-200">QA Leader</SelectItem>
+                                    <SelectItem value="team_leader" className="text-blue-200">Team Leader</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div>
+                                <Label htmlFor="newAssignee" className="text-blue-200">New Assignee</Label>
+                                <Select 
+                                  value={reassignData.newAssignee} 
+                                  onValueChange={(value) => setReassignData({...reassignData, newAssignee: value})}
+                                >
+                                  <SelectTrigger className="glass-panel">
+                                    <SelectValue placeholder="Select assignee" />
+                                  </SelectTrigger>
+                                  <SelectContent className="glass-card">
+                                    {users
+                                      .filter(user => 
+                                        reassignData.role === "qa_leader" ? user.role === "qa_leader" : user.role === "team_leader"
+                                      )
+                                      .map(user => (
+                                        <SelectItem key={user.id} value={user.username} className="text-blue-200">
+                                          {user.full_name || user.username}
+                                        </SelectItem>
+                                      ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div className="flex justify-end space-x-2">
+                                <Button 
+                                  variant="outline" 
+                                  onClick={() => setIsReassignDialogOpen(false)}
+                                  className="glass-panel text-blue-200 hover:bg-blue-500/30"
+                                >
+                                  Cancel
+                                </Button>
+                                <Button 
+                                  onClick={handleReassignReport}
+                                  disabled={!reassignData.newAssignee}
+                                  className="glass-panel bg-blue-600/80 hover:bg-blue-700/80"
+                                >
+                                  Reassign Report
+                                </Button>
+                              </div>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                        
+                        <Dialog open={isRevertDialogOpen && revertData.ncpId === report.id} onOpenChange={setIsRevertDialogOpen}>
+                          <DialogTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setRevertData({ ncpId: report.id, newStatus: "" })}
+                              className="glass-panel text-blue-200 hover:bg-blue-500/30"
+                            >
+                              <RotateCcw className="h-4 w-4 mr-1" />
+                              Revert
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="glass-card">
+                            <DialogHeader>
+                              <DialogTitle className="futuristic-heading">Revert NCP Report Status</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                              <div>
+                                <Label htmlFor="ncpId" className="text-blue-200">NCP ID</Label>
+                                <Input 
+                                  id="ncpId" 
+                                  value={report.ncp_id} 
+                                  disabled 
+                                  className="glass-panel"
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="newStatus" className="text-blue-200">New Status</Label>
+                                <Select 
+                                  value={revertData.newStatus} 
+                                  onValueChange={(value) => setRevertData({...revertData, newStatus: value})}
+                                >
+                                  <SelectTrigger className="glass-panel">
+                                    <SelectValue placeholder="Select new status" />
+                                  </SelectTrigger>
+                                  <SelectContent className="glass-card">
+                                    <SelectItem value="pending" className="text-blue-200">Pending</SelectItem>
+                                    <SelectItem value="qa_approved" className="text-blue-200">QA Approved</SelectItem>
+                                    <SelectItem value="tl_processed" className="text-blue-200">TL Processed</SelectItem>
+                                    <SelectItem value="process_approved" className="text-blue-200">Process Approved</SelectItem>
+                                    <SelectItem value="manager_approved" className="text-blue-200">Manager Approved</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div className="flex justify-end space-x-2">
+                                <Button 
+                                  variant="outline" 
+                                  onClick={() => setIsRevertDialogOpen(false)}
+                                  className="glass-panel text-blue-200 hover:bg-blue-500/30"
+                                >
+                                  Cancel
+                                </Button>
+                                <Button 
+                                  onClick={handleRevertStatus}
+                                  disabled={!revertData.newStatus}
+                                  className="glass-panel bg-blue-600/80 hover:bg-blue-700/80"
+                                >
+                                  Revert Status
+                                </Button>
+                              </div>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

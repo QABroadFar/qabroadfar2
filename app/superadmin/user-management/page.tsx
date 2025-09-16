@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "@/hooks/use-toast"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Users, UserPlus, Key, Trash2 } from "lucide-react"
 
 const UserManagementPage = () => {
   const [users, setUsers] = useState<any[]>([])
@@ -245,158 +246,189 @@ const UserManagementPage = () => {
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center h-full">Loading...</div>
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-lg text-blue-200">Loading users...</div>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">User Management</h1>
-          <p className="text-gray-600 mt-1">Manage users, roles, and permissions</p>
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold futuristic-heading">User Management</h1>
+          <p className="text-blue-300 mt-1">Manage users, roles, and permissions</p>
         </div>
-
-        <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-xl mb-6">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>All Users</CardTitle>
-              <Button onClick={handleOpenCreateUserDialog}>Create New User</Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Username</TableHead>
-                  <TableHead>Full Name</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created At</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.username}</TableCell>
-                    <TableCell>{user.full_name || "-"}</TableCell>
-                    <TableCell>
-                      <Select value={user.role} onValueChange={(newRole) => handleRoleChange(user, newRole)}>
-                        <SelectTrigger className="w-[150px]">
-                          <SelectValue placeholder="Select role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="user">User</SelectItem>
-                          <SelectItem value="qa_leader">QA Leader</SelectItem>
-                          <SelectItem value="team_leader">Team Leader</SelectItem>
-                          <SelectItem value="process_lead">Process Lead</SelectItem>
-                          <SelectItem value="qa_manager">QA Manager</SelectItem>
-                          <SelectItem value="admin">Admin</SelectItem>
-                          <SelectItem value="super_admin">Super Admin</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={user.is_active}
-                        onCheckedChange={(isChecked) => handleStatusChange(user, isChecked)}
-                      />
-                    </TableCell>
-                    <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      <div className="flex space-x-2">
-                        <Button variant="outline" size="sm" onClick={() => handleOpenPasswordDialog(user)}>
-                          Reset Password
-                        </Button>
-                        <Button 
-                          variant="destructive" 
-                          size="sm" 
-                          onClick={() => handleDeleteUser(user)}
-                          disabled={user.role === "super_admin"}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        <Button onClick={handleOpenCreateUserDialog} className="glass-panel">
+          <UserPlus className="h-4 w-4 mr-2" />
+          Create New User
+        </Button>
       </div>
+
+      <Card className="glass-card">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 futuristic-subheading">
+            <Users className="h-5 w-5 text-blue-300" />
+            All Users
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-blue-200">Username</TableHead>
+                <TableHead className="text-blue-200">Full Name</TableHead>
+                <TableHead className="text-blue-200">Role</TableHead>
+                <TableHead className="text-blue-200">Status</TableHead>
+                <TableHead className="text-blue-200">Created At</TableHead>
+                <TableHead className="text-blue-200">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.map((user) => (
+                <TableRow key={user.id} className="glass-panel">
+                  <TableCell className="font-medium text-blue-100">{user.username}</TableCell>
+                  <TableCell className="text-blue-200">{user.full_name || "-"}</TableCell>
+                  <TableCell>
+                    <Select value={user.role} onValueChange={(newRole) => handleRoleChange(user, newRole)}>
+                      <SelectTrigger className="w-[150px] glass-panel text-blue-200">
+                        <SelectValue placeholder="Select role" />
+                      </SelectTrigger>
+                      <SelectContent className="glass-card">
+                        <SelectItem value="user">User</SelectItem>
+                        <SelectItem value="qa_leader">QA Leader</SelectItem>
+                        <SelectItem value="team_leader">Team Leader</SelectItem>
+                        <SelectItem value="process_lead">Process Lead</SelectItem>
+                        <SelectItem value="qa_manager">QA Manager</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="super_admin">Super Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    <Switch
+                      checked={user.is_active}
+                      onCheckedChange={(isChecked) => handleStatusChange(user, isChecked)}
+                    />
+                  </TableCell>
+                  <TableCell className="text-blue-200">{new Date(user.created_at).toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    <div className="flex space-x-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handleOpenPasswordDialog(user)}
+                        className="glass-panel text-blue-200 hover:bg-blue-500/30"
+                      >
+                        <Key className="h-4 w-4 mr-1" />
+                        Reset
+                      </Button>
+                      <Button 
+                        variant="destructive" 
+                        size="sm" 
+                        onClick={() => handleDeleteUser(user)}
+                        disabled={user.role === "super_admin"}
+                        className="glass-panel hover:bg-red-500/30"
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Delete
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
       {/* Password Reset Dialog */}
       <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
-        <DialogContent>
+        <DialogContent className="glass-card">
           <DialogHeader>
-            <DialogTitle>Reset Password for {selectedUserForPassword?.username}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="futuristic-heading">Reset Password for {selectedUserForPassword?.username}</DialogTitle>
+            <DialogDescription className="text-blue-300">
               Enter a new password for the user.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
-            <Label htmlFor="new-password">New Password</Label>
+            <Label htmlFor="new-password" className="text-blue-200">New Password</Label>
             <Input
               id="new-password"
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Enter new password"
+              className="glass-panel"
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowPasswordDialog(false)}>Cancel</Button>
-            <Button onClick={handlePasswordReset}>Confirm Reset</Button>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowPasswordDialog(false)}
+              className="glass-panel text-blue-200 hover:bg-blue-500/30"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handlePasswordReset}
+              className="glass-panel bg-blue-600/80 hover:bg-blue-700/80"
+            >
+              Confirm Reset
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Create User Dialog */}
       <Dialog open={showCreateUserDialog} onOpenChange={setShowCreateUserDialog}>
-        <DialogContent>
+        <DialogContent className="glass-card">
           <DialogHeader>
-            <DialogTitle>Create New User</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="futuristic-heading">Create New User</DialogTitle>
+            <DialogDescription className="text-blue-300">
               Enter user details to create a new account.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-4">
             <div>
-              <Label htmlFor="new-username">Username *</Label>
+              <Label htmlFor="new-username" className="text-blue-200">Username *</Label>
               <Input
                 id="new-username"
                 value={newUser.username}
                 onChange={(e) => setNewUser({...newUser, username: e.target.value})}
                 placeholder="Enter username"
+                className="glass-panel"
               />
             </div>
             <div>
-              <Label htmlFor="new-fullname">Full Name</Label>
+              <Label htmlFor="new-fullname" className="text-blue-200">Full Name</Label>
               <Input
                 id="new-fullname"
                 value={newUser.fullName}
                 onChange={(e) => setNewUser({...newUser, fullName: e.target.value})}
                 placeholder="Enter full name"
+                className="glass-panel"
               />
             </div>
             <div>
-              <Label htmlFor="new-password-create">Password *</Label>
+              <Label htmlFor="new-password-create" className="text-blue-200">Password *</Label>
               <Input
                 id="new-password-create"
                 type="password"
                 value={newUser.password}
                 onChange={(e) => setNewUser({...newUser, password: e.target.value})}
                 placeholder="Enter password"
+                className="glass-panel"
               />
             </div>
             <div>
-              <Label htmlFor="new-role">Role *</Label>
+              <Label htmlFor="new-role" className="text-blue-200">Role *</Label>
               <Select value={newUser.role} onValueChange={(value) => setNewUser({...newUser, role: value})}>
-                <SelectTrigger>
+                <SelectTrigger className="glass-panel text-blue-200">
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="glass-card">
                   <SelectItem value="user">User</SelectItem>
                   <SelectItem value="qa_leader">QA Leader</SelectItem>
                   <SelectItem value="team_leader">Team Leader</SelectItem>
@@ -409,8 +441,19 @@ const UserManagementPage = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCreateUserDialog(false)}>Cancel</Button>
-            <Button onClick={handleCreateUser}>Create User</Button>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowCreateUserDialog(false)}
+              className="glass-panel text-blue-200 hover:bg-blue-500/30"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleCreateUser}
+              className="glass-panel bg-blue-600/80 hover:bg-blue-700/80"
+            >
+              Create User
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/hooks/use-toast"
 import { formatToWIB } from "@/lib/date-utils"
+import { Plus, Edit, Trash2, Package, Factory, Ruler } from "lucide-react"
 
 export default function SystemConfigurationPage() {
   const [skuCodes, setSkuCodes] = useState<any[]>([])
@@ -420,32 +421,47 @@ export default function SystemConfigurationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold futuristic-heading">System Configuration</h1>
+          <p className="text-blue-300">Manage system-wide configuration settings</p>
+        </div>
+      </div>
+
       <div className="max-w-7xl mx-auto space-y-6">
         {/* SKU Codes Section */}
-        <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-xl">
+        <Card className="glass-card">
           <CardHeader>
-            <CardTitle className="text-3xl font-bold text-gray-800">SKU Codes</CardTitle>
-            <div className="w-20 h-1 bg-blue-600 rounded-full"></div>
+            <CardTitle className="flex items-center gap-2 futuristic-subheading">
+              <Package className="h-5 w-5 text-blue-300" />
+              SKU Codes
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="mb-4">
               <Dialog open={isSkuDialogOpen && !editingSku} onOpenChange={setIsSkuDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button onClick={() => {
-                    setEditingSku(null)
-                    setNewSku({ code: "", description: "" })
-                  }}>
+                  <Button 
+                    onClick={() => {
+                      setEditingSku(null)
+                      setNewSku({ code: "", description: "" })
+                    }}
+                    className="glass-panel"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
                     Add New SKU Code
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="glass-card">
                   <DialogHeader>
-                    <DialogTitle>{editingSku ? "Edit SKU Code" : "Add New SKU Code"}</DialogTitle>
+                    <DialogTitle className="futuristic-heading">
+                      {editingSku ? "Edit SKU Code" : "Add New SKU Code"}
+                    </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="skuCode">Code</Label>
+                      <Label htmlFor="skuCode" className="text-blue-200">Code</Label>
                       <Input
                         id="skuCode"
                         value={editingSku ? editingSku.code : newSku.code}
@@ -455,10 +471,11 @@ export default function SystemConfigurationPage() {
                             : setNewSku({...newSku, code: e.target.value})
                         }
                         placeholder="Enter SKU code"
+                        className="glass-panel"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="skuDescription">Description</Label>
+                      <Label htmlFor="skuDescription" className="text-blue-200">Description</Label>
                       <Textarea
                         id="skuDescription"
                         value={editingSku ? editingSku.description : newSku.description}
@@ -469,10 +486,15 @@ export default function SystemConfigurationPage() {
                         }
                         placeholder="Enter description"
                         rows={3}
+                        className="glass-panel"
                       />
                     </div>
                     <div className="flex justify-end space-x-2">
-                      <Button variant="outline" onClick={() => setIsSkuDialogOpen(false)}>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setIsSkuDialogOpen(false)}
+                        className="glass-panel text-blue-200 hover:bg-blue-500/30"
+                      >
                         Cancel
                       </Button>
                       <Button 
@@ -481,6 +503,7 @@ export default function SystemConfigurationPage() {
                             ? handleUpdateSKU(editingSku.id, editingSku)
                             : handleCreateSKU()
                         }
+                        className="glass-panel bg-blue-600/80 hover:bg-blue-700/80"
                       >
                         {editingSku ? "Update SKU" : "Create SKU"}
                       </Button>
@@ -494,18 +517,18 @@ export default function SystemConfigurationPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Code</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Created At</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead className="text-blue-200">Code</TableHead>
+                    <TableHead className="text-blue-200">Description</TableHead>
+                    <TableHead className="text-blue-200">Created At</TableHead>
+                    <TableHead className="text-blue-200">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {skuCodes.map((sku) => (
-                    <TableRow key={sku.id}>
-                      <TableCell className="font-medium">{sku.code}</TableCell>
-                      <TableCell>{sku.description}</TableCell>
-                      <TableCell>{formatToWIB(sku.created_at)}</TableCell>
+                    <TableRow key={sku.id} className="glass-panel">
+                      <TableCell className="font-medium text-blue-100">{sku.code}</TableCell>
+                      <TableCell className="text-blue-200">{sku.description}</TableCell>
+                      <TableCell className="text-blue-200">{formatToWIB(sku.created_at)}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
                           <Dialog open={isSkuDialogOpen && editingSku?.id === sku.id} onOpenChange={setIsSkuDialogOpen}>
@@ -517,40 +540,49 @@ export default function SystemConfigurationPage() {
                                   setEditingSku(sku)
                                   setIsSkuDialogOpen(true)
                                 }}
+                                className="glass-panel text-blue-200 hover:bg-blue-500/30"
                               >
+                                <Edit className="h-4 w-4 mr-1" />
                                 Edit
                               </Button>
                             </DialogTrigger>
-                            <DialogContent>
+                            <DialogContent className="glass-card">
                               <DialogHeader>
-                                <DialogTitle>Edit SKU Code</DialogTitle>
+                                <DialogTitle className="futuristic-heading">Edit SKU Code</DialogTitle>
                               </DialogHeader>
                               <div className="space-y-4">
                                 <div>
-                                  <Label htmlFor="editSkuCode">Code</Label>
+                                  <Label htmlFor="editSkuCode" className="text-blue-200">Code</Label>
                                   <Input
                                     id="editSkuCode"
                                     value={editingSku?.code || ""}
                                     onChange={(e) => setEditingSku({...editingSku, code: e.target.value})}
                                     placeholder="Enter SKU code"
+                                    className="glass-panel"
                                   />
                                 </div>
                                 <div>
-                                  <Label htmlFor="editSkuDescription">Description</Label>
+                                  <Label htmlFor="editSkuDescription" className="text-blue-200">Description</Label>
                                   <Textarea
                                     id="editSkuDescription"
                                     value={editingSku?.description || ""}
                                     onChange={(e) => setEditingSku({...editingSku, description: e.target.value})}
                                     placeholder="Enter description"
                                     rows={3}
+                                    className="glass-panel"
                                   />
                                 </div>
                                 <div className="flex justify-end space-x-2">
-                                  <Button variant="outline" onClick={() => setIsSkuDialogOpen(false)}>
+                                  <Button 
+                                    variant="outline" 
+                                    onClick={() => setIsSkuDialogOpen(false)}
+                                    className="glass-panel text-blue-200 hover:bg-blue-500/30"
+                                  >
                                     Cancel
                                   </Button>
                                   <Button 
                                     onClick={() => handleUpdateSKU(editingSku.id, editingSku)}
+                                    className="glass-panel bg-blue-600/80 hover:bg-blue-700/80"
                                   >
                                     Update SKU
                                   </Button>
@@ -562,7 +594,9 @@ export default function SystemConfigurationPage() {
                             variant="destructive" 
                             size="sm"
                             onClick={() => handleDeleteSKU(sku.id)}
+                            className="glass-panel hover:bg-red-500/30"
                           >
+                            <Trash2 className="h-4 w-4 mr-1" />
                             Delete
                           </Button>
                         </div>
@@ -576,29 +610,37 @@ export default function SystemConfigurationPage() {
         </Card>
 
         {/* Machines Section */}
-        <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-xl">
+        <Card className="glass-card">
           <CardHeader>
-            <CardTitle className="text-3xl font-bold text-gray-800">Machines</CardTitle>
-            <div className="w-20 h-1 bg-blue-600 rounded-full"></div>
+            <CardTitle className="flex items-center gap-2 futuristic-subheading">
+              <Factory className="h-5 w-5 text-blue-300" />
+              Machines
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="mb-4">
               <Dialog open={isMachineDialogOpen && !editingMachine} onOpenChange={setIsMachineDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button onClick={() => {
-                    setEditingMachine(null)
-                    setNewMachine({ code: "", name: "" })
-                  }}>
+                  <Button 
+                    onClick={() => {
+                      setEditingMachine(null)
+                      setNewMachine({ code: "", name: "" })
+                    }}
+                    className="glass-panel"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
                     Add New Machine
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="glass-card">
                   <DialogHeader>
-                    <DialogTitle>{editingMachine ? "Edit Machine" : "Add New Machine"}</DialogTitle>
+                    <DialogTitle className="futuristic-heading">
+                      {editingMachine ? "Edit Machine" : "Add New Machine"}
+                    </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="machineCode">Code</Label>
+                      <Label htmlFor="machineCode" className="text-blue-200">Code</Label>
                       <Input
                         id="machineCode"
                         value={editingMachine ? editingMachine.code : newMachine.code}
@@ -608,10 +650,11 @@ export default function SystemConfigurationPage() {
                             : setNewMachine({...newMachine, code: e.target.value})
                         }
                         placeholder="Enter machine code"
+                        className="glass-panel"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="machineName">Name</Label>
+                      <Label htmlFor="machineName" className="text-blue-200">Name</Label>
                       <Input
                         id="machineName"
                         value={editingMachine ? editingMachine.name : newMachine.name}
@@ -621,10 +664,15 @@ export default function SystemConfigurationPage() {
                             : setNewMachine({...newMachine, name: e.target.value})
                         }
                         placeholder="Enter machine name"
+                        className="glass-panel"
                       />
                     </div>
                     <div className="flex justify-end space-x-2">
-                      <Button variant="outline" onClick={() => setIsMachineDialogOpen(false)}>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setIsMachineDialogOpen(false)}
+                        className="glass-panel text-blue-200 hover:bg-blue-500/30"
+                      >
                         Cancel
                       </Button>
                       <Button 
@@ -633,6 +681,7 @@ export default function SystemConfigurationPage() {
                             ? handleUpdateMachine(editingMachine.id, editingMachine)
                             : handleCreateMachine()
                         }
+                        className="glass-panel bg-blue-600/80 hover:bg-blue-700/80"
                       >
                         {editingMachine ? "Update Machine" : "Create Machine"}
                       </Button>
@@ -646,18 +695,18 @@ export default function SystemConfigurationPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Code</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Created At</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead className="text-blue-200">Code</TableHead>
+                    <TableHead className="text-blue-200">Name</TableHead>
+                    <TableHead className="text-blue-200">Created At</TableHead>
+                    <TableHead className="text-blue-200">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {machines.map((machine) => (
-                    <TableRow key={machine.id}>
-                      <TableCell className="font-medium">{machine.code}</TableCell>
-                      <TableCell>{machine.name}</TableCell>
-                      <TableCell>{formatToWIB(machine.created_at)}</TableCell>
+                    <TableRow key={machine.id} className="glass-panel">
+                      <TableCell className="font-medium text-blue-100">{machine.code}</TableCell>
+                      <TableCell className="text-blue-200">{machine.name}</TableCell>
+                      <TableCell className="text-blue-200">{formatToWIB(machine.created_at)}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
                           <Dialog open={isMachineDialogOpen && editingMachine?.id === machine.id} onOpenChange={setIsMachineDialogOpen}>
@@ -669,39 +718,48 @@ export default function SystemConfigurationPage() {
                                   setEditingMachine(machine)
                                   setIsMachineDialogOpen(true)
                                 }}
+                                className="glass-panel text-blue-200 hover:bg-blue-500/30"
                               >
+                                <Edit className="h-4 w-4 mr-1" />
                                 Edit
                               </Button>
                             </DialogTrigger>
-                            <DialogContent>
+                            <DialogContent className="glass-card">
                               <DialogHeader>
-                                <DialogTitle>Edit Machine</DialogTitle>
+                                <DialogTitle className="futuristic-heading">Edit Machine</DialogTitle>
                               </DialogHeader>
                               <div className="space-y-4">
                                 <div>
-                                  <Label htmlFor="editMachineCode">Code</Label>
+                                  <Label htmlFor="editMachineCode" className="text-blue-200">Code</Label>
                                   <Input
                                     id="editMachineCode"
                                     value={editingMachine?.code || ""}
                                     onChange={(e) => setEditingMachine({...editingMachine, code: e.target.value})}
                                     placeholder="Enter machine code"
+                                    className="glass-panel"
                                   />
                                 </div>
                                 <div>
-                                  <Label htmlFor="editMachineName">Name</Label>
+                                  <Label htmlFor="editMachineName" className="text-blue-200">Name</Label>
                                   <Input
                                     id="editMachineName"
                                     value={editingMachine?.name || ""}
                                     onChange={(e) => setEditingMachine({...editingMachine, name: e.target.value})}
                                     placeholder="Enter machine name"
+                                    className="glass-panel"
                                   />
                                 </div>
                                 <div className="flex justify-end space-x-2">
-                                  <Button variant="outline" onClick={() => setIsMachineDialogOpen(false)}>
+                                  <Button 
+                                    variant="outline" 
+                                    onClick={() => setIsMachineDialogOpen(false)}
+                                    className="glass-panel text-blue-200 hover:bg-blue-500/30"
+                                  >
                                     Cancel
                                   </Button>
                                   <Button 
                                     onClick={() => handleUpdateMachine(editingMachine.id, editingMachine)}
+                                    className="glass-panel bg-blue-600/80 hover:bg-blue-700/80"
                                   >
                                     Update Machine
                                   </Button>
@@ -713,7 +771,9 @@ export default function SystemConfigurationPage() {
                             variant="destructive" 
                             size="sm"
                             onClick={() => handleDeleteMachine(machine.id)}
+                            className="glass-panel hover:bg-red-500/30"
                           >
+                            <Trash2 className="h-4 w-4 mr-1" />
                             Delete
                           </Button>
                         </div>
@@ -727,29 +787,37 @@ export default function SystemConfigurationPage() {
         </Card>
 
         {/* UOMs Section */}
-        <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-xl">
+        <Card className="glass-card">
           <CardHeader>
-            <CardTitle className="text-3xl font-bold text-gray-800">Units of Measure (UOM)</CardTitle>
-            <div className="w-20 h-1 bg-blue-600 rounded-full"></div>
+            <CardTitle className="flex items-center gap-2 futuristic-subheading">
+              <Ruler className="h-5 w-5 text-blue-300" />
+              Units of Measure (UOM)
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="mb-4">
               <Dialog open={isUomDialogOpen && !editingUom} onOpenChange={setIsUomDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button onClick={() => {
-                    setEditingUom(null)
-                    setNewUom({ code: "", name: "" })
-                  }}>
+                  <Button 
+                    onClick={() => {
+                      setEditingUom(null)
+                      setNewUom({ code: "", name: "" })
+                    }}
+                    className="glass-panel"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
                     Add New UOM
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="glass-card">
                   <DialogHeader>
-                    <DialogTitle>{editingUom ? "Edit UOM" : "Add New UOM"}</DialogTitle>
+                    <DialogTitle className="futuristic-heading">
+                      {editingUom ? "Edit UOM" : "Add New UOM"}
+                    </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="uomCode">Code</Label>
+                      <Label htmlFor="uomCode" className="text-blue-200">Code</Label>
                       <Input
                         id="uomCode"
                         value={editingUom ? editingUom.code : newUom.code}
@@ -759,10 +827,11 @@ export default function SystemConfigurationPage() {
                             : setNewUom({...newUom, code: e.target.value})
                         }
                         placeholder="Enter UOM code"
+                        className="glass-panel"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="uomName">Name</Label>
+                      <Label htmlFor="uomName" className="text-blue-200">Name</Label>
                       <Input
                         id="uomName"
                         value={editingUom ? editingUom.name : newUom.name}
@@ -772,10 +841,15 @@ export default function SystemConfigurationPage() {
                             : setNewUom({...newUom, name: e.target.value})
                         }
                         placeholder="Enter UOM name"
+                        className="glass-panel"
                       />
                     </div>
                     <div className="flex justify-end space-x-2">
-                      <Button variant="outline" onClick={() => setIsUomDialogOpen(false)}>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setIsUomDialogOpen(false)}
+                        className="glass-panel text-blue-200 hover:bg-blue-500/30"
+                      >
                         Cancel
                       </Button>
                       <Button 
@@ -784,6 +858,7 @@ export default function SystemConfigurationPage() {
                             ? handleUpdateUOM(editingUom.id, editingUom)
                             : handleCreateUOM()
                         }
+                        className="glass-panel bg-blue-600/80 hover:bg-blue-700/80"
                       >
                         {editingUom ? "Update UOM" : "Create UOM"}
                       </Button>
@@ -797,18 +872,18 @@ export default function SystemConfigurationPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Code</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Created At</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead className="text-blue-200">Code</TableHead>
+                    <TableHead className="text-blue-200">Name</TableHead>
+                    <TableHead className="text-blue-200">Created At</TableHead>
+                    <TableHead className="text-blue-200">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {uoms.map((uom) => (
-                    <TableRow key={uom.id}>
-                      <TableCell className="font-medium">{uom.code}</TableCell>
-                      <TableCell>{uom.name}</TableCell>
-                      <TableCell>{formatToWIB(uom.created_at)}</TableCell>
+                    <TableRow key={uom.id} className="glass-panel">
+                      <TableCell className="font-medium text-blue-100">{uom.code}</TableCell>
+                      <TableCell className="text-blue-200">{uom.name}</TableCell>
+                      <TableCell className="text-blue-200">{formatToWIB(uom.created_at)}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
                           <Dialog open={isUomDialogOpen && editingUom?.id === uom.id} onOpenChange={setIsUomDialogOpen}>
@@ -820,39 +895,48 @@ export default function SystemConfigurationPage() {
                                   setEditingUom(uom)
                                   setIsUomDialogOpen(true)
                                 }}
+                                className="glass-panel text-blue-200 hover:bg-blue-500/30"
                               >
+                                <Edit className="h-4 w-4 mr-1" />
                                 Edit
                               </Button>
                             </DialogTrigger>
-                            <DialogContent>
+                            <DialogContent className="glass-card">
                               <DialogHeader>
-                                <DialogTitle>Edit UOM</DialogTitle>
+                                <DialogTitle className="futuristic-heading">Edit UOM</DialogTitle>
                               </DialogHeader>
                               <div className="space-y-4">
                                 <div>
-                                  <Label htmlFor="editUomCode">Code</Label>
+                                  <Label htmlFor="editUomCode" className="text-blue-200">Code</Label>
                                   <Input
                                     id="editUomCode"
                                     value={editingUom?.code || ""}
                                     onChange={(e) => setEditingUom({...editingUom, code: e.target.value})}
                                     placeholder="Enter UOM code"
+                                    className="glass-panel"
                                   />
                                 </div>
                                 <div>
-                                  <Label htmlFor="editUomName">Name</Label>
+                                  <Label htmlFor="editUomName" className="text-blue-200">Name</Label>
                                   <Input
                                     id="editUomName"
                                     value={editingUom?.name || ""}
                                     onChange={(e) => setEditingUom({...editingUom, name: e.target.value})}
                                     placeholder="Enter UOM name"
+                                    className="glass-panel"
                                   />
                                 </div>
                                 <div className="flex justify-end space-x-2">
-                                  <Button variant="outline" onClick={() => setIsUomDialogOpen(false)}>
+                                  <Button 
+                                    variant="outline" 
+                                    onClick={() => setIsUomDialogOpen(false)}
+                                    className="glass-panel text-blue-200 hover:bg-blue-500/30"
+                                  >
                                     Cancel
                                   </Button>
                                   <Button 
                                     onClick={() => handleUpdateUOM(editingUom.id, editingUom)}
+                                    className="glass-panel bg-blue-600/80 hover:bg-blue-700/80"
                                   >
                                     Update UOM
                                   </Button>
@@ -864,7 +948,9 @@ export default function SystemConfigurationPage() {
                             variant="destructive" 
                             size="sm"
                             onClick={() => handleDeleteUOM(uom.id)}
+                            className="glass-panel hover:bg-red-500/30"
                           >
+                            <Trash2 className="h-4 w-4 mr-1" />
                             Delete
                           </Button>
                         </div>
