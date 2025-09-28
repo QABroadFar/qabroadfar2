@@ -355,7 +355,7 @@ export async function approveNCPByQALeader(
   // Return an object with changes property to match expected API response
   return {
     data,
-    changes: data ? 1 : 0  // For single update operations, return 1 if successful, 0 if not
+    changes: data ? data.length : 0  // For update operations, return number of affected rows
   }
 }
 
@@ -381,7 +381,7 @@ export async function rejectNCPByQALeader(
   // Return an object with changes property to match expected API response
   return {
     data,
-    changes: data ? 1 : 0  // For single update operations, return 1 if successful, 0 if not
+    changes: data ? data.length : 0  // For update operations, return number of affected rows
   }
 }
 
@@ -420,7 +420,7 @@ export async function processNCPByTeamLeader(
   // Return an object with changes property to match expected API response
   return {
     data,
-    changes: data ? 1 : 0  // For single update operations, return 1 if successful, 0 if not
+    changes: data ? data.length : 0  // For update operations, return number of affected rows
   }
 }
 
@@ -457,11 +457,16 @@ export async function approveNCPByProcessLead(
   // Return an object with changes property to match expected API response
   return {
     data,
-    changes: data ? 1 : 0  // For single update operations, return 1 if successful, 0 if not
+    changes: data ? data.length : 0  // For update operations, return number of affected rows
   }
 }
-
 export async function rejectNCPByProcessLead(
+  id: number,
+  rejectionReason: string,
+  processLeadUsername: string
+
+) {
+
   const { data, error } = await supabase
     .from('ncp_reports')
     .update({
@@ -503,7 +508,6 @@ export async function rejectNCPByProcessLead(
     changes: data ? data.length : 0
   }
 }
-
 
 export async function rejectNCPByQAManager(
   id: number,
