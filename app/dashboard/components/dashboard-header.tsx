@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, Search, User, LogOut } from "lucide-react"
+import { Bell, Search, User, LogOut, Key } from "lucide-react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -35,6 +35,7 @@ interface UserInfo {
 interface DashboardHeaderProps {
   userInfo?: UserInfo | null
   onLogout?: () => void
+  setCurrentPage?: (page: string) => void
 }
 
 export function DashboardHeader({ userInfo, onLogout }: DashboardHeaderProps) {
@@ -118,8 +119,16 @@ export function DashboardHeader({ userInfo, onLogout }: DashboardHeaderProps) {
                   <DropdownMenuSeparator />
                 </>
               )}
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // Navigate directly to a change password page
+                  window.location.href = '/dashboard/change-password';
+                }}
+              >
+                <Key className="h-4 w-4 mr-2" />
+                Change Password
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="text-red-600 focus:text-red-600">
                 <LogOut className="h-4 w-4 mr-2" />

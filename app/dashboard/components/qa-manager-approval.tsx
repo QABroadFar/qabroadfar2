@@ -293,10 +293,10 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
           
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex-1">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-700 to-indigo-800 bg-clip-text text-transparent">
                 QA Manager Final Approval
               </h1>
-              <p className="text-gray-600 mt-2 text-lg">
+              <p className="text-gray-700 mt-2 text-lg">
                 Final review and approval of completed NCP workflows
               </p>
             </div>
@@ -326,7 +326,7 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-blue-100 text-sm">Total NCPs</p>
+                    <p className="text-blue-200 text-sm font-medium">Total NCPs</p>
                     <p className="text-2xl font-bold">{pendingNCPs.length}</p>
                   </div>
                   <Layers className="h-8 w-8 text-blue-200" />
@@ -338,7 +338,7 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-purple-100 text-sm">Avg. Hold Qty</p>
+                    <p className="text-purple-200 text-sm font-medium">Avg. Hold Qty</p>
                     <p className="text-2xl font-bold">
                       {Math.round(pendingNCPs.reduce((sum, ncp) => sum + (ncp.hold_quantity || 0), 0) / pendingNCPs.length) || 0}
                     </p>
@@ -352,7 +352,7 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-green-100 text-sm">Avg. Sortir</p>
+                    <p className="text-green-200 text-sm font-medium">Avg. Sortir</p>
                     <p className="text-2xl font-bold">
                       {Math.round(pendingNCPs.reduce((sum, ncp) => sum + (parseInt(ncp.jumlah_sortir || 0)), 0) / pendingNCPs.length) || 0}
                     </p>
@@ -366,7 +366,7 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-orange-100 text-sm">Avg. Reject</p>
+                    <p className="text-orange-200 text-sm font-medium">Avg. Reject</p>
                     <p className="text-2xl font-bold">
                       {Math.round(pendingNCPs.reduce((sum, ncp) => sum + (parseInt(ncp.jumlah_reject || 0)), 0) / pendingNCPs.length) || 0}
                     </p>
@@ -442,31 +442,31 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4 bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl border border-gray-200/50">
                     <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
                       <div className="p-2 rounded-lg bg-blue-100">
-                        <Package className="h-5 w-5 text-blue-600" />
+                        <Package className="h-5 w-5 text-blue-700" />
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500 uppercase tracking-wide">SKU Code</div>
-                        <div className="font-semibold text-gray-800">{ncp.sku_code}</div>
+                        <div className="text-xs text-gray-600 uppercase tracking-wide font-medium">SKU Code</div>
+                        <div className="font-semibold text-gray-900">{ncp.sku_code}</div>
                       </div>
                     </div>
                     
                     <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
                       <div className="p-2 rounded-lg bg-green-100">
-                        <FileText className="h-5 w-5 text-green-600" />
+                        <FileText className="h-5 w-5 text-green-700" />
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500 uppercase tracking-wide">Machine</div>
-                        <div className="font-semibold text-gray-800">{ncp.machine_code}</div>
+                        <div className="text-xs text-gray-600 uppercase tracking-wide font-medium">Machine</div>
+                        <div className="font-semibold text-gray-900">{ncp.machine_code}</div>
                       </div>
                     </div>
                     
                     <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
                       <div className="p-2 rounded-lg bg-amber-100">
-                        <Clock className="h-5 w-5 text-amber-600" />
+                        <Clock className="h-5 w-5 text-amber-700" />
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500 uppercase tracking-wide">Incident Date</div>
-                        <div className="font-semibold text-gray-800">
+                        <div className="text-xs text-gray-600 uppercase tracking-wide font-medium">Incident Date</div>
+                        <div className="font-semibold text-gray-900">
                           {new Date(ncp.date).toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",
@@ -477,21 +477,21 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                     
                     <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
                       <div className="p-2 rounded-lg bg-purple-100">
-                        <Clock className="h-5 w-5 text-purple-600" />
+                        <Clock className="h-5 w-5 text-purple-700" />
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500 uppercase tracking-wide">Incident Time</div>
-                        <div className="font-semibold text-gray-800">{ncp.time_incident}</div>
+                        <div className="text-xs text-gray-600 uppercase tracking-wide font-medium">Incident Time</div>
+                        <div className="font-semibold text-gray-900">{ncp.time_incident}</div>
                       </div>
                     </div>
                     
                     <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
                       <div className="p-2 rounded-lg bg-indigo-100">
-                        <User className="h-5 w-5 text-indigo-600" />
+                        <User className="h-5 w-5 text-indigo-700" />
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500 uppercase tracking-wide">Process Lead</div>
-                        <div className="font-semibold text-gray-800 truncate">{ncp.process_approved_by}</div>
+                        <div className="text-xs text-gray-600 uppercase tracking-wide font-medium">Process Lead</div>
+                        <div className="font-semibold text-gray-900 truncate">{ncp.process_approved_by}</div>
                       </div>
                     </div>
                   </div>
@@ -500,11 +500,11 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                   <div className="p-5 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-200/50">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="p-2 rounded-lg bg-orange-100">
-                        <AlertCircle className="h-5 w-5 text-orange-600" />
+                        <AlertCircle className="h-5 w-5 text-orange-700" />
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-800">Problem Description</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">Problem Description</h3>
                     </div>
-                    <p className="text-gray-800 leading-relaxed bg-white/80 p-4 rounded-lg border border-orange-200">
+                    <p className="text-gray-900 leading-relaxed bg-white/80 p-4 rounded-lg border border-orange-200">
                       {ncp.problem_description}
                     </p>
                   </div>
@@ -514,46 +514,46 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                     <div className="p-5 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-200/50">
                       <div className="flex items-center gap-2 mb-4">
                         <div className="p-2 rounded-lg bg-blue-100">
-                          <ClipboardCheck className="h-5 w-5 text-blue-600" />
+                          <ClipboardCheck className="h-5 w-5 text-blue-700" />
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-800">QA Leader Disposition</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">QA Leader Disposition</h3>
                       </div>
                       
-                      <p className="text-gray-800 leading-relaxed bg-white/80 p-4 rounded-lg border border-blue-200 mb-4">
+                      <p className="text-gray-900 leading-relaxed bg-white/80 p-4 rounded-lg border border-blue-200 mb-4">
                         {ncp.disposisi}
                       </p>
 
                       {/* Quantities Grid */}
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="bg-gradient-to-br from-white to-orange-50 p-4 rounded-lg border border-orange-200 text-center shadow-sm">
-                          <div className="text-sm text-gray-500 mb-2">Sortir Quantity</div>
+                          <div className="text-sm text-gray-700 mb-2 font-medium">Sortir Quantity</div>
                           <div className={`text-3xl font-bold ${getPriorityColor(parseInt(ncp.jumlah_sortir || 0))}`}>
                             {ncp.jumlah_sortir || "0"}
                           </div>
-                          <div className="text-sm text-gray-500">{ncp.hold_quantity_uom}</div>
+                          <div className="text-sm text-gray-700">{ncp.hold_quantity_uom}</div>
                         </div>
                         
                         <div className="bg-gradient-to-br from-white to-green-50 p-4 rounded-lg border border-green-200 text-center shadow-sm">
-                          <div className="text-sm text-gray-500 mb-2">Release Quantity</div>
+                          <div className="text-sm text-gray-700 mb-2 font-medium">Release Quantity</div>
                           <div className={`text-3xl font-bold ${getPriorityColor(parseInt(ncp.jumlah_release || 0))}`}>
                             {ncp.jumlah_release || "0"}
                           </div>
-                          <div className="text-sm text-gray-500">{ncp.hold_quantity_uom}</div>
+                          <div className="text-sm text-gray-700">{ncp.hold_quantity_uom}</div>
                         </div>
                         
                         <div className="bg-gradient-to-br from-white to-red-50 p-4 rounded-lg border border-red-200 text-center shadow-sm">
-                          <div className="text-sm text-gray-500 mb-2">Reject Quantity</div>
+                          <div className="text-sm text-gray-700 mb-2 font-medium">Reject Quantity</div>
                           <div className={`text-3xl font-bold ${getPriorityColor(parseInt(ncp.jumlah_reject || 0))}`}>
                             {ncp.jumlah_reject || "0"}
                           </div>
-                          <div className="text-sm text-gray-500">{ncp.hold_quantity_uom}</div>
+                          <div className="text-sm text-gray-700">{ncp.hold_quantity_uom}</div>
                         </div>
                       </div>
                       
                       {/* Total Hold Quantity */}
                       <div className="mt-4 p-4 bg-white/80 rounded-lg border border-gray-200 text-center">
-                        <div className="text-sm text-gray-500 mb-1">Total Hold Quantity</div>
-                        <div className="text-2xl font-bold text-gray-800">
+                        <div className="text-sm text-gray-700 mb-1 font-medium">Total Hold Quantity</div>
+                        <div className="text-2xl font-bold text-gray-900">
                           {ncp.hold_quantity} <span className="text-lg">{ncp.hold_quantity_uom}</span>
                         </div>
                       </div>
@@ -564,23 +564,22 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                   <div className="p-5 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200/50">
                     <div className="flex items-center gap-2 mb-4">
                       <div className="p-2 rounded-lg bg-green-100">
-                        <Zap className="h-5 w-5 text-green-600" />
+                        <Zap className="h-5 w-5 text-green-700" />
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-800">Team Leader Analysis</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">Team Leader Analysis</h3>
                     </div>
                     
-                    <div className="space-y-4">
-                      <Accordion type="single" collapsible className="w-full">
+                    <Accordion type="single" collapsible className="w-full">
                         <AccordionItem value="root-cause">
                           <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-2">
-                              <Target className="h-4 w-4 text-green-600" />
-                              <span className="font-medium">Root Cause Analysis</span>
+                              <Target className="h-4 w-4 text-green-700" />
+                              <span className="font-medium text-gray-900">Root Cause Analysis</span>
                             </div>
                           </AccordionTrigger>
                           <AccordionContent>
                             <div className="p-4 bg-white/80 rounded-lg border border-green-200">
-                              <p className="text-gray-800">{ncp.root_cause_analysis}</p>
+                              <p className="text-gray-900">{ncp.root_cause_analysis}</p>
                             </div>
                           </AccordionContent>
                         </AccordionItem>
@@ -588,13 +587,13 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                         <AccordionItem value="corrective">
                           <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-2">
-                              <Wrench className="h-4 w-4 text-blue-600" />
-                              <span className="font-medium">Corrective Action</span>
+                              <Wrench className="h-4 w-4 text-blue-700" />
+                              <span className="font-medium text-gray-900">Corrective Action</span>
                             </div>
                           </AccordionTrigger>
                           <AccordionContent>
                             <div className="p-4 bg-white/80 rounded-lg border border-blue-200">
-                              <p className="text-gray-800">{ncp.corrective_action}</p>
+                              <p className="text-gray-900">{ncp.corrective_action}</p>
                             </div>
                           </AccordionContent>
                         </AccordionItem>
@@ -602,18 +601,17 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                         <AccordionItem value="preventive">
                           <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-2">
-                              <Shield className="h-4 w-4 text-purple-600" />
-                              <span className="font-medium">Preventive Action</span>
+                              <Shield className="h-4 w-4 text-purple-700" />
+                              <span className="font-medium text-gray-900">Preventive Action</span>
                             </div>
                           </AccordionTrigger>
                           <AccordionContent>
                             <div className="p-4 bg-white/80 rounded-lg border border-purple-200">
-                              <p className="text-gray-800">{ncp.preventive_action}</p>
+                              <p className="text-gray-900">{ncp.preventive_action}</p>
                             </div>
                           </AccordionContent>
                         </AccordionItem>
                       </Accordion>
-                    </div>
                   </div>
 
                   {/* Process Lead Comment */}
@@ -621,12 +619,12 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                     <div className="p-5 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border border-purple-200/50">
                       <div className="flex items-center gap-2 mb-3">
                         <div className="p-2 rounded-lg bg-purple-100">
-                          <Award className="h-5 w-5 text-purple-600" />
+                          <Award className="h-5 w-5 text-purple-700" />
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-800">Process Lead Approval Comment</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">Process Lead Approval Comment</h3>
                       </div>
                       <div className="p-4 bg-white/80 rounded-lg border border-purple-200">
-                        <p className="text-gray-800">{ncp.process_comment}</p>
+                        <p className="text-gray-900">{ncp.process_comment}</p>
                       </div>
                     </div>
                   )}
@@ -636,9 +634,9 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                     <div className="p-5 bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl border border-gray-200/50">
                       <div className="flex items-center gap-2 mb-3">
                         <div className="p-2 rounded-lg bg-gray-100">
-                          <ImageIcon className="h-5 w-5 text-gray-600" />
+                          <ImageIcon className="h-5 w-5 text-gray-700" />
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-800">Photo Attachment</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">Photo Attachment</h3>
                       </div>
                       
                       <div className="flex flex-col sm:flex-row gap-4">
@@ -658,8 +656,8 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                         
                         <div className="flex-1">
                           <div className="p-3 bg-white/80 rounded-lg border">
-                            <p className="text-sm text-gray-600 mb-2">File Name:</p>
-                            <p className="font-medium text-gray-800 break-all">
+                            <p className="text-sm text-gray-700 mb-2 font-medium">File Name:</p>
+                            <p className="font-medium text-gray-900 break-all">
                               {ncp.photo_attachment.split("/").pop()}
                             </p>
                           </div>
@@ -722,18 +720,18 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
       <Dialog open={showApprovalDialog} onOpenChange={setShowApprovalDialog}>
         <DialogContent className="max-w-2xl bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-green-600 flex items-center gap-2">
+            <DialogTitle className="text-2xl font-bold text-green-700 flex items-center gap-2">
               <CheckCircle className="h-6 w-6" />
               Final Approval: {selectedNCP?.ncp_id}
             </DialogTitle>
-            <DialogDescription className="text-gray-600">
+            <DialogDescription className="text-gray-700">
               Complete the NCP workflow with final QA Manager approval. This will archive the NCP permanently.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="finalComment" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="finalComment" className="text-sm font-medium text-gray-800">
                 Final Approval Comment *
               </Label>
               <Textarea
@@ -744,7 +742,7 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                 className="min-h-32 border-gray-300 focus:border-green-500 focus:ring-green-500"
                 rows={5}
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-600">
                 This comment will complete the NCP workflow and archive the record permanently.
               </p>
             </div>
@@ -784,18 +782,18 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
       <Dialog open={showRejectionDialog} onOpenChange={setShowRejectionDialog}>
         <DialogContent className="max-w-2xl bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-red-600 flex items-center gap-2">
+            <DialogTitle className="text-2xl font-bold text-red-700 flex items-center gap-2">
               <XCircle className="h-6 w-6" />
               Reject Final Approval: {selectedNCP?.ncp_id}
             </DialogTitle>
-            <DialogDescription className="text-gray-600">
+            <DialogDescription className="text-gray-700">
               Reject this NCP and return to Team Leader for revision of the analysis.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="rejectionReason" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="rejectionReason" className="text-sm font-medium text-gray-800">
                 Rejection Reason *
               </Label>
               <Textarea
@@ -806,7 +804,7 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
                 className="min-h-32 border-gray-300 focus:border-red-500 focus:ring-red-500"
                 rows={5}
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-600">
                 Provide clear guidance on what needs to be corrected in the analysis or process.
               </p>
             </div>
@@ -847,11 +845,11 @@ export function QAManagerApproval({ onBack }: QAManagerApprovalProps) {
       <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
         <AlertDialogContent className="max-w-xl bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-3 text-2xl font-bold text-green-600">
+            <AlertDialogTitle className="flex items-center gap-3 text-2xl font-bold text-green-700">
               <CheckCircle className="h-8 w-8" />
               Operation Successful
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-700 pt-4 text-lg">
+            <AlertDialogDescription className="text-gray-800 pt-4 text-lg">
               {successMessage}
             </AlertDialogDescription>
           </AlertDialogHeader>

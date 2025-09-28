@@ -62,9 +62,15 @@ export async function updateUserRole(userId: number, newRole: string) {
     .from('users')
     .update({ role: newRole })
     .eq('id', userId)
+    .select()
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 export async function createUser(username: string, password: string, role: string, fullName: string) {
@@ -107,9 +113,31 @@ export async function updateUserPassword(userId: number, newPassword: string) {
     .from('users')
     .update({ password: hashedPassword })
     .eq('id', userId)
+    .select()
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
+}
+
+export async function updateUserUsername(userId: number, newUsername: string) {
+  const { data, error } = await supabase
+    .from('users')
+    .update({ username: newUsername })
+    .eq('id', userId)
+    .select()
+
+  if (error) throw new Error(error.message)
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 export async function updateUserStatus(userId: number, isActive: boolean) {
@@ -117,9 +145,15 @@ export async function updateUserStatus(userId: number, isActive: boolean) {
     .from('users')
     .update({ is_active: isActive })
     .eq('id', userId)
+    .select()
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 // NCP Reports functions

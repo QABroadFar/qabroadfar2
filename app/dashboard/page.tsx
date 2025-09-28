@@ -19,6 +19,7 @@ import AuditLogPage from "./audit-log/page"
 import SystemLogsPage from "./system-logs/page"
 import ApiKeysPage from "./api-keys/page"
 import BackupRestorePage from "./backup-restore/page"
+import { ChangePasswordForm } from "@/components/change-password-form"
 
 interface UserInfo {
   id: number
@@ -116,6 +117,8 @@ export default function DashboardPage() {
         return <ApiKeysPage />
       case "backup-restore":
         return <BackupRestorePage />
+      case "change-password":
+        return <ChangePasswordForm userId={userInfo.id} username={userInfo.username} onBack={() => setCurrentPage("dashboard")} />
       default:
         return <RoleSpecificDashboard userInfo={userInfo} />
     }
@@ -123,13 +126,16 @@ export default function DashboardPage() {
 
   return (
     <SidebarProvider>
-      <AppSidebar userInfo={userInfo} currentPage={currentPage} setCurrentPage={setCurrentPage} />
-      <SidebarInset>
-        <DashboardHeader onLogout={handleLogout} />
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          {renderContent()}
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+        <AppSidebar userInfo={userInfo} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+        <SidebarInset>
+          <DashboardHeader 
+            onLogout={handleLogout} 
+            setCurrentPage={setCurrentPage}
+          />
+          <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+            {renderContent()}
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
   )
 }

@@ -25,11 +25,15 @@ interface User {
   created_at: string
 }
 
+interface EditingUser extends User {
+  field?: 'username' | 'role' | 'password'
+}
+
 export function UserManagement() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddUserForm, setShowAddUserForm] = useState(false)
-  const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [editingUser, setEditingUser] = useState<EditingUser | null>(null)
   const [newUser, setNewUser] = useState({
     username: "",
     password: "",
@@ -168,6 +172,54 @@ export function UserManagement() {
       
       if (response.ok) {
         toast.success("User password updated successfully")
+      } else {
+        toast.error(result.error || "Failed to update user password")
+      }
+    } catch (error: any) {
+      console.error("Error updating user password:", error)
+      toast.error(`Error updating user password: ${error.message}`)
+    }
+  }
+
+  const handleUpdateUsername = async (userId: number, newUsername: string) => {
+    try {
+      const response = await fetch(`/api/users/${userId}/username`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: newUsername }),
+      })
+      
+      const result = await response.json()
+      
+      if (response.ok) {
+        toast.success("User username updated successfully")
+        fetchUsers() // Refresh the user list
+      } else {
+        toast.error(result.error || "Failed to update user username")
+      }
+    } catch (error: any) {
+      console.error("Error updating user username:", error)
+      toast.error(`Error updating user username: ${error.message}`)
+    }
+  }
+
+  const handleUpdatePassword = async (userId: number, newPassword: string) => {
+    try {
+      const response = await fetch(`/api/users/${userId}/password`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password: newPassword }),
+      })
+      
+      const result = await response.json()
+      
+      if (response.ok) {
+        toast.success("User password updated successfully")
+        // Don't refresh users since password update doesn't change displayed info
       } else {
         toast.error(result.error || "Failed to update user password")
       }
@@ -337,14 +389,50 @@ export function UserManagement() {
                 <TableBody>
                   {users.map((user) => (
                     <TableRow key={user.id} className="hover:bg-gray-50/50">
-                      <TableCell className="font-medium">{user.username}</TableCell>
+                      <TableCell>
+                        {editingUser?.id === user.id && editingUser.field === 'username' ? (
+                          <div className="flex gap-2">
+                            <Input
+                              value={editingUser.username}
+                              onChange={(e) => setEditingUser({...editingUser, username: e.target.value})}
+                              className="text-sm h-8"
+                              autoFocus
+                              onBlur={() => {
+                                handleUpdateUsername(user.id, editingUser.username)
+                                setEditingUser(null)
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  handleUpdateUsername(user.id, editingUser.username)
+                                  setEditingUser(null)
+                                } else if (e.key === "Escape") {
+                                  setEditingUser(null)
+                                }
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{user.username}</span>
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              onClick={() => setEditingUser({...user, field: 'username'})}
+                              className="p-1"
+                            >
+                              <Edit className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        )}
+                      </TableCell>
                       <TableCell>{user.full_name || "-"}</TableCell>
                       <TableCell>
-                        {editingUser?.id === user.id ? (
+                        {editingUser?.id === user.id && editingUser.field === 'role' ? (
                           <select
                             value={editingUser.role}
                             onChange={(e) => setEditingUser({...editingUser, role: e.target.value})}
                             className="w-full px-2 py-1 border border-gray-200 rounded-md text-sm"
+                            autoFocus
                             onBlur={() => {
                               handleUpdateUserRole(user.id, editingUser.role)
                               setEditingUser(null)
@@ -352,6 +440,8 @@ export function UserManagement() {
                             onKeyDown={(e) => {
                               if (e.key === "Enter") {
                                 handleUpdateUserRole(user.id, editingUser.role)
+                                setEditingUser(null)
+                              } else if (e.key === "Escape") {
                                 setEditingUser(null)
                               }
                             }}
@@ -370,7 +460,7 @@ export function UserManagement() {
                             <Button 
                               size="sm" 
                               variant="ghost" 
-                              onClick={() => setEditingUser(user)}
+                              onClick={() => setEditingUser({...user, field: 'role'})}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>

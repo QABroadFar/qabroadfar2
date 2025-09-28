@@ -29,11 +29,10 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Password is required" }, { status: 400 })
     }
 
-    // Hash the new password
-    const hashedPassword = hashSync(password, 10)
-    const result = await updateUserPassword(userId, hashedPassword)
+    // Pass the plain password to the function (it will hash it)
+    const result = await updateUserPassword(userId, password)
     
-    if (result.changes > 0) {
+    if (result && result.changes > 0) {
       // Log the event
       await logSystemEvent("info", "User Password Updated", {
         user_id: userId,
