@@ -509,6 +509,70 @@ export async function rejectNCPByProcessLead(
   }
 }
 
+// QA Manager functions
+export async function approveNCPByQAManager(
+  id: number,
+  comment: string,
+  qaManagerUsername: string
+) {
+  const { data, error } = await supabase
+    .from("ncp_reports")
+    .update({
+      status: "manager_approved",
+      manager_approved_by: qaManagerUsername,
+      manager_approved_at: new Date().toISOString(),
+      manager_comment: comment,
+      archived_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select()
+    .single()
+
+  if (error) throw new Error(error.message)
+
+  if (data) {
+    // Create notification for original submitter
+    const { data: submitterUser } = await supabase
+      .from("users")
+      .select("id")
+      .eq("username", data.submitted_by)
+      .single()
+
+    if (submitterUser) {
+      await createNotification(
+        submitterUser.id,
+        data.ncp_id,
+        "NCP Workflow Completed",
+        `NCP ${data.ncp_id} has been fully approved and archived. The workflow is now complete.`
+      )
+    }
+
+    // Also notify QA Leader
+    if (data.qa_approved_by) {
+      const { data: qaLeaderUser } = await supabase
+        .from("users")
+        .select("id")
+        .eq("username", data.qa_approved_by)
+        .single()
+
+      if (qaLeaderUser) {
+        await createNotification(
+          qaLeaderUser.id,
+          data.ncp_id,
+          "NCP Workflow Completed",
+          `NCP ${data.ncp_id} has been fully approved by QA Manager and archived.`
+        )
+      }
+    }
+  }
+
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
+}
+
 export async function rejectNCPByQAManager(
   id: number,
   rejectionReason: string,
