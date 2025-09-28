@@ -352,7 +352,11 @@ export async function approveNCPByQALeader(
     }
   }
 
-  return data
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? 1 : 0  // For single update operations, return 1 if successful, 0 if not
+  }
 }
 
 export async function rejectNCPByQALeader(
@@ -373,7 +377,12 @@ export async function rejectNCPByQALeader(
     .single()
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? 1 : 0  // For single update operations, return 1 if successful, 0 if not
+  }
 }
 
 // Team Leader processing functions
@@ -408,7 +417,11 @@ export async function processNCPByTeamLeader(
     )
   }
 
-  return data
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? 1 : 0  // For single update operations, return 1 if successful, 0 if not
+  }
 }
 
 // Process Lead functions
@@ -441,7 +454,11 @@ export async function approveNCPByProcessLead(
     )
   }
 
-  return data
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? 1 : 0  // For single update operations, return 1 if successful, 0 if not
+  }
 }
 
 export async function rejectNCPByProcessLead(
@@ -481,13 +498,7 @@ export async function rejectNCPByProcessLead(
         'NCP Rejected by Process Lead',
         `NCP ${ncp.ncp_id} has been rejected by Process Lead and returned for reprocessing. Reason: ${rejectionReason}`
       )
-    }
-  }
-
-  return data
-}
-
-// QA Manager functions
+    }\n  }\n\n  // Return an object with changes property to match expected API response\n  return {\n    data,\n    changes: data ? 1 : 0  // For single update operations, return 1 if successful, 0 if not\n  }\n}\n\n// QA Manager functions
 export async function approveNCPByQAManager(
   id: number,
   comment: string,
@@ -583,13 +594,7 @@ export async function rejectNCPByQAManager(
         'NCP Rejected by QA Manager',
         `NCP ${ncp.ncp_id} has been rejected by QA Manager and returned for reprocessing. Reason: ${rejectionReason}`
       )
-    }
-  }
-
-  return data
-}
-
-// Notification functions
+    }\n  }\n\n  // Return an object with changes property to match expected API response\n  return {\n    data,\n    changes: data ? data.length : 0\n  }\n}\n\n// Notification functions
 export async function createNotification(
   userId: number,
   ncpId: string,
