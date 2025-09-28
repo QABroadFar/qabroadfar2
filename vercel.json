@@ -1,31 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next",
-      "config": {
-        "includeFiles": [
-          "public/**/*"
-        ]
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/"
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  },
-  "build": {
-    "env": {
-      "NEXT_TELEMETRY_DISABLED": "1"
-    }
-  },
-  "regions": ["iad1"],
   "cleanUrls": true,
   "headers": [
     {
@@ -49,5 +23,6 @@
         }
       ]
     }
-  ]
+  ],
+  "regions": ["iad1"]
 }
