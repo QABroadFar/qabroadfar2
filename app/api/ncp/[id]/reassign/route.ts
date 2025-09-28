@@ -32,7 +32,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     // Reassign NCP report
     const result = await reassignNCP(id, newAssignee, role, auth.username)
     
-    if (result.changes > 0) {
+    if (result && result.changes > 0) {
       // Get NCP details for logging
       const ncp: any = await getNCPById(id)
       

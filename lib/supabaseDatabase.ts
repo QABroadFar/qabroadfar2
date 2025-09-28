@@ -1075,7 +1075,7 @@ export async function reassignNCP(
   changedBy: string
 ) {
   const ncp: any = await getNCPById(ncpId)
-  if (!ncp) return { changes: 0 }
+  if (!ncp) return { data: null, changes: 0 }
 
   let columnToUpdate = ''
   let oldAssignee = ''
@@ -1086,7 +1086,7 @@ export async function reassignNCP(
     columnToUpdate = 'assigned_team_leader'
     oldAssignee = ncp.assigned_team_leader
   } else {
-    return { changes: 0 }
+    return { data: null, changes: 0 }
   }
 
   await logNCPChange(
@@ -1105,9 +1105,15 @@ export async function reassignNCP(
     .from('ncp_reports')
     .update(updateData)
     .eq('id', ncpId)
+    .select()
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 export async function deleteNCPReport(id: number) {
