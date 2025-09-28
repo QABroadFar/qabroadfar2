@@ -32,7 +32,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     // Revert NCP status
     const result = await revertNCPStatus(id, newStatus, auth.username)
     
-    if (result.changes > 0) {
+    if (result && result.changes > 0) {
       // Get NCP details for logging
       const ncp: any = await getNCPById(id)
       

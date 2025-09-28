@@ -1014,14 +1014,14 @@ export async function deleteApiKey(id: number) {
 export async function superEditNCP(ncpId: number, data: any, changedBy: string) {
   const ncp = await getNCPById(ncpId)
   if (!ncp) {
-    return { changes: 0 }
+    return { data: null, changes: 0 }
   }
 
   const fields = Object.keys(data)
   const values = Object.values(data)
 
   if (fields.length === 0) {
-    return { changes: 0 }
+    return { data: null, changes: 0 }
   }
 
   for (const field of fields) {
@@ -1043,7 +1043,12 @@ export async function superEditNCP(ncpId: number, data: any, changedBy: string) 
     .eq('id', ncpId)
 
   if (error) throw new Error(error.message)
-  return result
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data: result,
+    changes: result ? result.length : 0
+  }
 }
 
 export async function revertNCPStatus(ncpId: number, newStatus: string, changedBy: string) {
@@ -1063,9 +1068,15 @@ export async function revertNCPStatus(ncpId: number, newStatus: string, changedB
     .from('ncp_reports')
     .update({ status: newStatus })
     .eq('id', ncpId)
+    .select()
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 export async function reassignNCP(
@@ -1117,10 +1128,19 @@ export async function reassignNCP(
 }
 
 export async function deleteNCPReport(id: number) {
-  const { data, error } = await supabase.from('ncp_reports').delete().eq('id', id)
+  const { data, error } = await supabase
+    .from('ncp_reports')
+    .delete()
+    .eq('id', id)
+    .select()
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 // Analytics Functions
