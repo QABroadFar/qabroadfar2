@@ -462,39 +462,6 @@ export async function approveNCPByProcessLead(
 }
 
 export async function rejectNCPByProcessLead(
-  const { data, error } = await supabase
-    .from('ncp_reports')
-    .update({
-      status: 'qa_approved',
-      process_approved_by: null,
-      process_approved_at: null,
-      process_rejection_reason: rejectionReason,
-      process_comment: null,
-    })
-    .eq('id', id)
-    .select()
-
-  if (error) throw new Error(error.message)
-
-  if (data && data.length > 0) {
-    // Get NCP details for notification
-    const ncp = data[0]
-
-    // Create notification for assigned team leader
-    const { data: teamLeaderUser } = await supabase
-      .from('users')
-      .select('id')
-      .eq('username', ncp.assigned_team_leader)
-      .single()
-
-    if (teamLeaderUser) {
-      await createNotification(
-        teamLeaderUser.id,
-        ncp.ncp_id,
-        'NCP Rejected by Process Lead',
-        `NCP ${ncp.ncp_id} has been rejected by Process Lead and returned for reprocessing. Reason: ${rejectionReason}`
-      )
-    }
   }
 
   // Return an object with changes property to match expected API response
