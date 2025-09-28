@@ -1055,10 +1055,19 @@ export async function createApiKey(serviceName: string, permissions: string[]) {
 }
 
 export async function deleteApiKey(id: number) {
-  const { data, error } = await supabase.from('api_keys').delete().eq('id', id)
+  const { data, error } = await supabase
+    .from('api_keys')
+    .delete()
+    .eq('id', id)
+    .select()
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 // Super Admin Functions
