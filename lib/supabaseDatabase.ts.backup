@@ -462,15 +462,101 @@ export async function approveNCPByProcessLead(
 }
 
 export async function rejectNCPByProcessLead(
+  id: number,
+  rejectionReason: string,
+  processLeadUsername: string
+) {
+  const { data, error } = await supabase
+    .from('ncp_reports')
+    .update({
+      status: 'qa_approved',
+      process_approved_by: null,
+      process_approved_at: null,
+      process_rejection_reason: rejectionReason,
+      process_comment: null,
+    })
+    .eq('id', id)
+    .select()
+
+  if (error) throw new Error(error.message)
+
+  if (data && data.length > 0) {
+    // Get NCP details for notification
+    const ncp = data[0]
+
+    // Create notification for assigned team leader
+    const { data: teamLeaderUser } = await supabase
+      .from('users')
+      .select('id')
+      .eq('username', ncp.assigned_team_leader)
+      .single()
+
+    if (teamLeaderUser) {
+      await createNotification(
+        teamLeaderUser.id,
+        ncp.ncp_id,
+        'NCP Rejected by Process Lead',
+        `NCP ${ncp.ncp_id} has been rejected by Process Lead and returned for reprocessing. Reason: ${rejectionReason}`
+      )
+    }\n  }\n\n  // Return an object with changes property to match expected API response\n  return {\n    data,\n    changes: data ? 1 : 0  // For single update operations, return 1 if successful, 0 if not\n  }\n}\n\n// QA Manager functions
+export async function approveNCPByQAManager(
+  id: number,
+  comment: string,
+  qaManagerUsername: string
+) {
+  const { data, error } = await supabase
+    .from('ncp_reports')
+    .update({
+      status: 'manager_approved',
+      manager_approved_by: qaManagerUsername,
+      manager_approved_at: new Date().toISOString(),
+      manager_comment: comment,
+      archived_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) throw new Error(error.message)
+
+  if (data) {
+    // Create notification for original submitter
+    const { data: submitterUser } = await supabase
+      .from('users')
+      .select('id')
+      .eq('username', data.submitted_by)
+      .single()
+
+    if (submitterUser) {
+      await createNotification(
+        submitterUser.id,
+        data.ncp_id,
+        'NCP Workflow Completed',
+        `NCP ${data.ncp_id} has been fully approved and archived. The workflow is now complete.`
+      )
+    }
+
+    // Also notify QA Leader
+    if (data.qa_approved_by) {
+      const { data: qaLeaderUser } = await supabase
+        .from('users')
+        .select('id')
+        .eq('username', data.qa_approved_by)
+        .single()
+
+      if (qaLeaderUser) {
+        await createNotification(
+          qaLeaderUser.id,
+          data.ncp_id,
+          'NCP Workflow Completed',
+          `NCP ${data.ncp_id} has been fully approved by QA Manager and archived.`
+        )
+      }
+    }
   }
 
-  // Return an object with changes property to match expected API response
-  return {
-    data,
-    changes: data ? data.length : 0
-  }
+  return data
 }
-
 
 export async function rejectNCPByQAManager(
   id: number,
@@ -508,17 +594,7 @@ export async function rejectNCPByQAManager(
         'NCP Rejected by QA Manager',
         `NCP ${ncp.ncp_id} has been rejected by QA Manager and returned for reprocessing. Reason: ${rejectionReason}`
       )
-    }
-  }
-
-  // Return an object with changes property to match expected API response
-  return {
-    data,
-    changes: data ? data.length : 0
-  }
-}
-
-// Notification functions
+    }\n  }\n\n  // Return an object with changes property to match expected API response\n  return {\n    data,\n    changes: data ? data.length : 0\n  }\n}\n\n// Notification functions
 export async function createNotification(
   userId: number,
   ncpId: string,
