@@ -858,7 +858,12 @@ export async function createMachine(code: string, name: string) {
     .select()
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 export async function updateMachine(id: number, code: string, name: string) {
@@ -866,16 +871,31 @@ export async function updateMachine(id: number, code: string, name: string) {
     .from('machines')
     .update({ code, name })
     .eq('id', id)
+    .select()
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 export async function deleteMachine(id: number) {
-  const { data, error } = await supabase.from('machines').delete().eq('id', id)
+  const { data, error } = await supabase
+    .from('machines')
+    .delete()
+    .eq('id', id)
+    .select()
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 // UOMs Functions
@@ -890,24 +910,50 @@ export async function getAllUOMs() {
 }
 
 export async function createUOM(code: string, name: string) {
-  const { data, error } = await supabase.from('uoms').insert([{ code, name }]).select()
+  const { data, error } = await supabase
+    .from('uoms')
+    .insert([{ code, name }])
+    .select()
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 export async function updateUOM(id: number, code: string, name: string) {
-  const { data, error } = await supabase.from('uoms').update({ code, name }).eq('id', id)
+  const { data, error } = await supabase
+    .from('uoms')
+    .update({ code, name })
+    .eq('id', id)
+    .select()
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 export async function deleteUOM(id: number) {
-  const { data, error } = await supabase.from('uoms').delete().eq('id', id)
+  const { data, error } = await supabase
+    .from('uoms')
+    .delete()
+    .eq('id', id)
+    .select()
 
   if (error) throw new Error(error.message)
-  return data
+  
+  // Return an object with changes property to match expected API response
+  return {
+    data,
+    changes: data ? data.length : 0
+  }
 }
 
 // Audit Log Functions
